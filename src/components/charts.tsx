@@ -1,0 +1,176 @@
+"use client";
+
+import {
+  Area,
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  BarChart,
+} from "recharts";
+import type { Snapshot } from "@/lib/types";
+import { compactMoney } from "@/lib/format";
+import { regions } from "@/lib/regions";
+
+const axis = { fontSize: 11, fill: "#788497", fontFamily: "inherit" };
+const tooltipStyle = {
+  border: "1px solid #e3e8f1",
+  borderRadius: 10,
+  fontSize: 12,
+  boxShadow: "0 6px 24px #18213310",
+};
+
+export function SpendingChart({ snapshots }: { snapshots: Snapshot[] }) {
+  const data = snapshots.map((row) => ({
+    name: regions.find((region) => region.code === row.regionCode)?.shortName,
+    Pagu: row.total.budget === null ? null : Number(row.total.budget) / 1e12,
+    Realisasi:
+      row.total.realized === null ? null : Number(row.total.realized) / 1e12,
+  }));
+  return (
+    <div
+      className="spending-chart"
+      role="img"
+      aria-label="Grafik perbandingan pagu dan realisasi. Angka lengkap tersedia pada tabel daerah."
+    >
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={1}
+        initialDimension={{ width: 650, height: 290 }}
+      >
+        <BarChart
+          data={data}
+          margin={{ top: 14, left: -19, right: 8, bottom: 0 }}
+          barGap={6}
+          barCategoryGap="28%"
+        >
+          <CartesianGrid
+            strokeDasharray="3 5"
+            vertical={false}
+            stroke="#EAF0F6"
+          />
+          <XAxis
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
+            tick={axis}
+            dy={8}
+          />
+          <YAxis
+            tickFormatter={(value) => `${value} T`}
+            axisLine={false}
+            tickLine={false}
+            tick={axis}
+          />
+          <Tooltip
+            contentStyle={tooltipStyle}
+            cursor={{ fill: "#f6f8fd" }}
+            formatter={(value) => compactMoney(String(Number(value) * 1e12))}
+          />
+          <Legend
+            iconType="circle"
+            iconSize={7}
+            wrapperStyle={{ fontSize: 12, paddingTop: 20 }}
+          />
+          <Bar
+            isAnimationActive={false}
+            dataKey="Pagu"
+            fill="#DDE6FB"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={36}
+          />
+          <Bar
+            isAnimationActive={false}
+            dataKey="Realisasi"
+            fill="#2457E7"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={36}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+export function HistoryChart({ snapshots }: { snapshots: Snapshot[] }) {
+  const data = [...snapshots]
+    .sort((a, b) => a.year - b.year)
+    .map((row) => ({
+      tahun: String(row.year),
+      Pagu: row.total.budget === null ? null : Number(row.total.budget) / 1e12,
+      Realisasi:
+        row.total.realized === null ? null : Number(row.total.realized) / 1e12,
+    }));
+  return (
+    <div
+      className="history-chart"
+      role="img"
+      aria-label="Grafik riwayat belanja pada bulan pelaporan yang sama. Tabel angka tersedia di bawah grafik."
+    >
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={1}
+        initialDimension={{ width: 800, height: 260 }}
+      >
+        <ComposedChart
+          data={data}
+          margin={{ top: 15, left: -15, right: 28, bottom: 0 }}
+        >
+          <CartesianGrid
+            vertical={false}
+            strokeDasharray="3 5"
+            stroke="#EAF0F6"
+          />
+          <XAxis
+            dataKey="tahun"
+            axisLine={false}
+            tickLine={false}
+            tick={axis}
+            dy={9}
+          />
+          <YAxis
+            tickFormatter={(value) => `${value} T`}
+            axisLine={false}
+            tickLine={false}
+            tick={axis}
+          />
+          <Tooltip
+            contentStyle={tooltipStyle}
+            formatter={(value) => compactMoney(String(Number(value) * 1e12))}
+          />
+          <Legend
+            iconType="circle"
+            iconSize={7}
+            wrapperStyle={{ fontSize: 12, paddingTop: 20 }}
+          />
+          <Area
+            isAnimationActive={false}
+            dataKey="Realisasi"
+            type="linear"
+            fill="#2457E7"
+            fillOpacity={0.07}
+            stroke="#2457E7"
+            strokeWidth={3}
+            dot={{ r: 4, fill: "white", strokeWidth: 2 }}
+          />
+          <Line
+            isAnimationActive={false}
+            dataKey="Pagu"
+            type="linear"
+            stroke="#A8B6CC"
+            strokeWidth={2}
+            strokeDasharray="5 5"
+            dot={{ r: 3 }}
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}

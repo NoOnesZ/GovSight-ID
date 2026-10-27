@@ -1,0 +1,681 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-27T16:42:36.873Z",
+  "snapshots": [
+    {
+      "regionCode": "0215",
+      "year": 2024,
+      "month": 10,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "8026297907872",
+        "realized": "4745047220833.2"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "2132137204543",
+          "realized": "1604090885928"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "3039161784501",
+          "realized": "1745216297662.9"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "2305900061492",
+          "realized": "1084943167656.3"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "549098857336",
+          "realized": "310796869586"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2024&provinsi=02&pemda=15",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2024&provinsi=02&pemda=15",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "03993fc1c2d4dc291581294acc36e3b26756bc450ac147f67315e4b806c9a947",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0215-2024-10.xml"
+      }
+    },
+    {
+      "regionCode": "0215",
+      "year": 2024,
+      "month": 12,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "8026297907872",
+        "realized": "6258347667812.3"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "2132137204543",
+          "realized": "1926958217929"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "3039161784501",
+          "realized": "2421257635489"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "2305900061492",
+          "realized": "1488415288707.3"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "549098857336",
+          "realized": "421716525687"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=12&tahun=2024&provinsi=02&pemda=15",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=12&tahun=2024&provinsi=02&pemda=15",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "b5a65c6987a11354a3299eaea8ffeb8b25191252c227741afc7e3963e7b10609",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0215-2024-12.xml"
+      }
+    },
+    {
+      "regionCode": "0215",
+      "year": 2025,
+      "month": 10,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "7606389209471",
+        "realized": "4169292922249.3"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "2436653874396",
+          "realized": "1602285193359"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "3328158077454",
+          "realized": "1722555715820.3"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "1314558877787",
+          "realized": "673064882945"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "527018379834",
+          "realized": "171387130125"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2025&provinsi=02&pemda=15",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2025&provinsi=02&pemda=15",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "a9d3fe0a25ef109102beb310ebc3959f1b8eddcff81c52c9eb365dec05842d99",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0215-2025-10.xml"
+      }
+    },
+    {
+      "regionCode": "0215",
+      "year": 2025,
+      "month": 12,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "7606389209471",
+        "realized": "5837451499682.8"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "2436653874396",
+          "realized": "1990951633013"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "3328158077454",
+          "realized": "2499048681197.6"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "1314558877787",
+          "realized": "1039226105214.2"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "527018379834",
+          "realized": "308225080258"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=12&tahun=2025&provinsi=02&pemda=15",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=12&tahun=2025&provinsi=02&pemda=15",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "8160564afb7d2f6a57ea2f0dcb78abf8b7fbbd7660d86f4699c92cb2e48a1b53",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0215-2025-12.xml"
+      }
+    },
+    {
+      "regionCode": "0215",
+      "year": 2026,
+      "month": 10,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "6900214620675",
+        "realized": "4065254633911.9"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "2250369936879",
+          "realized": "1651734549326"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "3040456500183",
+          "realized": "1843696608869.3"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "1197962239352",
+          "realized": "344675662882.6"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "411425944261",
+          "realized": "225147812834"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=15",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=15",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "bc6bb61d77abe62d3e02f58dd05620b63f97ec4d190b99fa1f569e50a7768141",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0215-2026-10.xml"
+      }
+    },
+    {
+      "regionCode": "0214",
+      "year": 2024,
+      "month": 10,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "1053197133539.2",
+        "realized": "682664977998.48"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "507692691065.57",
+          "realized": "431411664700"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "386937269157.83",
+          "realized": "187896273964.88"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "127509668081.9",
+          "realized": "39687443433.6"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "31057505233.95",
+          "realized": "23669595900"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2024&provinsi=02&pemda=14",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2024&provinsi=02&pemda=14",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "79bc1c34e2ed409ddd64507065299db587e15ac2625d39b5387f083e5e3eb5b0",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0214-2024-10.xml"
+      }
+    },
+    {
+      "regionCode": "0214",
+      "year": 2024,
+      "month": 12,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "1053197133539.2",
+        "realized": "959728400092.57"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "507692691065.57",
+          "realized": "504877243971"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "386937269157.83",
+          "realized": "319494239783.53"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "127509668081.9",
+          "realized": "90767621817.04"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "31057505233.95",
+          "realized": "44589294521"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=12&tahun=2024&provinsi=02&pemda=14",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=12&tahun=2024&provinsi=02&pemda=14",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "0825bad94fba799329b7a284c600f3b1e23bc4ee924f20eed5c508b99855db9c",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0214-2024-12.xml"
+      }
+    },
+    {
+      "regionCode": "0214",
+      "year": 2025,
+      "month": 10,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "1009702196896",
+        "realized": "664026148983.45"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "515650549460.29",
+          "realized": "394339177378.29"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "366035947885.01",
+          "realized": "217547225124.12"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "88667775550.7",
+          "realized": "47783362481.04"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "39347924000",
+          "realized": "4356384000"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2025&provinsi=02&pemda=14",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2025&provinsi=02&pemda=14",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "a974c98b70fe2876c90288beebca318cf3aa5e0e43ee7c1cfb9c73e36ac75cbf",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0214-2025-10.xml"
+      }
+    },
+    {
+      "regionCode": "0214",
+      "year": 2025,
+      "month": 12,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "1009702196896",
+        "realized": "1000426916605.8"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "515650549460.29",
+          "realized": "528266480913.29"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "366035947885.01",
+          "realized": "346067839330"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "88667775550.7",
+          "realized": "100416755688.55"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "39347924000",
+          "realized": "25675840674"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=12&tahun=2025&provinsi=02&pemda=14",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=12&tahun=2025&provinsi=02&pemda=14",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "923183dc9a85633e1ff73ad5d38b009d4a8aaa3f3603f75ada8b77899e562728",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0214-2025-12.xml"
+      }
+    },
+    {
+      "regionCode": "0214",
+      "year": 2026,
+      "month": 10,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "980933056207",
+        "realized": "568484265546.2"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "516451632027.31",
+          "realized": "359310632519"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "282306556439.36",
+          "realized": "172691475525.15"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "145273665449.33",
+          "realized": "32325773502.05"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "36901202291",
+          "realized": "4156384000"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=14",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=14",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "3b43f63e35e0feb5723ceb3d94c25e3634d223bb8b690fd7f404a000621e7b9a",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0214-2026-10.xml"
+      }
+    },
+    {
+      "regionCode": "0203",
+      "year": 2024,
+      "month": 10,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "4988776998641",
+        "realized": "3091021230522.6"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "1723758193555",
+          "realized": "1122871553249.7"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "1492514876489",
+          "realized": "862673888541.09"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "794829933270",
+          "realized": "347385618074.8"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "977673995327",
+          "realized": "758090170657"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2024&provinsi=02&pemda=03",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2024&provinsi=02&pemda=03",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "f9865ea75389b1d6eebea938e466836d2925d43df10fbe296cc31f3cb83b1f04",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0203-2024-10.xml"
+      }
+    },
+    {
+      "regionCode": "0203",
+      "year": 2024,
+      "month": 12,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "4988776998641",
+        "realized": "4265020984550.2"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "1723758193555",
+          "realized": "1390219781591.7"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "1492514876489",
+          "realized": "1299935063023.7"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "794829933270",
+          "realized": "666604042966.92"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "977673995327",
+          "realized": "908262096967.83"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=12&tahun=2024&provinsi=02&pemda=03",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=12&tahun=2024&provinsi=02&pemda=03",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "7417a21e1bc51ea499f3c0877db6389ac5d9514ae03ed4f5a17ab228f576b70f",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0203-2024-12.xml"
+      }
+    },
+    {
+      "regionCode": "0203",
+      "year": 2025,
+      "month": 10,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "4986389058084",
+        "realized": "2692002196455.3"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "1724556532352",
+          "realized": "1117055318347"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "1519565184707",
+          "realized": "773530163375.61"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "858247521863",
+          "realized": "200361874998.65"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "884019819162",
+          "realized": "601054839734"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2025&provinsi=02&pemda=03",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2025&provinsi=02&pemda=03",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "6a8d25330cdcabac7fb385c9570df5f6ddb7ea6170491aa3beade3b822946b7f",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0203-2025-10.xml"
+      }
+    },
+    {
+      "regionCode": "0203",
+      "year": 2025,
+      "month": 12,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "4986389058084",
+        "realized": "4263539613738.7"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "1724556532352",
+          "realized": "1403861815078"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "1519565184707",
+          "realized": "1315900622217.2"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "858247521863",
+          "realized": "753608964203.45"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "884019819162",
+          "realized": "790168212240"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=12&tahun=2025&provinsi=02&pemda=03",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=12&tahun=2025&provinsi=02&pemda=03",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "15023e01b84cee205df9fe61bafd2abd804a028175bf75c879808d0c4b352c93",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0203-2025-12.xml"
+      }
+    },
+    {
+      "regionCode": "0203",
+      "year": 2026,
+      "month": 10,
+      "total": {
+        "code": "total",
+        "label": "Belanja Daerah",
+        "budget": "4218346486912",
+        "realized": "2666810306009.8"
+      },
+      "categories": [
+        {
+          "code": "pegawai",
+          "label": "Belanja Pegawai",
+          "budget": "1464556943095",
+          "realized": "989898552367"
+        },
+        {
+          "code": "barang-jasa",
+          "label": "Belanja Barang dan Jasa",
+          "budget": "1414738396254",
+          "realized": "857004799567.82"
+        },
+        {
+          "code": "modal",
+          "label": "Belanja Modal",
+          "budget": "573257606232",
+          "realized": "412954309826"
+        },
+        {
+          "code": "lainnya",
+          "label": "Belanja Lainnya",
+          "budget": "765793541331",
+          "realized": "406952644249"
+        }
+      ],
+      "source": {
+        "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=03",
+        "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=03",
+        "publishedAt": "2026-10-26",
+        "checkedAt": "2026-10-27T16:42:36.873Z",
+        "batchId": "f334e7abc10d6e0e199927b0705c51239f21fdb15e49032fbfa3805263af40a5",
+        "rawPath": "/data/raw/2026-10-27T16-42-36-873Z/0203-2026-10.xml"
+      }
+    }
+  ]
+}
