@@ -3,7 +3,7 @@
 import { Building2, Check, Plus, Scale, X } from "lucide-react";
 import Link from "next/link";
 import type { Dataset } from "@/lib/types";
-import { regions } from "@/lib/regions";
+import { months, regions } from "@/lib/regions";
 import { compactMoney, fullMoney, percent } from "@/lib/format";
 import { percentage } from "@/lib/data-core";
 import {
@@ -81,6 +81,7 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
             <button
               key={region.code}
               onClick={() => toggle(region.code)}
+              disabled={!codes.includes(region.code) && codes.length >= 3}
               aria-pressed={codes.includes(region.code)}
               className={
                 codes.includes(region.code)
@@ -127,7 +128,7 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                     <th>
                       <span className="small-label">Periode pelaporan</span>
                       <strong>
-                        {month === 10 ? "Oktober" : "Desember"} {year}
+                        {months[month]} {year}
                       </strong>
                     </th>
                     {snapshots.map((row) => (

@@ -1444,6 +1444,14 @@ table {
   background: #f2f6ff;
   border-color: #9db6fc;
 }
+.region-option:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.region-option:disabled:hover {
+  background: none;
+  border-color: #e3e8f1;
+}
 .region-option-icon {
   color: #93a5bf;
 }

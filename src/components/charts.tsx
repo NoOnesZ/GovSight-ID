@@ -25,6 +25,10 @@ const tooltipStyle = {
   boxShadow: "0 6px 24px #18213310",
 };
 
+function trillionTick(value: number) {
+  return `${value.toLocaleString("id-ID")} T`;
+}
+
 export function SpendingChart({ snapshots }: { snapshots: Snapshot[] }) {
   const data = snapshots.map((row) => ({
     name: regions.find((region) => region.code === row.regionCode)?.shortName,
@@ -63,7 +67,7 @@ export function SpendingChart({ snapshots }: { snapshots: Snapshot[] }) {
             dy={8}
           />
           <YAxis
-            tickFormatter={(value) => `${value} T`}
+            tickFormatter={trillionTick}
             axisLine={false}
             tickLine={false}
             tick={axis}
@@ -136,7 +140,7 @@ export function HistoryChart({ snapshots }: { snapshots: Snapshot[] }) {
             dy={9}
           />
           <YAxis
-            tickFormatter={(value) => `${value} T`}
+            tickFormatter={trillionTick}
             axisLine={false}
             tickLine={false}
             tick={axis}

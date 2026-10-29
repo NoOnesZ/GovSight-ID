@@ -3,6 +3,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { parseDjpkExport } from "../src/lib/data-core";
 import { regions, months } from "../src/lib/regions";
+import { periods } from "../src/lib/periods";
 import type { Dataset, Snapshot } from "../src/lib/types";
 
 async function get(url: string) {
@@ -30,43 +31,40 @@ async function main() {
   const checkedAt = new Date().toISOString();
   const runId = checkedAt.replace(/[:.]/g, "-");
   const rawDirectory = path.join(process.cwd(), "public", "data", "raw", runId);
-  await mkdir(rawDirectory, { recursive: true });
-  await mkdir(path.join(process.cwd(), "data"), { recursive: true });
   const snapshots: Snapshot[] = [];
+  // Berkas asli ditahan di memori sampai seluruh batch lolos pemeriksaan,
+  // agar kegagalan di tengah tidak meninggalkan folder raw setengah jadi.
+  const rawFiles = new Map<string, string>();
   for (const region of regions) {
-    for (const year of [2024, 2025, 2026]) {
-      for (const month of year === 2026 ? [10] : [10, 12]) {
-        const query = new URLSearchParams({
-          periode: String(month),
-          tahun: String(year),
-          provinsi: "02",
-          pemda: region.sourceCode,
-        });
-        const url = `https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&${query}`;
-        const portalUrl = `https://djpk.kemenkeu.go.id/portal/data/apbd?${query}`;
-        const [raw, html] = await Promise.all([get(url), get(portalUrl)]);
-        const parsed = parseDjpkExport(raw);
-        const file = `${region.code}-${year}-${month}.xml`;
-        const rawPath = `/data/raw/${runId}/${file}`;
-        await writeFile(path.join(rawDirectory, file), raw, "utf8");
-        snapshots.push({
-          regionCode: region.code,
-          year,
-          month,
-          ...parsed,
-          source: {
-            url,
-            portalUrl,
-            publishedAt: publishedDate(html),
-            checkedAt,
-            batchId: createHash("sha256").update(raw).digest("hex"),
-            rawPath,
-          },
-        });
-        console.log(
-          `${region.name} ${year}/${month}: ${parsed.total.realized}`,
-        );
-      }
+    for (const { year, month } of periods) {
+      const query = new URLSearchParams({
+        periode: String(month),
+        tahun: String(year),
+        provinsi: "02",
+        pemda: region.sourceCode,
+      });
+      const url = `https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&${query}`;
+      const portalUrl = `https://djpk.kemenkeu.go.id/portal/data/apbd?${query}`;
+      const [raw, html] = await Promise.all([get(url), get(portalUrl)]);
+      const parsed = parseDjpkExport(raw);
+      const file = `${region.code}-${year}-${month}.xml`;
+      const rawPath = `/data/raw/${runId}/${file}`;
+      rawFiles.set(file, raw);
+      snapshots.push({
+        regionCode: region.code,
+        year,
+        month,
+        ...parsed,
+        source: {
+          url,
+          portalUrl,
+          publishedAt: publishedDate(html),
+          checkedAt,
+          batchId: createHash("sha256").update(raw).digest("hex"),
+          rawPath,
+        },
+      });
+      console.log(`${region.name} ${year}/${month}: ${parsed.total.realized}`);
     }
   }
   const dataset: Dataset = { version: 1, generatedAt: checkedAt, snapshots };
@@ -79,6 +77,10 @@ async function main() {
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
   }
+  await mkdir(rawDirectory, { recursive: true });
+  await mkdir(path.dirname(destination), { recursive: true });
+  for (const [file, raw] of rawFiles)
+    await writeFile(path.join(rawDirectory, file), raw, "utf8");
   await writeFile(destination + ".pending", text, "utf8");
   await rename(destination + ".pending", destination);
   console.log(

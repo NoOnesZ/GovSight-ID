@@ -1,15 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowLeft,
-  ArrowUpRight,
-  BarChart3,
-  Building2,
-  Info,
-} from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BarChart3, Info, MapPin } from "lucide-react";
 import type { Dataset, Region } from "@/lib/types";
 import { months } from "@/lib/regions";
+import { runningYear } from "@/lib/periods";
 import { compactMoney, fullMoney, percent } from "@/lib/format";
 import { percentage } from "@/lib/data-core";
 import {
@@ -56,7 +51,7 @@ export function Profile({
       <div className="page-title-row">
         <div>
           <span className="location-label">
-            <MapPinIcon /> Sumatera Utara
+            <MapPin size={14} /> Sumatera Utara
           </span>
           <h1>{region.name}</h1>
           <p>Kenali rencana dan realisasi belanja daerah ini.</p>
@@ -99,7 +94,7 @@ export function Profile({
           <small>Realisasi dibagi pagu tahunan</small>
         </div>
       </div>
-      {year === 2026 && (
+      {year === runningYear && (
         <InfoNote>
           Ini data tahun berjalan, bukan hasil akhir tahun. Angka dapat berubah
           mengikuti pelaporan atau revisi sumber.
@@ -169,7 +164,7 @@ export function Profile({
                 <tr key={row.year}>
                   <th>
                     {months[row.month]} {row.year}
-                    {row.year === 2026 && (
+                    {row.year === runningYear && (
                       <small className="year-badge">Tahun berjalan</small>
                     )}
                   </th>
@@ -208,7 +203,4 @@ export function Profile({
       </div>
     </>
   );
-}
-function MapPinIcon() {
-  return <Building2 size={14} />;
 }

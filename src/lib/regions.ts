@@ -22,6 +22,9 @@ export const regions: Region[] = [
     type: "kabupaten",
   },
 ];
+export const regionListLabel = new Intl.ListFormat("id-ID", {
+  type: "conjunction",
+}).format(regions.map((region) => region.shortName));
 export const categoryColors: Record<string, string> = {
   pegawai: "#2457E7",
   "barang-jasa": "#7896F0",

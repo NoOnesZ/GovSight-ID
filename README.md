@@ -1,17 +1,19 @@
 # Rapor Daerah
 
-Prototipe web Open Government Data untuk memahami dan membandingkan belanja daerah Sumatera Utara. Dibuat di `D:\mia2026` untuk MIA 2026, cabang Web In Action.
+Prototipe web Open Government Data untuk memahami dan membandingkan belanja daerah Sumatera Utara. Dibuat untuk MIA 2026, cabang Web In Action.
 
-## Menjalankan di VS Code
+## Menjalankan
 
-Buka folder `D:\mia2026`, lalu jalankan dari terminal PowerShell:
+Butuh Node.js 20 atau lebih baru.
 
-```powershell
-npm.cmd install
-npm.cmd run dev -- --port 3100
+```bash
+git clone https://github.com/NoOnesZ/GovSight-ID.git
+cd GovSight-ID
+npm install
+npm run dev -- --port 3100
 ```
 
-Buka http://127.0.0.1:3100 di browser. Jika port sedang digunakan oleh preview yang sudah berjalan, gunakan preview tersebut atau ganti port.
+Buka http://127.0.0.1:3100 di browser. Jika port sedang dipakai, ganti angka port. Di Windows PowerShell yang memblokir skrip, pakai `npm.cmd` sebagai pengganti `npm`.
 
 ## Yang sudah ada
 
@@ -32,11 +34,11 @@ Ekspor DJPK bernama `csv_apbd` tetapi isi yang diperiksa berupa Excel XML. Berka
 
 Refresh seluruh snapshot secara manual:
 
-```powershell
-npm.cmd run data:refresh
+```bash
+npm run data:refresh
 ```
 
-Data lama hanya diganti setelah seluruh batch lolos pemeriksaan. Jangan menjalankan dua proses refresh bersamaan. Pada production nanti, refresh memerlukan deployment ulang karena prototipe membundel data pada build.
+Daerah ditambahkan di `src/lib/regions.ts`, periode di `src/lib/periods.ts`. Data lama dan berkas asli baru ditulis setelah seluruh batch lolos pemeriksaan. Jangan menjalankan dua proses refresh bersamaan. Pada production nanti, refresh memerlukan deployment ulang karena prototipe membundel data pada build.
 
 **Belum terhubung ke Neon dan belum di-deploy ke Vercel.** Tidak ada pembaruan real-time atau penjadwalan harian. Tidak ada penilaian mutu layanan, skor pemda, atau deteksi korupsi. Integrasi database dan penambahan sepuluh daerah menjadi tahap berikutnya.
 
@@ -64,25 +66,28 @@ Nilai uang di API berupa string desimal atau `null`. Tahun/periode tidak tersedi
 
 ## Verifikasi
 
-```powershell
-npm.cmd test
-npm.cmd run typecheck
-npm.cmd run build
+```bash
+npm test
+npm run typecheck
+npm run build
 ```
 
 Uji browser (preview harus berjalan di port 3100):
 
-```powershell
-npx.cmd playwright install chromium
-npm.cmd run test:browser
+```bash
+npx playwright install chromium
+npm run test:browser
 ```
 
-Hasil terakhir: 11 tes data/API lulus, TypeScript dan build lulus, serta keempat halaman dan interaksi utama lulus pemeriksaan browser di lebar 360, 768, dan 1280 piksel. Screenshot ada di `docs/previews/` dan catatan lengkap ada di `docs/IMPLEMENTATION.md`.
+Hasil terakhir: 12 tes data/API lulus, TypeScript dan build lulus, serta keempat halaman dan interaksi utama lulus pemeriksaan browser di lebar 360, 768, dan 1280 piksel. Screenshot ada di `docs/previews/` dan catatan lengkap ada di `docs/IMPLEMENTATION.md`.
 
-Untuk menjalankan build production:
+Untuk menjalankan build production (juga dipakai di hosting):
 
-```powershell
-npm.cmd run start -- --port 3100
+```bash
+npm run build
+PORT=3100 npm start
 ```
+
+Server mendengarkan semua alamat dan memakai variabel `PORT` dari hosting.
 
 Pengujian manusia dengan lima orang, deploy publik/redeploy, persyaratan hosting sponsor, dan konfirmasi format pengumpulan lomba belum dilakukan. Guidebook memuat tanggal draft yang berbeda; target internal tetap 1 November 2026 sampai ketua memastikan pengumuman terbaru.
