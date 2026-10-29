@@ -14,6 +14,7 @@ import {
   PanelLeftClose,
   ShieldCheck,
 } from "lucide-react";
+import { regions } from "@/lib/regions";
 
 const navigation = [
   { href: "/", label: "Jelajah anggaran", icon: Compass },
@@ -24,7 +25,10 @@ const navigation = [
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const current =
-    navigation.find((item) => item.href === pathname)?.label ?? "Profil daerah";
+    navigation.find((item) => item.href === pathname)?.label ??
+    (pathname.startsWith("/daerah/")
+      ? "Profil daerah"
+      : "Halaman tidak ditemukan");
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main">
@@ -87,7 +91,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <span className="prototype-badge">
             <FlaskConical size={14} />
             <span>Versi awal</span>
-            <span className="badge-divider" />3 daerah
+            <span className="badge-divider" />
+            {regions.length} daerah
           </span>
         </header>
         <main id="main" className="main-content">

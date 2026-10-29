@@ -10,6 +10,8 @@ import {
   readApiRegions,
 } from "../src/lib/dataset";
 import { parseDjpkExport } from "../src/lib/data-core";
+import { periods } from "../src/lib/periods";
+import { regions } from "../src/lib/regions";
 import { GET as compare } from "../src/app/api/bandingkan/route";
 import { GET as exportCsv } from "../src/app/api/ekspor/route";
 
@@ -31,6 +33,18 @@ test("seluruh snapshot cocok dengan berkas DJPK asli dan SHA-256", () => {
     unique.add(`${snapshot.regionCode}/${snapshot.year}/${snapshot.month}`);
   }
   assert.equal(unique.size, 15);
+});
+
+test("daftar periode sama persis dengan snapshot setiap daerah", () => {
+  const expected = regions
+    .flatMap((region) =>
+      periods.map(({ year, month }) => `${region.code}/${year}/${month}`),
+    )
+    .sort();
+  const actual = dataset.snapshots
+    .map((row) => `${row.regionCode}/${row.year}/${row.month}`)
+    .sort();
+  assert.deepEqual(actual, expected);
 });
 
 test("API tidak mengubah periode atau kode salah secara diam-diam", () => {

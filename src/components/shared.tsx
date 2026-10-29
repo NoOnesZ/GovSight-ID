@@ -16,21 +16,26 @@ import {
 import { categoryColors, months } from "@/lib/regions";
 import { dateLabel, fullMoney, percent, periodLabel } from "@/lib/format";
 import { percentage } from "@/lib/data-core";
+import {
+  availabilityLabel,
+  isAvailablePeriod,
+  latestPeriod,
+  monthsInYear,
+  reportMonths,
+  runningYear,
+  years,
+} from "@/lib/periods";
 import type { Snapshot } from "@/lib/types";
 
 export function useFilters() {
   const params = useSearchParams();
   const pathname = usePathname();
-  const requestedYear = Number(params.get("tahun") ?? 2026);
-  const year = [2024, 2025, 2026].includes(requestedYear)
-    ? requestedYear
-    : 2026;
-  const requestedMonth = Number(params.get("bulan") ?? 10);
-  const invalidPeriod =
-    ![2024, 2025, 2026].includes(requestedYear) ||
-    ![10, 12].includes(requestedMonth) ||
-    (requestedYear === 2026 && requestedMonth === 12);
-  const month = requestedMonth === 12 && year !== 2026 ? 12 : 10;
+  const requestedYear = Number(params.get("tahun") ?? latestPeriod.year);
+  const requestedMonth = Number(params.get("bulan") ?? latestPeriod.month);
+  const invalidPeriod = !isAvailablePeriod(requestedYear, requestedMonth);
+  const { year, month } = invalidPeriod
+    ? latestPeriod
+    : { year: requestedYear, month: requestedMonth };
   function update(values: Record<string, string | null>) {
     const updated = new URLSearchParams(params.toString());
     for (const [key, value] of Object.entries(values)) {
@@ -71,17 +76,19 @@ export function PeriodControls({
         <select
           aria-label="Tahun anggaran"
           value={year}
-          onChange={(event) =>
+          onChange={(event) => {
+            const available = monthsInYear(Number(event.target.value));
             onChange({
               tahun: event.target.value,
-              bulan:
-                month === 12 && event.target.value === "2026"
-                  ? "10"
-                  : String(month),
-            })
-          }
+              bulan: String(
+                available.includes(month)
+                  ? month
+                  : available[available.length - 1],
+              ),
+            });
+          }}
         >
-          {[2026, 2025, 2024].map((value) => (
+          {years.map((value) => (
             <option key={value} value={value}>
               {value}
             </option>
@@ -96,10 +103,15 @@ export function PeriodControls({
           value={month}
           onChange={(event) => onChange({ bulan: event.target.value })}
         >
-          <option value="10">s.d. Oktober</option>
-          <option value="12" disabled={year === 2026}>
-            s.d. Desember{year === 2026 ? " (belum tersedia)" : ""}
-          </option>
+          {reportMonths.map((value) => {
+            const unavailable = !monthsInYear(year).includes(value);
+            return (
+              <option key={value} value={value} disabled={unavailable}>
+                s.d. {months[value]}
+                {unavailable ? " (belum tersedia)" : ""}
+              </option>
+            );
+          })}
         </select>
         <ChevronDown size={14} />
       </label>
@@ -276,8 +288,8 @@ export function EmptyState({
 export function UnavailablePeriod() {
   return (
     <EmptyState title="Periode belum tersedia">
-      Pilih Oktober 2024–2026 atau Desember 2024–2025 dari halaman jelajah. Data
-      periode lain tidak ditampilkan sebagai pengganti.
+      Pilih {availabilityLabel} dari halaman jelajah. Data periode lain tidak
+      ditampilkan sebagai pengganti.
     </EmptyState>
   );
 }
@@ -312,15 +324,5 @@ export function ExternalSource({ snapshot }: { snapshot: Snapshot }) {
     >
       Buka sumber asli <ExternalLink size={14} />
     </a>
-  );
-}
-
-export function PeriodLabel({ year, month }: { year: number; month: number }) {
-  return (
-    <span className="pill">
-      {months[month]} {year}
-      {year === 2026 && <span className="pill-dot" />}
-      {year === 2026 ? "Tahun berjalan" : ""}
-    </span>
   );
 }

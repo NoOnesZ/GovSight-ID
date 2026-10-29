@@ -1,25 +1,24 @@
 import stored from "../../data/snapshots.json";
 import { regions } from "./regions";
+import { availabilityLabel, isAvailablePeriod, latestPeriod } from "./periods";
 import type { Dataset } from "./types";
 
 export const dataset = stored as Dataset;
-export function getSnapshot(code: string, year = 2026, month = 10) {
+export function getSnapshot(
+  code: string,
+  year = latestPeriod.year,
+  month = latestPeriod.month,
+) {
   return dataset.snapshots.find(
     (row) =>
       row.regionCode === code && row.year === year && row.month === month,
   );
 }
 export function readApiPeriod(params: URLSearchParams) {
-  const year = Number(params.get("tahun") ?? 2026);
-  const month = Number(params.get("bulan") ?? 10);
-  if (
-    ![2024, 2025, 2026].includes(year) ||
-    ![10, 12].includes(month) ||
-    (year === 2026 && month === 12)
-  )
-    throw new Error(
-      "Periode belum tersedia. Pilih Oktober 2024–2026 atau Desember 2024–2025.",
-    );
+  const year = Number(params.get("tahun") ?? latestPeriod.year);
+  const month = Number(params.get("bulan") ?? latestPeriod.month);
+  if (!isAvailablePeriod(year, month))
+    throw new Error(`Periode belum tersedia. Pilih ${availabilityLabel}.`);
   return { year, month };
 }
 export function readApiRegions(params: URLSearchParams) {

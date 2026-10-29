@@ -17,9 +17,9 @@ import {
   SlidersHorizontal,
   Wallet,
 } from "lucide-react";
-import { useState } from "react";
 import type { Dataset } from "@/lib/types";
-import { regions } from "@/lib/regions";
+import { regionListLabel, regions } from "@/lib/regions";
+import { runningYear } from "@/lib/periods";
 import {
   compactMoney,
   dateLabel,
@@ -46,7 +46,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
   const { year, month, params, update, period, invalidPeriod } = useFilters();
   const query = params.get("q") ?? "";
   const kind = params.get("jenis") ?? "semua";
-  const [sort, setSort] = useState("nama");
+  const sort = params.get("urut") === "realisasi" ? "realisasi" : "nama";
   if (invalidPeriod) return <UnavailablePeriod />;
   const snapshots = dataset.snapshots.filter(
     (row) => row.year === year && row.month === month,
@@ -73,6 +73,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
     snapshots.find((row) => row.regionCode === "0215") ?? snapshots[0];
   const totalBudget = sumAmounts(visible.map((row) => row.total.budget));
   const totalRealized = sumAmounts(visible.map((row) => row.total.realized));
+  const featuredRegion = featured
+    ? regions.find((region) => region.code === featured.regionCode)
+    : undefined;
   const rate = featured
     ? percentage(featured.total.realized, featured.total.budget)
     : null;
@@ -107,7 +110,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
             <Check size={14} /> Tanpa akun
           </div>
         </div>
-        {featured && (
+        {featured && featuredRegion && (
           <div className="hero-visual">
             <div className="preview-card">
               <div className="preview-heading">
@@ -115,12 +118,12 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                   <Building2 size={18} />
                 </span>
                 <div>
-                  <strong>Kota Medan</strong>
+                  <strong>{featuredRegion.name}</strong>
                   <span>Realisasi belanja {year}</span>
                 </div>
                 <Link
-                  href={`/daerah/0215?${period}`}
-                  aria-label="Lihat profil Kota Medan"
+                  href={`/daerah/${featuredRegion.code}?${period}`}
+                  aria-label={`Lihat profil ${featuredRegion.name}`}
                 >
                   <ArrowUpRight size={19} />
                 </Link>
@@ -269,7 +272,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 <div>
                   <strong>{periodLabel(year, month)}</strong>
                   <span>
-                    {year === 2026 ? "Tahun berjalan" : "Periode historis"}
+                    {year === runningYear
+                      ? "Tahun berjalan"
+                      : "Periode historis"}
                   </span>
                 </div>
               </div>
@@ -289,7 +294,14 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                     <select
                       aria-label="Urutkan daerah"
                       value={sort}
-                      onChange={(event) => setSort(event.target.value)}
+                      onChange={(event) =>
+                        update({
+                          urut:
+                            event.target.value === "nama"
+                              ? null
+                              : event.target.value,
+                        })
+                      }
                     >
                       <option value="nama">Nama daerah</option>
                       <option value="realisasi">Realisasi terbesar</option>
@@ -401,8 +413,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
           </>
         ) : (
           <EmptyState title="Daerah tidak ditemukan">
-            Coba kata “Medan”, “Binjai”, atau “Deli Serdang”, atau ubah filter
-            jenis daerah.
+            Coba cari {regionListLabel}, atau ubah filter jenis daerah.
           </EmptyState>
         )}
       </section>
@@ -432,7 +443,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
         </Link>
       </section>
       <p className="coverage-note">
-        Cakupan versi awal: Medan, Binjai, dan Deli Serdang. Data diperiksa{" "}
+        Cakupan versi awal: {regionListLabel}. Data diperiksa{" "}
         {dateLabel(dataset.generatedAt)}. Pembaruan mengikuti publikasi sumber.
       </p>
     </>
