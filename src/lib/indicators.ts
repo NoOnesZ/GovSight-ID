@@ -95,3 +95,128 @@ export function yearEndModalFlag(
       : ("wajar" as const),
   };
 }
+
+export interface InquiryItem {
+  id: string;
+  category: "akhir-tahun" | "alokasi" | "tren" | "serapan";
+  title: string;
+  badge: "kritis" | "perhatian" | "positif";
+  badgeLabel: string;
+  observation: string;
+  questions: string[];
+}
+
+export function generateInquiryBrief(
+  currentSnapshot: Snapshot,
+  octoberSnapshot?: Snapshot,
+  decemberSnapshot?: Snapshot,
+  completeYearsSnapshots?: Snapshot[],
+): InquiryItem[] {
+  const items: InquiryItem[] = [];
+
+  // 1. Indikator Lonjakan Akhir Tahun (Year-End Surge)
+  const flag = yearEndModalFlag(octoberSnapshot, decemberSnapshot);
+  if (flag.status === "ditandai") {
+    items.push({
+      id: "akhir-tahun",
+      category: "akhir-tahun",
+      title: `Lonjakan Belanja Modal Akhir Tahun (${formatFlagShare(flag.share)})`,
+      badge: "kritis",
+      badgeLabel: "Prioritas Ditanyakan",
+      observation: `Sebanyak ${formatFlagShare(flag.share)} realisasi belanja modal setahun terkonsentrasi pada November–Desember ${flag.year}. Ini melampaui batas wajar rata-rata merata (16,67%) dan ambang ${YEAR_END_THRESHOLD}%.`,
+      questions: [
+        `Proyek fisik dan pengadaan apa saja yang dibayarkan pada November–Desember ${flag.year}?`,
+        `Apakah seluruh pekerjaan telah melalui Berita Acara Serah Terima (BAST/PHO) dan uji mutu fisik sebelum pencairan anggaran?`,
+        `Bagaimana mitigasi dinas teknis agar pencairan tidak tergesa-gesa di pengujung tahun anggaran berjalan?`,
+      ],
+    });
+  } else if (flag.status === "wajar") {
+    items.push({
+      id: "akhir-tahun",
+      category: "akhir-tahun",
+      title: `Penyaluran Belanja Modal Akhir Tahun Terkendali (${formatFlagShare(flag.share)})`,
+      badge: "positif",
+      badgeLabel: "Di Bawah Ambang",
+      observation: `Realisasi modal pada dua bulan terakhir ${flag.year} tercatat ${formatFlagShare(flag.share)}, di bawah ambang penanda ${YEAR_END_THRESHOLD}%.`,
+      questions: [
+        `Praktik penjadwalan dan termin lelang proyek apa yang terbukti efektif sehingga pencairan tidak menumpuk di akhir tahun?`,
+      ],
+    });
+  }
+
+  // 2. Keseimbangan Belanja Pegawai vs Belanja Modal
+  const pegawai = categoryShares(currentSnapshot, "pegawai");
+  const modal = categoryShares(currentSnapshot, "modal");
+  if (pegawai.budget !== null && modal.budget !== null) {
+    if (pegawai.budget > 40 || pegawai.budget > modal.budget * 2) {
+      items.push({
+        id: "alokasi-pegawai",
+        category: "alokasi",
+        title: `Porsi Belanja Pegawai (${formatFlagShare(pegawai.budget)}) Mendominasi Belanja Modal (${formatFlagShare(modal.budget)})`,
+        badge: "perhatian",
+        badgeLabel: "Keseimbangan Fiskal",
+        observation: `Alokasi belanja aparatur mencapai ${formatFlagShare(pegawai.budget)} dari total pagu, berbanding ${formatFlagShare(modal.budget)} untuk investasi aset fisik dan infrastruktur publik.`,
+        questions: [
+          `Bagaimana rencana pemerintah daerah merestrukturisasi belanja operasional agar ruang fiskal untuk fasilitas publik meningkat?`,
+          `Apakah besarnya alokasi aparatur berbanding lurus dengan kepuasan dan kecepatan layanan administrasi publik bagi warga?`,
+        ],
+      });
+    }
+  }
+
+  // 3. Tren Investasi Modal 3 Tahun
+  if (completeYearsSnapshots && completeYearsSnapshots.length === 3) {
+    const trend = threeYearTrend(completeYearsSnapshots);
+    if (trend === "menurun") {
+      items.push({
+        id: "tren-modal",
+        category: "tren",
+        title: "Porsi Belanja Modal Menurun dalam Tiga Tahun Terakhir",
+        badge: "perhatian",
+        badgeLabel: "Tren Investasi",
+        observation:
+          "Dalam kurun tiga tahun anggaran penuh berurutan, proporsi belanja modal terhadap total belanja daerah konsisten menyusut.",
+        questions: [
+          "Apa penyebab utama tren penurunan kapasitas belanja modal fisik daerah dari tahun ke tahun?",
+          "Bagaimana strategi pemda dalam menjamin pemeliharaan jalan, jembatan, irigasi, dan gedung sekolah yang menua?",
+        ],
+      });
+    } else if (trend === "meningkat") {
+      items.push({
+        id: "tren-modal",
+        category: "tren",
+        title: "Porsi Belanja Modal Meningkat Berkelanjutan",
+        badge: "positif",
+        badgeLabel: "Tren Positif",
+        observation:
+          "Komposisi belanja modal terhadap total realisasi daerah bertumbuh konsisten dalam tiga tahun berurutan.",
+        questions: [
+          "Infrastruktur strategis apa saja yang berhasil diselesaikan dari kenaikan porsi modal ini dan bagaimana dampak ekonominya bagi warga?",
+        ],
+      });
+    }
+  }
+
+  // 4. Laju Serapan Berjalan (jika serapan < 50% pada semester kedua / bulan >= 8)
+  const currentAbsorption = monthlyAbsorption(currentSnapshot);
+  if (
+    currentAbsorption !== null &&
+    currentSnapshot.month >= 8 &&
+    currentAbsorption < 50
+  ) {
+    items.push({
+      id: "serapan-lambat",
+      category: "serapan",
+      title: `Serapan Berjalan Lambat (${formatFlagShare(currentAbsorption)} s.d. Bulan ${currentSnapshot.month})`,
+      badge: "perhatian",
+      badgeLabel: "Laju Pelaksanaan",
+      observation: `Hingga bulan ${currentSnapshot.month}, baru ${formatFlagShare(currentAbsorption)} pagu tahunan yang terserap. Kondisi ini berpotensi memicu belanja kejar tayang di pengujung tahun.`,
+      questions: [
+        "Kendala apa yang dihadapi Organisasi Perangkat Daerah (OPD) dalam eksekusi lelang atau tender pengadaan?",
+        "Apakah ada percepatan terukur yang disiapkan agar proyek tidak gagal bayar atau mangkrak di akhir tahun?",
+      ],
+    });
+  }
+
+  return items;
+}

@@ -1,5 +1,9 @@
 import type { Dataset } from "@/lib/types";
-import { yearEndModalFlag, formatFlagShare } from "@/lib/indicators";
+import {
+  yearEndModalFlag,
+  formatFlagShare,
+  YEAR_END_THRESHOLD,
+} from "@/lib/indicators";
 import { fullMoney } from "@/lib/format";
 
 export function YearEnd({ dataset, code }: { dataset: Dataset; code: string }) {
@@ -10,7 +14,7 @@ export function YearEnd({ dataset, code }: { dataset: Dataset; code: string }) {
       {[
         ...new Set(
           dataset.snapshots
-            .filter((s) => s.regionCode === code)
+            .filter((s) => s.regionCode === code && s.month === 10)
             .map((s) => s.year),
         ),
       ]
@@ -39,7 +43,7 @@ export function YearEnd({ dataset, code }: { dataset: Dataset; code: string }) {
                 </strong>
                 <p>
                   {flag.share !== null
-                    ? `Selisih laporan Oktober dan Desember setara ${formatFlagShare(flag.share)} realisasi modal setahun; ambang penanda 40%. Jika merata sepanjang tahun, sekitar 16,67% terjadi pada dua bulan terakhir.`
+                    ? `Selisih laporan Oktober dan Desember setara ${formatFlagShare(flag.share)} realisasi modal setahun; ambang penanda ${YEAR_END_THRESHOLD}%. Jika merata sepanjang tahun, sekitar 16,67% terjadi pada dua bulan terakhir.`
                     : flag.status === "tidak-konsisten"
                       ? "Realisasi kumulatif menurun; periksa revisi sumber."
                       : `Penanda ${year} dihitung setelah data Oktober dan Desember tersedia.`}
@@ -75,18 +79,15 @@ export function YearEnd({ dataset, code }: { dataset: Dataset; code: string }) {
                     Unduh Oktober
                   </a>
                 )}
+                {october && december && " · "}
                 {december && (
-                  <>
-                    {" "}
-                    ·{" "}
-                    <a
-                      className="text-link"
-                      href={december.source.rawPath}
-                      download
-                    >
-                      Unduh Desember
-                    </a>
-                  </>
+                  <a
+                    className="text-link"
+                    href={december.source.rawPath}
+                    download
+                  >
+                    Unduh Desember
+                  </a>
                 )}
               </div>
             </div>

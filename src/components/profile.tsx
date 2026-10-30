@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, BarChart3, Info, MapPin } from "lucide-react";
 import type { Dataset, Region } from "@/lib/types";
-import { months } from "@/lib/regions";
+import { months, regions } from "@/lib/regions";
 import { runningYear } from "@/lib/periods";
 import { compactMoney, fullMoney, percent } from "@/lib/format";
 import { percentage } from "@/lib/data-core";
@@ -29,6 +29,8 @@ import {
   belowThreeYearReference,
 } from "@/lib/indicators";
 import { YearEnd } from "./year-end";
+import { InquiryToolkit } from "./inquiry-toolkit";
+import { Sparkles } from "lucide-react";
 
 export function Profile({
   dataset,
@@ -49,9 +51,9 @@ export function Profile({
   const history = dataset.snapshots.filter(
     (row) => row.regionCode === region.code && row.month === month,
   );
-  const monthly = dataset.snapshots.filter(
-    (row) => row.regionCode === region.code && row.year === year,
-  );
+  const monthly = dataset.snapshots
+    .filter((row) => row.regionCode === region.code && row.year === year)
+    .sort((a, b) => a.month - b.month);
   const completeYears = dataset.snapshots
     .filter((row) => row.regionCode === region.code && row.month === 12)
     .sort((a, b) => b.year - a.year)
@@ -59,12 +61,20 @@ export function Profile({
     .reverse();
   if (!snapshot) return <EmptyState />;
   const rate = percentage(snapshot.total.realized, snapshot.total.budget);
-  const peer = region.code === "0215" ? "0214" : "0215";
+  const peer =
+    regions.find((r) => r.type === region.type && r.code !== region.code)
+      ?.code ?? (region.code === "0215" ? "0214" : "0215");
   return (
     <>
       <Link className="back-link" href={`/?${period}`}>
         <ArrowLeft size={15} /> Kembali ke jelajah
       </Link>
+      <div className="print-header" aria-hidden="true">
+        <h2>GovSight ID — Lembar Telaah Anggaran Daerah</h2>
+        <p>
+          Daerah: {region.name} · Periode Laporan: {months[month]} {year} · Sumber: Data Resmi DJPK Kementerian Keuangan
+        </p>
+      </div>
       <div className="page-title-row">
         <div>
           <span className="location-label">
@@ -74,6 +84,12 @@ export function Profile({
           <p>Kenali rencana dan realisasi belanja daerah ini.</p>
         </div>
         <div className="heading-actions">
+          <a
+            className="button button-secondary action-advocacy-link"
+            href="#lembar-advokasi"
+          >
+            <Sparkles size={14} /> Panduan Advokasi
+          </a>
           <ShareButton />
           <DownloadButton codes={[region.code]} year={year} month={month} />
         </div>
@@ -118,6 +134,11 @@ export function Profile({
         </InfoNote>
       )}
       <YearEnd dataset={dataset} code={region.code} />
+      <InquiryToolkit
+        region={region}
+        currentSnapshot={snapshot}
+        dataset={dataset}
+      />
       <div className="profile-grid">
         <section className="panel composition-panel">
           <SectionHeading
@@ -179,8 +200,8 @@ export function Profile({
                     <th>
                       {code === "modal" ? "Belanja modal" : "Belanja pegawai"}
                     </th>
-                    <td>{percent(shares.budget)}</td>
-                    <td>{percent(shares.realized)}</td>
+                    <td>{formatFlagShare(shares.budget)}</td>
+                    <td>{formatFlagShare(shares.realized)}</td>
                   </tr>
                 );
               })}
@@ -212,10 +233,8 @@ export function Profile({
                   </tr>
                 </thead>
                 <tbody>
-                  {monthly
-                    .sort((a, b) => a.month - b.month)
-                    .map((row) => (
-                      <tr key={row.month}>
+                  {monthly.map((row) => (
+                    <tr key={row.month}>
                         <th>
                           {months[row.month]} {row.year}
                         </th>

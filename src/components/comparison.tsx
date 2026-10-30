@@ -6,7 +6,7 @@ import type { Dataset } from "@/lib/types";
 import { months, regions } from "@/lib/regions";
 import { compactMoney, fullMoney, percent } from "@/lib/format";
 import { percentage } from "@/lib/data-core";
-import { yearEndModalFlag, formatFlagShare } from "@/lib/indicators";
+import { yearEndModalFlag, formatFlagShare, YEAR_END_THRESHOLD } from "@/lib/indicators";
 import {
   DownloadButton,
   EmptyState,
@@ -22,6 +22,11 @@ import { SpendingChart } from "./charts";
 export function Comparison({ dataset }: { dataset: Dataset }) {
   const { year, month, params, update, period, invalidPeriod } = useFilters();
   if (invalidPeriod) return <UnavailablePeriod />;
+  const completeYear = Math.max(
+    ...dataset.snapshots
+      .filter((s) => s.month === 12)
+      .map((s) => s.year),
+  );
   const requested = params.get("daerah");
   const codes =
     requested === null
@@ -256,11 +261,6 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                     const availableYears = dataset.snapshots
                       .filter((s) => s.month === 12 && s.regionCode === code)
                       .map((s) => s.year);
-                    const completeYear = Math.max(
-                      ...dataset.snapshots
-                        .filter((s) => s.month === 12)
-                        .map((s) => s.year),
-                    );
                     const october = dataset.snapshots.find(
                       (s) =>
                         s.regionCode === code &&
@@ -306,10 +306,10 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
               </table>
             </div>
             <InfoNote>
-              Ambang 40% merupakan pilihan metodologi, bukan batas hukum atau
-              bukti pelanggaran. Perbedaan jadwal proyek dapat memengaruhi
-              hasil. Buka profil untuk pertanyaan dan sumber Oktober serta
-              Desember.
+              Ambang {YEAR_END_THRESHOLD}% merupakan pilihan metodologi, bukan
+              batas hukum atau bukti pelanggaran. Perbedaan jadwal proyek dapat
+              memengaruhi hasil. Buka profil untuk pertanyaan dan sumber Oktober
+              serta Desember.
             </InfoNote>
           </section>
           {snapshots[0] && <SourceNote snapshot={snapshots[0]} />}

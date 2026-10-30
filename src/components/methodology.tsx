@@ -7,12 +7,16 @@ import {
   Check,
   Database,
   FileText,
+  GraduationCap,
+  Landmark,
+  MessageSquare,
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
 import type { Dataset } from "@/lib/types";
 import { dateLabel } from "@/lib/format";
 import { regions } from "@/lib/regions";
+import { YEAR_END_THRESHOLD } from "@/lib/indicators";
 import {
   DownloadButton,
   InfoNote,
@@ -101,16 +105,47 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
         </section>
       </div>
       <section className="panel formula-panel">
-        <h2>Penumpukan akhir tahun</h2>
+        <span className="pill amber">Penanda Kritis (DSS)</span>
+        <h2>Penumpukan belanja modal akhir tahun</h2>
+        <div className="formula">
+          <span>Realisasi modal s.d. Des − Realisasi modal s.d. Okt</span>
+          <span className="formula-line" />
+          <span>Total realisasi modal setahun (s.d. Des)</span>
+          <strong>× 100%</strong>
+        </div>
         <p>
-          (Realisasi modal s.d. Desember − s.d. Oktober) ÷ realisasi modal s.d.
-          Desember × 100%. Hasil dibulatkan ke dua desimal sebelum dibandingkan
-          dengan ambang. Ambang 40% adalah pilihan metodologi, bukan batas
-          hukum; distribusi merata selama 12 bulan menghasilkan sekitar 16,67%
-          untuk dua bulan. Status: ditandai, di bawah ambang, belum tersedia,
-          atau tidak konsisten jika realisasi kumulatif menurun. Jadwal proyek
-          dapat berbeda dan penanda tidak membuktikan pelanggaran.
+          Hasil perhitungan dibulatkan ke dua desimal sebelum dibandingkan dengan
+          ambang batas <strong>{YEAR_END_THRESHOLD}%</strong>.
         </p>
+        <div className="method-explanation">
+          <h3>Mengapa ambang {YEAR_END_THRESHOLD}% dipilih?</h3>
+          <p>
+            Jika belanja modal terdistribusi secara proporsional sepanjang 12
+            bulan, pengeluaran dua bulan terakhir (November–Desember) sewajarnya
+            hanya menyerap sekitar <strong>16,67%</strong> (2/12) dari total
+            tahunan. Ambang <strong>{YEAR_END_THRESHOLD}%</strong> menandai
+            terjadinya lonjakan percepatan anggaran lebih dari 2,4 kali lipat dari
+            laju normal hanya dalam rentang waktu 61 hari terakhir.
+          </p>
+          <h3>Mengapa penanda ini penting jika sebagian besar daerah terindikasi?</h3>
+          <p>
+            Dalam data APBD sepuluh daerah Sumatera Utara yang dianalisis,
+            sebanyak <strong>14 dari 20 tahun anggaran (70%)</strong> melampaui
+            ambang {YEAR_END_THRESHOLD}%, bahkan Kabupaten Deli Serdang mencapai
+            73,41% pada tahun 2025. Fakta ini menegaskan bahwa penumpukan belanja
+            modal di akhir tahun bukanlah anomali tunggal, melainkan sebuah{" "}
+            <em>pola struktural sistemik</em> ("belanja kejar tayang") dalam tata
+            kelola anggaran daerah.
+          </p>
+          <p>
+            Status penanda: <em>Perlu ditanyakan (ditandai)</em>,{" "}
+            <em>Di bawah ambang (wajar)</em>, <em>Belum tersedia</em>, atau{" "}
+            <em>Tidak konsisten</em> bila realisasi kumulatif tercatat menurun.
+            Penanda berfungsi sebagai <strong>pemicu pertanyaan publik</strong>{" "}
+            (misalnya memastikan serah terima fisik proyek dan kualitas hasil
+            konstruksi), bukan vonis hukum atau bukti pelanggaran.
+          </p>
+        </div>
       </section>
       <section className="panel definitions-panel">
         <h2>Istilah yang sering ditemui</h2>
@@ -158,6 +193,95 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
             </dd>
           </div>
         </dl>
+      </section>
+      <section className="panel education-panel">
+        <div className="section-heading">
+          <div>
+            <span className="pill green">
+              <GraduationCap size={13} /> Edukasi Literasi Anggaran
+            </span>
+            <h2>Siklus APBD & Titik Kritis Pengawasan Warga</h2>
+            <p>
+              Kapan masyarakat dapat terlibat dan bagaimana menyalurkan aspirasi
+              secara berdaya?
+            </p>
+          </div>
+        </div>
+        <div className="cycle-grid">
+          <div className="cycle-card">
+            <span className="cycle-badge">Fase 1 · Jan–Mei</span>
+            <h3>Perencanaan (Musrenbang)</h3>
+            <p>
+              Musyawarah perencanaan dari tingkat desa, kecamatan, hingga forum
+              SKPD dan RKPD. Warga berhak mengusulkan pembangunan prioritas di
+              wilayahnya.
+            </p>
+          </div>
+          <div className="cycle-card">
+            <span className="cycle-badge">Fase 2 · Jun–Nov</span>
+            <h3>Penganggaran & Bahas DPRD</h3>
+            <p>
+              Pemerintah menyusun KUA-PPAS dan Nota Keuangan RAPBD untuk dibahas
+              bersama DPRD. Pantau komisi terkait agar usulan warga tidak
+              tergeser belanja seremonial.
+            </p>
+          </div>
+          <div className="cycle-card highlight">
+            <span className="cycle-badge alert">
+              Fase 3 · Jan–Des (Fokus GovSight)
+            </span>
+            <h3>Pelaksanaan & Penyerapan</h3>
+            <p>
+              Realisasi DPA oleh dinas-dinas teknis. Pantau apakah pencairan
+              belanja modal berjalan tertib atau menumpuk tajam di pengujung
+              tahun (penanda November–Desember).
+            </p>
+          </div>
+          <div className="cycle-card">
+            <span className="cycle-badge">Fase 4 · Jan–Jun (T+1)</span>
+            <h3>Audit & Pertanggungjawaban</h3>
+            <p>
+              Pemeriksaan Laporan Keuangan Pemerintah Daerah (LKPD) oleh BPK RI
+              dan evaluasi LKPJ di DPRD. Warga dapat menguji kesesuaian fisik aset
+              di lapangan.
+            </p>
+          </div>
+        </div>
+
+        <div className="advocacy-channels">
+          <h3>
+            <Landmark size={17} /> Tiga Kanal Resmi Partisipasi & Pengaduan
+            Warga
+          </h3>
+          <div className="channels-list">
+            <div className="channel-item">
+              <strong>
+                1. Pejabat Pengelola Informasi & Dokumentasi (PPID)
+              </strong>
+              <p>
+                Berdasarkan <strong>UU No. 14/2008 (KIP)</strong>, setiap warga
+                berhak mengajukan permohonan salinan DPA, RKA, dan Berita Acara
+                Serah Terima (BAST) pekerjaan konstruksi ke Pemda.
+              </p>
+            </div>
+            <div className="channel-item">
+              <strong>2. SP4N-LAPOR! (lapor.go.id)</strong>
+              <p>
+                Layanan pengaduan nasional resmi yang terhubung ke Ombudsman RI
+                dan Kementerian PAN-RB. Gunakan data tanggal dan nominal dari
+                GovSight ID sebagai bukti awal pelaporan.
+              </p>
+            </div>
+            <div className="channel-item">
+              <strong>3. Forum Reses & Rapat Dengar Pendapat (RDP) DPRD</strong>
+              <p>
+                Manfaatkan fitur <em>Lembar Telaah Kritis</em> di profil daerah
+                untuk mengajukan pertanyaan spesifik langsung kepada anggota
+                dewan daerah pemilihmu.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
       <section className="panel source-panel">
         <div className="section-heading">

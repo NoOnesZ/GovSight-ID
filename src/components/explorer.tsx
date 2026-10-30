@@ -1,9 +1,11 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import Decimal from "decimal.js";
 import { yearEndModalFlag, formatFlagShare } from "@/lib/indicators";
 import {
+  AlertTriangle,
   ArrowDown,
   ArrowRight,
   ArrowUpRight,
@@ -47,36 +49,66 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
   const { year, month, params, update, period, invalidPeriod } = useFilters();
   const query = params.get("q") ?? "";
   const kind = params.get("jenis") ?? "semua";
-  const sort = params.get("urut") ?? "nama";
+  const fokus = params.get("fokus") ?? "semua";
+  const rawSort = params.get("urut");
+  const sort =
+    rawSort === "realisasi" || rawSort === "penumpukan" ? rawSort : "nama";
   const latestCompleteYear = Math.max(
     ...dataset.snapshots.filter((s) => s.month === 12).map((s) => s.year),
   );
+  const flagMap = useMemo(() => {
+    const map = new Map<string, ReturnType<typeof yearEndModalFlag>>();
+    const octSnapshots = new Map<string, (typeof dataset.snapshots)[0]>();
+    const decSnapshots = new Map<string, (typeof dataset.snapshots)[0]>();
+    for (const s of dataset.snapshots) {
+      if (s.year === latestCompleteYear) {
+        if (s.month === 10) octSnapshots.set(s.regionCode, s);
+        else if (s.month === 12) decSnapshots.set(s.regionCode, s);
+      }
+    }
+    for (const r of regions) {
+      map.set(
+        r.code,
+        yearEndModalFlag(octSnapshots.get(r.code), decSnapshots.get(r.code)),
+      );
+    }
+    return map;
+  }, [dataset.snapshots, latestCompleteYear]);
+
   const flagFor = (code: string) =>
-    yearEndModalFlag(
-      dataset.snapshots.find(
-        (s) =>
-          s.regionCode === code &&
-          s.year === latestCompleteYear &&
-          s.month === 10,
-      ),
-      dataset.snapshots.find(
-        (s) =>
-          s.regionCode === code &&
-          s.year === latestCompleteYear &&
-          s.month === 12,
-      ),
-    );
+    flagMap.get(code) ?? {
+      regionCode: code,
+      year: latestCompleteYear,
+      share: null,
+      status: "belum-tersedia" as const,
+    };
   if (invalidPeriod) return <UnavailablePeriod />;
   const snapshots = dataset.snapshots.filter(
     (row) => row.year === year && row.month === month,
   );
+  const flaggedCount = snapshots.filter(
+    (s) => flagFor(s.regionCode).status === "ditandai",
+  ).length;
+  const kotaCount = snapshots.filter((s) => {
+    const r = regions.find((item) => item.code === s.regionCode);
+    return r?.type === "kota";
+  }).length;
+  const kabCount = snapshots.filter((s) => {
+    const r = regions.find((item) => item.code === s.regionCode);
+    return r?.type === "kabupaten";
+  }).length;
   const visible = snapshots
     .filter((row) => {
       const region = regions.find((region) => region.code === row.regionCode)!;
-      return (
-        region.name.toLowerCase().includes(query.toLowerCase()) &&
-        (kind === "semua" || region.type === kind)
-      );
+      const matchesQuery = region.name
+        .toLowerCase()
+        .includes(query.toLowerCase());
+      const matchesKind = kind === "semua" || region.type === kind;
+      const matchesFokus =
+        fokus === "penanda"
+          ? flagFor(row.regionCode).status === "ditandai"
+          : true;
+      return matchesQuery && matchesKind && matchesFokus;
     })
     .sort((a, b) =>
       sort === "penumpukan"
@@ -247,6 +279,42 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
               <ChevronDown size={14} />
             </label>
           </div>
+        </div>
+        <div
+          className="quick-filter-pills"
+          role="tablist"
+          aria-label="Filter cepat perspektif"
+        >
+          <button
+            type="button"
+            className={`pill-button ${fokus === "semua" && kind === "semua" ? "active" : ""}`}
+            onClick={() => update({ jenis: "semua", fokus: null })}
+          >
+            Semua ({snapshots.length})
+          </button>
+          <button
+            type="button"
+            className={`pill-button ${fokus === "penanda" ? "active amber" : ""}`}
+            onClick={() =>
+              update({ fokus: fokus === "penanda" ? null : "penanda" })
+            }
+          >
+            <AlertTriangle size={13} /> Ditandai Akhir Tahun ({flaggedCount})
+          </button>
+          <button
+            type="button"
+            className={`pill-button ${fokus !== "penanda" && kind === "kota" ? "active" : ""}`}
+            onClick={() => update({ jenis: "kota", fokus: null })}
+          >
+            <Building2 size={13} /> Kota ({kotaCount})
+          </button>
+          <button
+            type="button"
+            className={`pill-button ${fokus !== "penanda" && kind === "kabupaten" ? "active" : ""}`}
+            onClick={() => update({ jenis: "kabupaten", fokus: null })}
+          >
+            <MapPin size={13} /> Kabupaten ({kabCount})
+          </button>
         </div>
         {visible.length ? (
           <>
