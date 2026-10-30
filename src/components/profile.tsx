@@ -20,7 +20,15 @@ import {
   UnavailablePeriod,
   useFilters,
 } from "./shared";
-import { HistoryChart } from "./charts";
+import { HistoryChart, MonthlyChart } from "./charts";
+import {
+  categoryShares,
+  monthlyAbsorption,
+  threeYearTrend,
+  formatFlagShare,
+  belowThreeYearReference,
+} from "@/lib/indicators";
+import { YearEnd } from "./year-end";
 
 export function Profile({
   dataset,
@@ -29,7 +37,8 @@ export function Profile({
   dataset: Dataset;
   region: Region;
 }) {
-  const { year, month, update, period, invalidPeriod } = useFilters();
+  const { year, month, update, period, invalidPeriod, params } = useFilters();
+  const reference = params.get("acuan") ?? "";
   if (invalidPeriod) return <UnavailablePeriod />;
   const snapshot = dataset.snapshots.find(
     (row) =>
@@ -40,6 +49,14 @@ export function Profile({
   const history = dataset.snapshots.filter(
     (row) => row.regionCode === region.code && row.month === month,
   );
+  const monthly = dataset.snapshots.filter(
+    (row) => row.regionCode === region.code && row.year === year,
+  );
+  const completeYears = dataset.snapshots
+    .filter((row) => row.regionCode === region.code && row.month === 12)
+    .sort((a, b) => b.year - a.year)
+    .slice(0, 3)
+    .reverse();
   if (!snapshot) return <EmptyState />;
   const rate = percentage(snapshot.total.realized, snapshot.total.budget);
   const peer = region.code === "0215" ? "0214" : "0215";
@@ -100,6 +117,7 @@ export function Profile({
           mengikuti pelaporan atau revisi sumber.
         </InfoNote>
       )}
+      <YearEnd dataset={dataset} code={region.code} />
       <div className="profile-grid">
         <section className="panel composition-panel">
           <SectionHeading
@@ -139,7 +157,153 @@ export function Profile({
           </Link>
         </section>
       </div>
+      <section className="panel composition-panel" style={{ marginTop: 24 }}>
+        <SectionHeading
+          title="Pagu dan realisasi menurut jenis belanja"
+          subtitle={`Komposisi pada periode ${months[month]} ${year}.`}
+        />
+        <div className="table-scroll">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Kategori</th>
+                <th>Porsi pagu</th>
+                <th>Porsi realisasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {["modal", "pegawai"].map((code) => {
+                const shares = categoryShares(snapshot, code);
+                return (
+                  <tr key={code}>
+                    <th>
+                      {code === "modal" ? "Belanja modal" : "Belanja pegawai"}
+                    </th>
+                    <td>{percent(shares.budget)}</td>
+                    <td>{percent(shares.realized)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <InfoNote>
+          Persentase pagu dan realisasi memakai total yang berbeda. Keduanya
+          tidak langsung menunjukkan kepatuhan terhadap batas hukum atau mutu
+          layanan.
+        </InfoNote>
+      </section>
       <section className="panel history-panel">
+        <SectionHeading
+          title="Serapan belanja bulanan"
+          subtitle={`Tahun ${year}: realisasi kumulatif dibagi pagu pada setiap laporan.`}
+        />
+        {monthly.length > 1 ? (
+          <>
+            <MonthlyChart snapshots={monthly} />
+            <div className="table-scroll">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Periode</th>
+                    <th>Pagu laporan</th>
+                    <th>Realisasi kumulatif</th>
+                    <th>Serapan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {monthly
+                    .sort((a, b) => a.month - b.month)
+                    .map((row) => (
+                      <tr key={row.month}>
+                        <th>
+                          {months[row.month]} {row.year}
+                        </th>
+                        <td title={fullMoney(row.total.budget)}>
+                          {compactMoney(row.total.budget)}
+                        </td>
+                        <td title={fullMoney(row.total.realized)}>
+                          {compactMoney(row.total.realized)}
+                        </td>
+                        <td>{percent(monthlyAbsorption(row))}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        ) : (
+          <p>Data bulanan belum tersedia untuk tahun ini.</p>
+        )}
+        <InfoNote>
+          Garis merata adalah ilustrasi pembagian selama 12 bulan, bukan target
+          atau bukti keterlambatan. Pagu dapat berubah antar laporan.
+        </InfoNote>
+      </section>
+      <section className="panel history-panel">
+        <SectionHeading
+          title="Porsi realisasi modal tiga tahun terakhir"
+          subtitle="Tahun lengkap berurutan; persentase dibulatkan ke dua desimal."
+        />
+        <p>
+          {threeYearTrend(completeYears)
+            ? `Porsi ${threeYearTrend(completeYears)} selama tiga tahun berurutan.`
+            : "Pola tiga tahun belum dapat dihitung dari data yang tersedia."}
+        </p>
+        <label className="reference-input">
+          Acuan perbandingan pilihanmu (%){" "}
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            value={reference}
+            onChange={(e) => update({ acuan: e.target.value || null })}
+            placeholder="Contoh: 20"
+          />
+        </label>
+        {reference !== "" && (
+          <p role="status">
+            {belowThreeYearReference(completeYears, Number(reference)) === null
+              ? "Masukkan angka 0–100 dan pastikan data tiga tahun lengkap."
+              : belowThreeYearReference(completeYears, Number(reference))
+                ? "Ketiga tahun berada di bawah acuan pilihanmu."
+                : "Tidak semua tahun berada di bawah acuan pilihanmu."}
+          </p>
+        )}
+        <div className="table-scroll">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Tahun</th>
+                <th>Porsi belanja modal</th>
+                <th>Sumber</th>
+              </tr>
+            </thead>
+            <tbody>
+              {completeYears.map((row) => (
+                <tr key={row.year}>
+                  <th>{row.year}</th>
+                  <td>
+                    {formatFlagShare(categoryShares(row, "modal").realized)}
+                  </td>
+                  <td>
+                    <a className="text-link" href={row.source.rawPath} download>
+                      Unduh Desember {row.year}
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <InfoNote>
+          Acuan pilihanmu bukan batas hukum. Angka ini menunjukkan komposisi,
+          bukan nilai kinerja. Kebutuhan daerah dan klasifikasi belanja dapat
+          berbeda.
+        </InfoNote>
+      </section>
+      <section id="riwayat-tahunan" className="panel history-panel">
         <SectionHeading
           title="Melihat belanja dari waktu ke waktu"
           subtitle={`Semua tahun menggunakan realisasi sampai ${months[month]}, agar periodenya setara.`}

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Decimal from "decimal.js";
+import { yearEndModalFlag, formatFlagShare } from "@/lib/indicators";
 import {
   ArrowDown,
   ArrowRight,
@@ -46,7 +47,25 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
   const { year, month, params, update, period, invalidPeriod } = useFilters();
   const query = params.get("q") ?? "";
   const kind = params.get("jenis") ?? "semua";
-  const sort = params.get("urut") === "realisasi" ? "realisasi" : "nama";
+  const sort = params.get("urut") ?? "nama";
+  const latestCompleteYear = Math.max(
+    ...dataset.snapshots.filter((s) => s.month === 12).map((s) => s.year),
+  );
+  const flagFor = (code: string) =>
+    yearEndModalFlag(
+      dataset.snapshots.find(
+        (s) =>
+          s.regionCode === code &&
+          s.year === latestCompleteYear &&
+          s.month === 10,
+      ),
+      dataset.snapshots.find(
+        (s) =>
+          s.regionCode === code &&
+          s.year === latestCompleteYear &&
+          s.month === 12,
+      ),
+    );
   if (invalidPeriod) return <UnavailablePeriod />;
   const snapshots = dataset.snapshots.filter(
     (row) => row.year === year && row.month === month,
@@ -60,14 +79,17 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
       );
     })
     .sort((a, b) =>
-      sort === "realisasi"
-        ? new Decimal(b.total.realized ?? 0).comparedTo(a.total.realized ?? 0)
-        : regions
-            .find((region) => region.code === a.regionCode)!
-            .name.localeCompare(
-              regions.find((region) => region.code === b.regionCode)!.name,
-              "id",
-            ),
+      sort === "penumpukan"
+        ? (flagFor(b.regionCode).share ?? -1) -
+          (flagFor(a.regionCode).share ?? -1)
+        : sort === "realisasi"
+          ? new Decimal(b.total.realized ?? 0).comparedTo(a.total.realized ?? 0)
+          : regions
+              .find((region) => region.code === a.regionCode)!
+              .name.localeCompare(
+                regions.find((region) => region.code === b.regionCode)!.name,
+                "id",
+              ),
     );
   const featured =
     snapshots.find((row) => row.regionCode === "0215") ?? snapshots[0];
@@ -87,14 +109,10 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
             <MapPin size={14} /> Sumatera Utara <span /> Data terbuka untuk
             warga
           </span>
-          <h1>
-            Uang daerahmu,
-            <br />
-            untuk apa saja?
-          </h1>
+          <h1>Pemda mana yang perlu ditanya soal belanjanya?</h1>
           <p>
-            Kenali rencana belanja, lihat realisasinya, dan bandingkan daerahmu.
-            Angka publik, dijelaskan dengan sederhana.
+            Kami membaca data APBD resmi dan menandai pola yang perlu
+            ditanyakan, dengan metode terbuka.
           </p>
           <div className="hero-actions">
             <a className="button button-primary" href="#jelajah">
@@ -288,6 +306,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                       <span className="count-badge">{visible.length}</span>
                     </h3>
                     <p>Pagu dan realisasi dalam rupiah.</p>
+                    <p className="table-hint">
+                      Geser tabel ke samping untuk melihat penanda.
+                    </p>
                   </div>
                   <label className="sort-control">
                     <span className="sr-only">Urutkan daerah</span>
@@ -305,6 +326,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                     >
                       <option value="nama">Nama daerah</option>
                       <option value="realisasi">Realisasi terbesar</option>
+                      <option value="penumpukan">
+                        Penumpukan akhir tahun tertinggi
+                      </option>
                     </select>
                     <ChevronDown size={13} />
                   </label>
@@ -316,6 +340,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                         <th>Daerah</th>
                         <th>Pagu / Realisasi</th>
                         <th>Serapan</th>
+                        <th>Penanda {latestCompleteYear}</th>
                         <th>
                           <span className="sr-only">Profil</span>
                         </th>
@@ -375,6 +400,11 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                                   }}
                                 />
                               </span>
+                            </td>
+                            <td>
+                              {flagFor(region.code).share === null
+                                ? "Belum tersedia"
+                                : `${flagFor(region.code).status === "ditandai" ? "⚠ Ditandai" : "✓ Di bawah ambang"} · ${formatFlagShare(flagFor(region.code).share)}`}
                             </td>
                             <td>
                               <Link

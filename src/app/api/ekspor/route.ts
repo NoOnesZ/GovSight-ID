@@ -7,7 +7,7 @@ export function GET(request: Request) {
     return new Response(toCsv(codes, year, month), {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="rapor-daerah-${year}-${month}.csv"`,
+        "Content-Disposition": `attachment; filename="govsight-id-${year}-${month}.csv"`,
         "Cache-Control": "no-store",
       },
     });

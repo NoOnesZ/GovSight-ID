@@ -47,9 +47,10 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
         <div>
           <h2>Keterbukaan dimulai dari sumber yang jelas.</h2>
           <p>
-            Rapor Daerah mengolah data publik APBD dari DJPK Kementerian
-            Keuangan. Kami membantu menjelaskan angka, tanpa memberi skor atau
-            menilai suatu daerah baik atau buruk.
+            GovSight ID mengolah data publik APBD dari DJPK Kementerian
+            Keuangan. Kami menghitung indikator dengan rumus terbuka dan
+            menandai pola yang perlu dipertanyakan. Penanda bukan vonis dan
+            dapat ditelusuri ke sumber.
           </p>
         </div>
         <a
@@ -99,6 +100,18 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </p>
         </section>
       </div>
+      <section className="panel formula-panel">
+        <h2>Penumpukan akhir tahun</h2>
+        <p>
+          (Realisasi modal s.d. Desember − s.d. Oktober) ÷ realisasi modal s.d.
+          Desember × 100%. Hasil dibulatkan ke dua desimal sebelum dibandingkan
+          dengan ambang. Ambang 40% adalah pilihan metodologi, bukan batas
+          hukum; distribusi merata selama 12 bulan menghasilkan sekitar 16,67%
+          untuk dua bulan. Status: ditandai, di bawah ambang, belum tersedia,
+          atau tidak konsisten jika realisasi kumulatif menurun. Jadwal proyek
+          dapat berbeda dan penanda tidak membuktikan pelanggaran.
+        </p>
+      </section>
       <section className="panel definitions-panel">
         <h2>Istilah yang sering ditemui</h2>
         <dl>
@@ -161,8 +174,8 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
             <thead>
               <tr>
                 <th>Daerah</th>
-                <th>Tanggal diterima SIKD</th>
-                <th>Diperiksa oleh Rapor Daerah</th>
+                <th>Keterangan penerimaan SIKD pada portal</th>
+                <th>Diperiksa oleh GovSight ID</th>
                 <th>Berkas sumber</th>
               </tr>
             </thead>
@@ -229,9 +242,9 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
             mengikuti publikasi DJPK.
           </p>
           <p>
-            Tanggal diterima SIKD berasal dari keterangan portal. Tanggal
-            pemeriksaan menunjukkan kapan kami mengaksesnya. Keduanya tidak
-            berarti data baru dipublikasikan pada waktu yang sama.
+            Tanggal penerimaan SIKD berasal dari keterangan portal saat
+            pemeriksaan; bukan tanggal terbit tiap angka. Tanggal pemeriksaan
+            menunjukkan kapan kami mengakses sumber.
           </p>
           <span className="checked-line">
             <Check size={15} /> Bukan pembaruan langsung secara real-time.

@@ -192,7 +192,7 @@ export function SourceNote({
         Data {periodLabel(snapshot.year, snapshot.month)}
         <span className="source-note-divider">/</span>
         <span className="source-meta">
-          Diterima SIKD:{" "}
+          Keterangan penerimaan SIKD pada portal:{" "}
           {snapshot.source.publishedAt
             ? dateLabel(snapshot.source.publishedAt)
             : "belum dicantumkan"}

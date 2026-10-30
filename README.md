@@ -1,10 +1,12 @@
-# Rapor Daerah
+# GovSight ID
 
-Prototipe web Open Government Data untuk memahami dan membandingkan belanja daerah Sumatera Utara. Dibuat untuk MIA 2026, cabang Web In Action.
+Prototipe web untuk memahami dan membandingkan belanja daerah Sumatera Utara. GovSight ID menggabungkan **Open Government Data** sebagai dasar data pemerintah yang terbuka dan dapat ditelusuri dengan fitur **Data-Driven Decision Support (DSS)** untuk membantu warga, jurnalis, dan DPRD menentukan pertanyaan yang perlu diajukan. Dibuat untuk MIA 2026, cabang Web In Action.
+
+Data dan analisis disajikan dalam satu aplikasi: pengguna dapat memeriksa angka beserta sumbernya, membandingkan daerah, lalu melihat penanda pola belanja yang patut ditelaah. Penanda adalah bahan pertanyaan, bukan bukti pelanggaran atau penilaian mutu layanan. Pemilihan subtema resmi yang terdaftar tetap perlu dikonfirmasi kepada panitia.
 
 ## Menjalankan
 
-Butuh Node.js 20 atau lebih baru.
+Butuh Node.js 20.9 atau lebih baru.
 
 ```bash
 git clone https://github.com/NoOnesZ/GovSight-ID.git
@@ -18,8 +20,10 @@ Buka http://127.0.0.1:3100 di browser. Jika port sedang dipakai, ganti angka por
 ## Yang sudah ada
 
 - Beranda/jelajah dengan pencarian, filter tahun, periode, dan jenis daerah.
-- Profil Medan, Binjai, dan Deli Serdang, dengan komposisi dan riwayat pada bulan yang sama.
+- Profil sepuluh pemda Sumatera Utara, dengan komposisi dan riwayat pada bulan yang sama.
 - Perbandingan dua atau tiga daerah. Perbandingan kota dan kabupaten diberi penjelasan konteks.
+- Fitur awal DSS: penanda porsi realisasi belanja modal pada November–Desember, dengan ambang metodologi 40%, pertanyaan lanjutan, dan tautan ke berkas sumber Oktober dan Desember. Ambang tersebut bukan batas hukum; data yang belum tersedia atau tidak konsisten tidak dihitung.
+- Perbandingan penanda antar daerah, porsi pagu dan realisasi modal serta pegawai, grafik serapan bulanan, dan pola tiga tahun dengan acuan yang dapat diisi pengguna.
 - Metodologi, tautan sumber, berkas asli XML, dan unduhan CSV sesuai filter.
 - URL menyimpan filter dan pilihan daerah; tombol bagikan menyalin URL.
 - Tampilan desktop, tablet, dan HP; navigasi keyboard, fokus terlihat, reduced motion, serta tabel pendamping grafik.
@@ -28,7 +32,7 @@ Buka http://127.0.0.1:3100 di browser. Jika port sedang dipakai, ganti angka por
 
 Sumber: https://djpk.kemenkeu.go.id/portal/data/apbd
 
-Snapshot asli mencakup Oktober 2024, Oktober 2025, Oktober 2026, serta Desember 2024–2025 untuk masing-masing tiga pemda. Tanggal pemeriksaan dicatat otomatis di `data/snapshots.json`; tanggal diterima SIKD diambil dari keterangan portal untuk setiap ekspor.
+Snapshot mencakup Desember 2023, Januari–Desember 2024 dan 2025, serta Januari–Oktober 2026 untuk sepuluh pemda. Tanggal pemeriksaan dicatat otomatis di `data/snapshots.json`; tanggal penerimaan SIKD berasal dari keterangan portal saat pemeriksaan dan bukan tanggal terbit masing-masing angka.
 
 Ekspor DJPK bernama `csv_apbd` tetapi isi yang diperiksa berupa Excel XML. Berkas asli tersimpan di `public/data/raw/` dan SHA-256 dicatat per snapshot. Parser mempertahankan nilai uang sebagai string desimal, mengabaikan duplikasi kategori identik, dan menolak konflik serta total kategori yang tidak cocok dengan sumber. Data yang tidak tersedia memakai `null`, bukan nol.
 
@@ -41,6 +45,10 @@ npm run data:refresh
 Daerah ditambahkan di `src/lib/regions.ts`, periode di `src/lib/periods.ts`. Data lama dan berkas asli baru ditulis setelah seluruh batch lolos pemeriksaan. Jangan menjalankan dua proses refresh bersamaan. Pada production nanti, refresh memerlukan deployment ulang karena prototipe membundel data pada build.
 
 **Belum terhubung ke Neon dan belum di-deploy ke Vercel.** Tidak ada pembaruan real-time atau penjadwalan harian. Tidak ada penilaian mutu layanan, skor pemda, atau deteksi korupsi. Integrasi database dan penambahan sepuluh daerah menjadi tahap berikutnya.
+
+Porsi modal dan pegawai merupakan deskripsi komposisi, bukan pemeriksaan kepatuhan hukum. Garis serapan merata adalah ilustrasi, dan acuan tiga tahun yang diisi pengguna bukan standar hukum. Pembandingan perlu mempertimbangkan konteks daerah dan perubahan pagu.
+
+Panduan publikasi yang direncanakan tersedia di [docs/VERCEL.md](docs/VERCEL.md); rancangan uji pemahaman lima peserta ada di [docs/UJI-PENGGUNA.md](docs/UJI-PENGGUNA.md).
 
 ## Stack dan struktur
 
@@ -79,7 +87,7 @@ npx playwright install chromium
 npm run test:browser
 ```
 
-Hasil terakhir: 12 tes data/API lulus, TypeScript dan build lulus, serta keempat halaman dan interaksi utama lulus pemeriksaan browser di lebar 360, 768, dan 1280 piksel. Screenshot ada di `docs/previews/` dan catatan lengkap ada di `docs/IMPLEMENTATION.md`.
+Hasil terakhir: 19 tes data/API lulus, TypeScript dan build lulus, serta keempat halaman dan interaksi utama lulus pemeriksaan browser di lebar 360, 768, dan 1280 piksel. Screenshot uji terbaru ada di `test-results/previews/` dan catatan lengkap ada di `docs/IMPLEMENTATION.md`.
 
 Untuk menjalankan build production (juga dipakai di hosting):
 

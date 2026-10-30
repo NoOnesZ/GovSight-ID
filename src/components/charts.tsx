@@ -14,6 +14,8 @@ import {
   BarChart,
 } from "recharts";
 import type { Snapshot } from "@/lib/types";
+import { monthlyAbsorption } from "@/lib/indicators";
+import { months } from "@/lib/regions";
 import { compactMoney } from "@/lib/format";
 import { regions } from "@/lib/regions";
 
@@ -24,6 +26,81 @@ const tooltipStyle = {
   fontSize: 12,
   boxShadow: "0 6px 24px #18213310",
 };
+
+export function MonthlyChart({ snapshots }: { snapshots: Snapshot[] }) {
+  const data = Array.from({ length: 12 }, (_, i) => {
+    const row = snapshots.find((s) => s.month === i + 1);
+    return {
+      month: months[i + 1].slice(0, 3),
+      Serapan: row ? monthlyAbsorption(row) : null,
+      Merata: Math.round(((i + 1) / 12) * 10000) / 100,
+    };
+  });
+  return (
+    <div
+      className="history-chart"
+      role="img"
+      aria-label="Grafik serapan kumulatif per bulan. Garis merata hanya ilustrasi, bukan target."
+    >
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={1}
+        initialDimension={{ width: 800, height: 260 }}
+      >
+        <ComposedChart
+          data={data}
+          margin={{ top: 15, left: -15, right: 15, bottom: 0 }}
+        >
+          <CartesianGrid
+            vertical={false}
+            strokeDasharray="3 5"
+            stroke="#EAF0F6"
+          />
+          <XAxis
+            dataKey="month"
+            axisLine={false}
+            tickLine={false}
+            tick={axis}
+          />
+          <YAxis
+            tickFormatter={(value) => `${value}%`}
+            axisLine={false}
+            tickLine={false}
+            tick={axis}
+          />
+          <Tooltip
+            contentStyle={tooltipStyle}
+            formatter={(value) =>
+              `${Number(value).toLocaleString("id-ID", { maximumFractionDigits: 2 })}%`
+            }
+          />
+          <Legend
+            iconType="circle"
+            iconSize={7}
+            wrapperStyle={{ fontSize: 12, paddingTop: 20 }}
+          />
+          <Line
+            isAnimationActive={false}
+            dataKey="Serapan"
+            connectNulls={false}
+            type="linear"
+            stroke="#2457E7"
+            strokeWidth={3}
+          />
+          <Line
+            isAnimationActive={false}
+            dataKey="Merata"
+            type="linear"
+            stroke="#A8B6CC"
+            strokeDasharray="5 5"
+            dot={false}
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
 
 function trillionTick(value: number) {
   return `${value.toLocaleString("id-ID")} T`;

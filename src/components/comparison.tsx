@@ -6,6 +6,7 @@ import type { Dataset } from "@/lib/types";
 import { months, regions } from "@/lib/regions";
 import { compactMoney, fullMoney, percent } from "@/lib/format";
 import { percentage } from "@/lib/data-core";
+import { yearEndModalFlag, formatFlagShare } from "@/lib/indicators";
 import {
   DownloadButton,
   EmptyState,
@@ -233,6 +234,83 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
               </div>
             </div>
             <SpendingChart snapshots={snapshots} />
+          </section>
+          <section className="panel compare-chart-panel">
+            <h2>Penanda akhir tahun berdampingan</h2>
+            <p>
+              Penanda menggunakan tahun lengkap terakhir yang tersedia, terpisah
+              dari filter periode di atas.
+            </p>
+            <div className="table-scroll">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Daerah</th>
+                    <th>Tahun</th>
+                    <th>November–Desember</th>
+                    <th>Penanda</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {codes.map((code) => {
+                    const availableYears = dataset.snapshots
+                      .filter((s) => s.month === 12 && s.regionCode === code)
+                      .map((s) => s.year);
+                    const completeYear = Math.max(
+                      ...dataset.snapshots
+                        .filter((s) => s.month === 12)
+                        .map((s) => s.year),
+                    );
+                    const october = dataset.snapshots.find(
+                      (s) =>
+                        s.regionCode === code &&
+                        s.year === completeYear &&
+                        s.month === 10,
+                    );
+                    const december = dataset.snapshots.find(
+                      (s) =>
+                        s.regionCode === code &&
+                        s.year === completeYear &&
+                        s.month === 12,
+                    );
+                    const flag = yearEndModalFlag(october, december);
+                    return (
+                      <tr key={code}>
+                        <th>
+                          <Link
+                            className="text-link"
+                            href={`/daerah/${code}?${period}`}
+                          >
+                            {regions.find((r) => r.code === code)?.name}
+                          </Link>
+                        </th>
+                        <td>
+                          {availableYears.includes(completeYear)
+                            ? completeYear
+                            : "Belum tersedia"}
+                        </td>
+                        <td>{formatFlagShare(flag.share)}</td>
+                        <td>
+                          {flag.status === "ditandai"
+                            ? "⚠ Perlu ditanyakan"
+                            : flag.status === "wajar"
+                              ? "✓ Di bawah ambang"
+                              : flag.status === "tidak-konsisten"
+                                ? "Data tidak konsisten"
+                                : "Belum tersedia"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <InfoNote>
+              Ambang 40% merupakan pilihan metodologi, bukan batas hukum atau
+              bukti pelanggaran. Perbedaan jadwal proyek dapat memengaruhi
+              hasil. Buka profil untuk pertanyaan dan sumber Oktober serta
+              Desember.
+            </InfoNote>
           </section>
           {snapshots[0] && <SourceNote snapshot={snapshots[0]} />}
           <InfoNote>

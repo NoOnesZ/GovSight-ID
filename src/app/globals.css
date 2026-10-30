@@ -3157,3 +3157,39 @@ table {
     transition: none !important;
   }
 }
+
+.year-end-card {
+  margin: 14px 0;
+}
+.year-end-flagged {
+  background: #fff8eb;
+  border-color: #e9c77e;
+  color: #704a10;
+}
+.year-end-card .text-link {
+  margin-top: 8px;
+}
+.table-hint {
+  display: none;
+}
+@media (max-width: 480px) {
+  .table-hint {
+    display: block;
+  }
+}
+.reference-input {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+  color: #53637c;
+  font-size: 11px;
+}
+.reference-input input {
+  width: 110px;
+  padding: 8px 10px;
+  border: 1px solid #dfe5ee;
+  border-radius: 6px;
+  background: white;
+}

@@ -35,12 +35,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
         Langsung ke konten
       </a>
       <aside className="sidebar">
-        <Link href="/" className="brand" aria-label="Rapor Daerah, beranda">
+        <Link href="/" className="brand" aria-label="GovSight ID, beranda">
           <span className="brand-mark">
             <Landmark size={24} strokeWidth={1.8} />
           </span>
           <span>
-            Rapor<span className="brand-second">Daerah</span>
+            GovSight<span className="brand-second">ID</span>
             <small>Belanja publik, lebih terbuka.</small>
           </span>
         </Link>
@@ -100,7 +100,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </main>
         <footer className="site-footer">
           <span>
-            <Landmark size={15} /> Rapor Daerah{" "}
+            <Landmark size={15} /> GovSight ID{" "}
             <span className="footer-year">2026</span>
           </span>
           <p>Inisiatif independen. Bukan situs resmi pemerintah.</p>

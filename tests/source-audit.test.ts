@@ -16,7 +16,10 @@ import { GET as compare } from "../src/app/api/bandingkan/route";
 import { GET as exportCsv } from "../src/app/api/ekspor/route";
 
 test("seluruh snapshot cocok dengan berkas DJPK asli dan SHA-256", () => {
-  assert.equal(dataset.snapshots.length, 15);
+  assert.equal(regions.length, 10);
+  assert.ok(periods.some((p) => p.year === 2023 && p.month === 12));
+  assert.ok(periods.filter((p) => p.year === 2025).length === 12);
+  assert.equal(dataset.snapshots.length, regions.length * periods.length);
   const unique = new Set<string>();
   for (const snapshot of dataset.snapshots) {
     const raw = readFileSync(
@@ -32,7 +35,7 @@ test("seluruh snapshot cocok dengan berkas DJPK asli dan SHA-256", () => {
     assert.deepEqual(parsed.categories, snapshot.categories);
     unique.add(`${snapshot.regionCode}/${snapshot.year}/${snapshot.month}`);
   }
-  assert.equal(unique.size, 15);
+  assert.equal(unique.size, regions.length * periods.length);
 });
 
 test("daftar periode sama persis dengan snapshot setiap daerah", () => {
@@ -79,6 +82,11 @@ test("CSV mengikuti daerah dan periode terpilih tanpa pembulatan nilai uang", ()
 });
 
 test("endpoint perbandingan dan ekspor memvalidasi input", async () => {
+  const defaultComparison = compare(
+    new Request("http://localhost/api/bandingkan"),
+  );
+  assert.equal(defaultComparison.status, 200);
+  assert.equal((await defaultComparison.json()).snapshots.length, 2);
   assert.equal(
     compare(new Request("http://localhost/api/bandingkan?daerah=0215")).status,
     400,

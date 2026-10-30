@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile, rename } from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import { parseDjpkExport } from "../src/lib/data-core";
+import { retry } from "../src/lib/retry";
 import { regions, months } from "../src/lib/regions";
 import { periods } from "../src/lib/periods";
 import type { Dataset, Snapshot } from "../src/lib/types";
@@ -35,8 +36,14 @@ async function main() {
   // Berkas asli ditahan di memori sampai seluruh batch lolos pemeriksaan,
   // agar kegagalan di tengah tidak meninggalkan folder raw setengah jadi.
   const rawFiles = new Map<string, string>();
-  for (const region of regions) {
-    for (const { year, month } of periods) {
+  const jobs = regions.flatMap((region) =>
+    periods.map((period) => ({ region, ...period })),
+  );
+  let cursor = 0;
+  let failed = false;
+  async function worker() {
+    while (!failed && cursor < jobs.length) {
+      const { region, year, month } = jobs[cursor++];
       const query = new URLSearchParams({
         periode: String(month),
         tahun: String(year),
@@ -45,8 +52,19 @@ async function main() {
       });
       const url = `https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&${query}`;
       const portalUrl = `https://djpk.kemenkeu.go.id/portal/data/apbd?${query}`;
-      const [raw, html] = await Promise.all([get(url), get(portalUrl)]);
-      const parsed = parseDjpkExport(raw);
+      let result;
+      try {
+        result = await retry(async () => {
+          const [raw, html] = await Promise.all([get(url), get(portalUrl)]);
+          return { raw, html, parsed: parseDjpkExport(raw) };
+        });
+      } catch (error) {
+        failed = true;
+        throw new Error(
+          `${region.name} ${year}/${month}: ${(error as Error).message}`,
+        );
+      }
+      const { raw, html, parsed } = result;
       const file = `${region.code}-${year}-${month}.xml`;
       const rawPath = `/data/raw/${runId}/${file}`;
       rawFiles.set(file, raw);
@@ -67,6 +85,14 @@ async function main() {
       console.log(`${region.name} ${year}/${month}: ${parsed.total.realized}`);
     }
   }
+  await Promise.all(Array.from({ length: 6 }, () => worker()));
+  snapshots.sort(
+    (a, b) =>
+      regions.findIndex((r) => r.code === a.regionCode) -
+        regions.findIndex((r) => r.code === b.regionCode) ||
+      a.year - b.year ||
+      a.month - b.month,
+  );
   const dataset: Dataset = { version: 1, generatedAt: checkedAt, snapshots };
   const destination = path.join(process.cwd(), "data", "snapshots.json");
   const text = JSON.stringify(dataset, null, 2) + "\n";

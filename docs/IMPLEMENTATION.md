@@ -46,3 +46,13 @@ Neon, deployment Vercel, penjadwalan harian, perluasan sepuluh daerah, proposal 
 ## Tahap berikutnya
 
 Neon, deployment/redeploy publik, penjadwalan harian, perluasan menjadi sepuluh daerah, materi submission, serta pengujian dengan lima orang belum dilakukan dan tidak diklaim selesai. Prototipe tetap memakai snapshot lokal, bukan data real-time.
+
+## GovSight ID — 30 Oktober 2026
+
+- Nama tampilan dan metadata diperbarui menjadi GovSight ID. Produk menggabungkan data terbuka dan analisis DSS; subtema yang terdaftar masih perlu dikonfirmasi panitia.
+- Data diperluas menjadi 10 pemda dan 350 snapshot: Desember 2023; semua bulan 2024–2025; Januari–Oktober 2026. Batch diperiksa pada 30 Oktober 2026, dan keterangan penerimaan SIKD di portal adalah 29 Oktober 2026. Tanggal ini bukan tanggal terbit setiap angka.
+- Penanda November–Desember ditampilkan pada profil, beranda, dan perbandingan, dengan rumus terbuka, sumber asli, konteks, dan pilihan urutan. Pagu dan realisasi modal/pegawai, grafik serapan bulanan, dan pola modal tiga tahun juga ditampilkan. Acuan tiga tahun dimasukkan pengguna dan disimpan pada URL; bukan batas hukum.
+- Angka Deli Serdang 2025 diperiksa langsung terhadap ekspor DJPK: realisasi modal Oktober Rp200.361.874.998,65 dan Desember Rp753.608.964.203,45; selisihnya 73,41% dari realisasi Desember.
+- Batch pertama berhenti karena satu respons berisi baris kategori yang bertentangan. Pemeriksaan ulang respons konsisten; skrip kini mencoba ulang secara terbatas dan menerbitkan data hanya setelah seluruh batch valid. Snapshot lama dan berkas asli tetap dipertahankan.
+- `npm test`: 19/19 lulus, termasuk pemeriksaan hash dan parser seluruh 350 berkas. `npm run typecheck` dan `npm run build` lulus. Uji browser lulus pada 360, 768, dan 1280 px, termasuk filter, CSV, penanda Deli Serdang, perbandingan, acuan yang dibagikan, unduhan, dan keadaan gagal.
+- Panduan deploy nanti: `docs/VERCEL.md`. Rencana uji lima orang: `docs/UJI-PENGGUNA.md`. Pengujian dengan peserta nyata dan deployment publik belum dilakukan. Pembaruan data masih manual melalui skrip dan redeploy; ini bukan real-time.

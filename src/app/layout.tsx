@@ -9,8 +9,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Rapor Daerah — Pahami belanja daerahmu",
-    template: "%s | Rapor Daerah",
+    default: "GovSight ID — Pahami belanja daerahmu",
+    template: "%s | GovSight ID",
   },
   description:
     "Jelajahi dan bandingkan pagu, realisasi, serta komposisi belanja daerah Sumatera Utara dengan data terbuka DJPK.",

@@ -11,7 +11,7 @@ const context = await browser.newContext({
 const page = await context.newPage();
 const errors = [];
 page.on("pageerror", (error) => errors.push(error.message));
-await mkdir("docs/previews", { recursive: true });
+await mkdir("test-results/previews", { recursive: true });
 
 try {
   for (const width of [1280, 768, 360]) {
@@ -44,7 +44,7 @@ try {
       assert.equal(overflow, false, `${name} overflows at ${width}px`);
       if (width !== 768)
         await page.screenshot({
-          path: `docs/previews/${name}-${width}.png`,
+          path: `test-results/previews/${name}-${width}.png`,
           fullPage: true,
         });
       console.log(`PASS ${name} at ${width}px`);
@@ -52,6 +52,7 @@ try {
   }
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(base);
+  assert.equal(await page.locator(".region-table tbody tr").count(), 10);
   await page.getByRole("textbox", { name: "Cari daerah" }).fill("Binjai");
   await page.waitForFunction(
     () => document.querySelectorAll(".region-table tbody tr").length === 1,
@@ -83,21 +84,38 @@ try {
   await page
     .getByRole("heading", { name: "Kota Medan", exact: true })
     .waitFor();
-  assert.equal(await page.locator(".data-table tbody tr").count(), 2);
+  await page
+    .getByRole("heading", { name: "Serapan belanja bulanan" })
+    .waitFor();
+  await page
+    .getByRole("heading", { name: "Porsi realisasi modal tiga tahun terakhir" })
+    .waitFor();
+  await page.getByLabel("Acuan perbandingan pilihanmu (%)").fill("20");
+  await page.waitForURL(/acuan=20/);
+  await page.reload();
+  assert.equal(
+    await page.getByLabel("Acuan perbandingan pilihanmu (%)").inputValue(),
+    "20",
+  );
+  assert.equal(await page.locator("#riwayat-tahunan tbody tr").count(), 3);
   await page.getByLabel("Tahun anggaran").selectOption("2026");
   await page.waitForURL(/tahun=2026/);
+  await page.waitForFunction(() => document.querySelector('select[aria-label="Bulan pelaporan"]')?.value === "10");
   await page.waitForFunction(
-    () => document.querySelectorAll(".data-table tbody tr").length === 3,
+    () => document.querySelectorAll("#riwayat-tahunan tbody tr").length === 3,
   );
   assert.equal(
     await page.getByLabel("Bulan pelaporan", { exact: true }).inputValue(),
     "10",
   );
-  assert.equal(await page.locator(".data-table tbody tr").count(), 3);
+  assert.equal(await page.locator("#riwayat-tahunan tbody tr").count(), 3);
   console.log("PASS comparable profile history and unavailable December 2026");
 
   await page.goto(base + "/bandingkan");
   await page.getByRole("button", { name: /Deli Serdang/ }).click();
+  await page
+    .getByRole("heading", { name: "Penanda akhir tahun berdampingan" })
+    .waitFor();
   await page.getByText(/Kamu membandingkan kota dan kabupaten/).waitFor();
   assert.equal(
     await page.locator(".region-option[aria-pressed=true]").count(),
@@ -109,6 +127,12 @@ try {
     .getByRole("heading", { name: "Tambahkan satu daerah lagi" })
     .waitFor();
   console.log("PASS comparison selection and mixed-region context");
+
+  await page.goto(base + "/daerah/0203?tahun=2025&bulan=12");
+  await page.getByText(/73,41%/).first().waitFor();
+  assert.ok(await page.getByRole("link", { name: "Unduh Oktober" }).count() > 0);
+  assert.ok(await page.getByRole("link", { name: "Unduh Desember" }).count() > 0);
+  console.log("PASS Deli Serdang flag and original sources");
 
   await page.goto(base + "/metodologi");
   const rawUrl = await page

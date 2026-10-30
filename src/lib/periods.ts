@@ -8,11 +8,11 @@ export interface Period {
 // Satu-satunya daftar periode yang tersedia. Urut dari terlama ke terbaru.
 // Tes memastikan daftar ini sama persis dengan isi data/snapshots.json.
 export const periods: Period[] = [
-  { year: 2024, month: 10 },
-  { year: 2024, month: 12 },
-  { year: 2025, month: 10 },
-  { year: 2025, month: 12 },
-  { year: 2026, month: 10 },
+  { year: 2023, month: 12 },
+  ...[2024, 2025].flatMap((year) =>
+    Array.from({ length: 12 }, (_, i) => ({ year, month: i + 1 })),
+  ),
+  ...Array.from({ length: 10 }, (_, i) => ({ year: 2026, month: i + 1 })),
 ];
 
 export const latestPeriod = periods[periods.length - 1];
