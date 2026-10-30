@@ -96,11 +96,61 @@ export function yearEndModalFlag(
   };
 }
 
+export type PersistenceStatus =
+  | "dua-tahun-beruntun"
+  | "baru-2025"
+  | "baru-2024"
+  | "konsisten-wajar"
+  | "belum-lengkap";
+
+export function yearEndPersistence(
+  flag2024: ReturnType<typeof yearEndModalFlag>,
+  flag2025: ReturnType<typeof yearEndModalFlag>,
+): {
+  status: PersistenceStatus;
+  label: string;
+} {
+  const f24 = flag2024.status === "ditandai";
+  const f25 = flag2025.status === "ditandai";
+  const w24 = flag2024.status === "wajar";
+  const w25 = flag2025.status === "wajar";
+
+  if (f24 && f25) {
+    return {
+      status: "dua-tahun-beruntun",
+      label: "Pola 2 Tahun Berurutan",
+    };
+  }
+  if (!f24 && f25) {
+    return {
+      status: "baru-2025",
+      label: "Baru Terindikasi di 2025",
+    };
+  }
+  if (f24 && !f25) {
+    return {
+      status: "baru-2024",
+      label: "Terindikasi di 2024 Saja",
+    };
+  }
+  if (w24 && w25) {
+    return {
+      status: "konsisten-wajar",
+      label: "Konsisten di Bawah Ambang",
+    };
+  }
+  return {
+    status: "belum-lengkap",
+    label: "Data Belum Lengkap",
+  };
+}
+
 export interface InquiryItem {
   id: string;
   category: "akhir-tahun" | "alokasi" | "tren" | "serapan";
+  period: string;
   title: string;
-  badge: "kritis" | "perhatian" | "positif";
+  badge: "atensi" | "konteks" | "normal";
   badgeLabel: string;
   observation: string;
   questions: string[];
@@ -120,100 +170,140 @@ export function generateInquiryBrief(
     items.push({
       id: "akhir-tahun",
       category: "akhir-tahun",
-      title: `Lonjakan Belanja Modal Akhir Tahun (${formatFlagShare(flag.share)})`,
-      badge: "kritis",
-      badgeLabel: "Prioritas Ditanyakan",
-      observation: `Sebanyak ${formatFlagShare(flag.share)} realisasi belanja modal setahun terkonsentrasi pada November–Desember ${flag.year}. Ini melampaui batas wajar rata-rata merata (16,67%) dan ambang ${YEAR_END_THRESHOLD}%.`,
+      period: `Evaluasi Tahun Anggaran ${flag.year}`,
+      title: `Konsentrasi Belanja Modal Akhir Tahun (${formatFlagShare(flag.share)})`,
+      badge: "atensi",
+      badgeLabel: "Perlu Pendalaman",
+      observation: `Sebanyak ${formatFlagShare(flag.share)} realisasi belanja modal setahun terkonsentrasi pada November–Desember ${flag.year}. Angka ini melampaui laju rata-rata merata 12 bulan (16,67%) dan ambang metodologi ${YEAR_END_THRESHOLD}%.`,
       questions: [
-        `Proyek fisik dan pengadaan apa saja yang dibayarkan pada November–Desember ${flag.year}?`,
-        `Apakah seluruh pekerjaan telah melalui Berita Acara Serah Terima (BAST/PHO) dan uji mutu fisik sebelum pencairan anggaran?`,
-        `Bagaimana mitigasi dinas teknis agar pencairan tidak tergesa-gesa di pengujung tahun anggaran berjalan?`,
+        `Program pengadaan dan paket pekerjaan fisik apa saja yang dibayarkan pada November–Desember ${flag.year}?`,
+        `Apakah seluruh pekerjaan telah melalui Berita Acara Serah Terima (BAST/PHO) dan pengujian mutu teknis sebelum pencairan diterbitkan?`,
+        `Langkah tata kelola apa yang diterapkan dinas terkait agar penyerapan modal tahun berikutnya terdistribusi lebih proporsional sepanjang triwulan?`,
       ],
     });
   } else if (flag.status === "wajar") {
     items.push({
       id: "akhir-tahun",
       category: "akhir-tahun",
-      title: `Penyaluran Belanja Modal Akhir Tahun Terkendali (${formatFlagShare(flag.share)})`,
-      badge: "positif",
-      badgeLabel: "Di Bawah Ambang",
-      observation: `Realisasi modal pada dua bulan terakhir ${flag.year} tercatat ${formatFlagShare(flag.share)}, di bawah ambang penanda ${YEAR_END_THRESHOLD}%.`,
+      period: `Evaluasi Tahun Anggaran ${flag.year}`,
+      title: `Penyaluran Belanja Modal Akhir Tahun Berada di Bawah Ambang (${formatFlagShare(flag.share)})`,
+      badge: "normal",
+      badgeLabel: "Sesuai Ambang",
+      observation: `Realisasi modal pada dua bulan terakhir ${flag.year} tercatat ${formatFlagShare(flag.share)}, berada di bawah ambang penanda ${YEAR_END_THRESHOLD}%.`,
       questions: [
-        `Praktik penjadwalan dan termin lelang proyek apa yang terbukti efektif sehingga pencairan tidak menumpuk di akhir tahun?`,
+        `Praktik penjadwalan lelang atau termin kontrak apa yang dijalankan sehingga pencairan tidak menumpuk di pengujung tahun?`,
       ],
     });
   }
 
-  // 2. Keseimbangan Belanja Pegawai vs Belanja Modal
+  // 2. Keseimbangan Belanja Pegawai vs Belanja Modal (Berakar pada UU HKPD No. 1/2022)
   const pegawai = categoryShares(currentSnapshot, "pegawai");
   const modal = categoryShares(currentSnapshot, "modal");
   if (pegawai.budget !== null && modal.budget !== null) {
-    if (pegawai.budget > 40 || pegawai.budget > modal.budget * 2) {
+    if (pegawai.budget > 30) {
       items.push({
         id: "alokasi-pegawai",
         category: "alokasi",
-        title: `Porsi Belanja Pegawai (${formatFlagShare(pegawai.budget)}) Mendominasi Belanja Modal (${formatFlagShare(modal.budget)})`,
-        badge: "perhatian",
-        badgeLabel: "Keseimbangan Fiskal",
-        observation: `Alokasi belanja aparatur mencapai ${formatFlagShare(pegawai.budget)} dari total pagu, berbanding ${formatFlagShare(modal.budget)} untuk investasi aset fisik dan infrastruktur publik.`,
+        period: `Pagu APBD ${currentSnapshot.year}`,
+        title: `Porsi Belanja Pegawai ${formatFlagShare(pegawai.budget)} (Konteks UU HKPD Pasal 146)`,
+        badge: "konteks",
+        badgeLabel: "Konteks Regulasi",
+        observation: `Alokasi belanja pegawai menyerap ${formatFlagShare(pegawai.budget)} dari total pagu belanja daerah. Sebagai acuan regulasi, UU No. 1 Tahun 2022 (HKPD) Pasal 146 ayat (1) mengarahkan batas maksimal belanja pegawai sebesar 30% dari APBD (dengan masa transisi 5 tahun hingga 2027).`,
         questions: [
-          `Bagaimana rencana pemerintah daerah merestrukturisasi belanja operasional agar ruang fiskal untuk fasilitas publik meningkat?`,
-          `Apakah besarnya alokasi aparatur berbanding lurus dengan kepuasan dan kecepatan layanan administrasi publik bagi warga?`,
+          `Bagaimana rencana strategis pemerintah daerah dalam penyesuaian bertahap porsi belanja pegawai menuju target maksimal 30% sesuai amanat UU HKPD?`,
+          `Upaya digitalisasi birokrasi dan penyederhanaan proses apa yang dirancang guna memperluas ruang fiskal untuk belanja publik?`,
+        ],
+      });
+    }
+
+    if (modal.budget !== null && modal.budget < 20) {
+      items.push({
+        id: "alokasi-modal",
+        category: "alokasi",
+        period: `Pagu APBD ${currentSnapshot.year}`,
+        title: `Porsi Belanja Modal ${formatFlagShare(modal.budget)} (Konteks UU HKPD Pasal 147)`,
+        badge: "konteks",
+        badgeLabel: "Kapasitas Fiskal",
+        observation: `Alokasi belanja modal untuk aset infrastruktur publik tercatat ${formatFlagShare(modal.budget)} dari pagu APBD. UU HKPD Pasal 147 ayat (1) mengarahkan pemda bertahap mengalokasikan minimal 40% belanja infrastruktur pelayanan publik.`,
+        questions: [
+          `Langkah apa yang dipersiapkan daerah untuk meningkatkan porsi investasi modal fisik bagi pemeliharaan dan penambahan fasilitas dasar warga?`,
         ],
       });
     }
   }
 
-  // 3. Tren Investasi Modal 3 Tahun
+  // 3. Tren Investasi Modal 3 Tahun Berturut-turut
   if (completeYearsSnapshots && completeYearsSnapshots.length === 3) {
     const trend = threeYearTrend(completeYearsSnapshots);
     if (trend === "menurun") {
       items.push({
         id: "tren-modal",
         category: "tren",
-        title: "Porsi Belanja Modal Menurun dalam Tiga Tahun Terakhir",
-        badge: "perhatian",
-        badgeLabel: "Tren Investasi",
+        period: `Tren Realisasi 3 Tahun (${completeYearsSnapshots[0].year}–${completeYearsSnapshots[2].year})`,
+        title: "Porsi Belanja Modal Tercatat Menurun 3 Tahun Berurutan",
+        badge: "atensi",
+        badgeLabel: "Perlu Pendalaman",
         observation:
-          "Dalam kurun tiga tahun anggaran penuh berurutan, proporsi belanja modal terhadap total belanja daerah konsisten menyusut.",
+          "Dalam kurun tiga tahun anggaran penuh berurutan, proporsi belanja modal terhadap total belanja yang direalisasikan mengalami tren penurunan konsisten.",
         questions: [
-          "Apa penyebab utama tren penurunan kapasitas belanja modal fisik daerah dari tahun ke tahun?",
-          "Bagaimana strategi pemda dalam menjamin pemeliharaan jalan, jembatan, irigasi, dan gedung sekolah yang menua?",
+          "Faktor apa yang menjadi penyebab utama penurunan kapasitas alokasi belanja modal fisik daerah dari tahun ke tahun?",
+          "Bagaimana strategi pemda dalam menjaga kesinambungan pemeliharaan jalan, jembatan, dan fasilitas publik yang menua?",
         ],
       });
     } else if (trend === "meningkat") {
       items.push({
         id: "tren-modal",
         category: "tren",
-        title: "Porsi Belanja Modal Meningkat Berkelanjutan",
-        badge: "positif",
-        badgeLabel: "Tren Positif",
+        period: `Tren Realisasi 3 Tahun (${completeYearsSnapshots[0].year}–${completeYearsSnapshots[2].year})`,
+        title: "Porsi Belanja Modal Meningkat Konsisten 3 Tahun Berurutan",
+        badge: "normal",
+        badgeLabel: "Sesuai Ambang",
         observation:
-          "Komposisi belanja modal terhadap total realisasi daerah bertumbuh konsisten dalam tiga tahun berurutan.",
+          "Komposisi belanja modal terhadap total belanja yang direalisasikan menunjukkan tren kenaikan dalam tiga tahun berturut-turut.",
         questions: [
-          "Infrastruktur strategis apa saja yang berhasil diselesaikan dari kenaikan porsi modal ini dan bagaimana dampak ekonominya bagi warga?",
+          "Program pembangunan prioritas apa saja yang didanai melalui kenaikan porsi modal ini dan bagaimana dampak nyata yang dirasakan masyarakat?",
         ],
       });
     }
   }
 
-  // 4. Laju Serapan Berjalan (jika serapan < 50% pada semester kedua / bulan >= 8)
+  // 4. Laju Serapan Berjalan (Hanya untuk tahun berjalan sebelum bulan 12)
   const currentAbsorption = monthlyAbsorption(currentSnapshot);
   if (
     currentAbsorption !== null &&
     currentSnapshot.month >= 8 &&
+    currentSnapshot.month < 12 &&
     currentAbsorption < 50
   ) {
     items.push({
       id: "serapan-lambat",
       category: "serapan",
+      period: `Laporan s.d. Bulan ${currentSnapshot.month} ${currentSnapshot.year}`,
       title: `Serapan Berjalan Lambat (${formatFlagShare(currentAbsorption)} s.d. Bulan ${currentSnapshot.month})`,
-      badge: "perhatian",
+      badge: "konteks",
       badgeLabel: "Laju Pelaksanaan",
-      observation: `Hingga bulan ${currentSnapshot.month}, baru ${formatFlagShare(currentAbsorption)} pagu tahunan yang terserap. Kondisi ini berpotensi memicu belanja kejar tayang di pengujung tahun.`,
+      observation: `Hingga bulan ${currentSnapshot.month}, baru ${formatFlagShare(currentAbsorption)} pagu tahunan yang terserap. Kondisi serapan paruh kedua yang rendah berpotensi mendorong percepatan pencairan di pengujung tahun anggaran.`,
       questions: [
-        "Kendala apa yang dihadapi Organisasi Perangkat Daerah (OPD) dalam eksekusi lelang atau tender pengadaan?",
-        "Apakah ada percepatan terukur yang disiapkan agar proyek tidak gagal bayar atau mangkrak di akhir tahun?",
+        "Kendala apa yang dihadapi OPD dalam penyelesaian tahapan lelang atau pengadaan barang dan jasa?",
+        "Langkah percepatan teknis apa yang disiapkan agar pekerjaan fisik dapat selesai dengan mutu baik sebelum tahun anggaran berakhir?",
+      ],
+    });
+  } else if (
+    currentAbsorption !== null &&
+    currentSnapshot.month === 12 &&
+    currentAbsorption < 85
+  ) {
+    items.push({
+      id: "serapan-akhir-rendah",
+      category: "serapan",
+      period: `Laporan Akhir Tahun ${currentSnapshot.year}`,
+      title: `Serapan Akhir Tahun Tercatat ${formatFlagShare(currentAbsorption)}`,
+      badge: "konteks",
+      badgeLabel: "Evaluasi Serapan",
+      observation: `Hingga akhir tahun anggaran, realisasi belanja daerah ditutup pada angka ${formatFlagShare(currentAbsorption)} dari pagu tahunan.`,
+      questions: [
+        "Faktor apa yang menyebabkan pagu anggaran tidak terserap optimal dan program apa yang mengalami efisiensi atau penundaan?",
+        "Bagaimana pemanfaatan Sisa Lebih Pembiayaan Anggaran (SiLPA) yang terbentuk untuk mendukung APBD tahun berikutnya?",
       ],
     });
   }

@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import Decimal from "decimal.js";
-import { ArrowLeft, ArrowUpRight, BarChart3, Info, MapPin } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ArrowUpRight,
+  BarChart3,
+  Info,
+  MapPin,
+  Sparkles,
+} from "lucide-react";
 import type { Dataset, Region } from "@/lib/types";
 import { months, regions } from "@/lib/regions";
 import { runningYear } from "@/lib/periods";
@@ -31,7 +39,6 @@ import {
 } from "@/lib/indicators";
 import { YearEnd } from "./year-end";
 import { InquiryToolkit } from "./inquiry-toolkit";
-import { Sparkles } from "lucide-react";
 
 export function Profile({
   dataset,
@@ -79,7 +86,8 @@ export function Profile({
       <div className="print-header" aria-hidden="true">
         <h2>GovSight ID — Lembar Telaah Anggaran Daerah</h2>
         <p>
-          Daerah: {region.name} · Periode Laporan: {months[month]} {year} · Sumber: Data Resmi DJPK Kementerian Keuangan
+          Daerah: {region.name} · Periode Laporan: {months[month]} {year} ·
+          Sumber: Data Resmi DJPK Kementerian Keuangan
         </p>
       </div>
       <div className="page-title-row">
@@ -127,13 +135,49 @@ export function Profile({
         </div>
         <div>
           <span>Tingkat serapan</span>
-          <strong>{percent(rate)}</strong>
+          <div className="rate-value-row">
+            <strong
+              className={rate !== null && rate > 100 ? "rate-overflow" : ""}
+            >
+              {percent(rate)}
+            </strong>
+            {rate !== null && rate > 100 && (
+              <span
+                className="overflow-tag"
+                title="Realisasi melampaui pagu awal di SIKD (umumnya karena pagu APBD-P belum tersinkronisasi di pusat data)"
+              >
+                ⚠ &gt;100% Pagu
+              </span>
+            )}
+          </div>
           <span className="large-progress">
-            <span style={{ width: `${Math.min(rate ?? 0, 100)}%` }} />
+            <span
+              className={rate !== null && rate > 100 ? "progress-overflow" : ""}
+              style={{ width: `${Math.min(rate ?? 0, 100)}%` }}
+            />
           </span>
           <small>Realisasi dibagi pagu tahunan</small>
         </div>
       </div>
+      {rate !== null && rate > 100 && (
+        <div className="anomaly-notice" role="status">
+          <AlertTriangle size={18} className="anomaly-icon" />
+          <div>
+            <strong>
+              Catatan Resmi: Realisasi Tercatat {percent(rate)} Melampaui Pagu
+              Tercatat
+            </strong>
+            <p>
+              Pada portal SIKD DJPK Kementerian Keuangan, realisasi belanja
+              melampaui pagu umumnya terjadi saat APBD Perubahan (APBD-P) belum
+              selesai disinkronisasikan ke sistem pusat data sehingga realisasi
+              dibandingkan dengan pagu induk awal, atau terdapat pengesahan
+              belanja mendahului perubahan anggaran. Data ini disajikan apa
+              adanya sesuai dokumen publikasi DJPK tanpa modifikasi angka.
+            </p>
+          </div>
+        </div>
+      )}
       {year === runningYear && (
         <InfoNote>
           Ini data tahun berjalan, bukan hasil akhir tahun. Angka dapat berubah
@@ -182,29 +226,53 @@ export function Profile({
           </p>
           {modalNum > 0 && (
             <div className="impact-box">
-              <span className="small-label">Kapasitas Belanja Modal</span>
+              <div className="impact-box-top">
+                <span className="small-label">Simulasi Daya Beli Fiskal</span>
+                <span className="impact-mode-pill">
+                  Pilihan Rujukan (Salah Satu / Atau)
+                </span>
+              </div>
               <p className="impact-intro">
-                Realisasi modal {compactMoney(modalRealized)} setara dengan daya
-                pembangunan fisik rujukan warga:
+                Total realisasi modal{" "}
+                <strong>{compactMoney(modalRealized)}</strong> setara jika
+                dialokasikan penuh untuk salah satu kebutuhan fisik standar
+                kementerian berikut:
               </p>
               <div className="impact-items">
                 <div className="impact-item">
+                  <span className="impact-opt-badge">Alternatif A</span>
                   <strong>~{kmJalan.toLocaleString("id-ID")} km</strong>
                   <span>Peningkatan jalan mantap</span>
+                  <small>
+                    Asumsi ~Rp1,5 M/km (HSPK Bina Marga Kementerian PUPR)
+                  </small>
                 </div>
                 <div className="impact-item">
+                  <span className="impact-opt-badge">Alternatif B</span>
                   <strong>~{unitFaskes.toLocaleString("id-ID")} unit</strong>
-                  <span>Puskesmas / faskes pembantu</span>
+                  <span>Puskesmas Pembantu (Pustu)</span>
+                  <small>
+                    Asumsi ~Rp2,0 M/unit (Standar Prototipe Kemenkes RI)
+                  </small>
                 </div>
                 <div className="impact-item">
+                  <span className="impact-opt-badge">Alternatif C</span>
                   <strong>~{ruangKelas.toLocaleString("id-ID")} ruang</strong>
                   <span>Rehabilitasi kelas sekolah</span>
+                  <small>
+                    Asumsi ~Rp150 Jt/ruang (Menu DAK Fisik Kemendikbudristek)
+                  </small>
                 </div>
               </div>
-              <small className="impact-disclaimer">
-                *Estimasi ilustratif daya beli fiskal berdasarkan standar
-                rujukan biaya konstruksi kementerian (PU/Kemendikbud/Kemenkes).
-              </small>
+              <div className="impact-disclaimer-block">
+                <small className="impact-disclaimer">
+                  *Simulasi rujukan di atas merupakan{" "}
+                  <strong>pilihan alternatif (atau)</strong> untuk memberikan
+                  perbandingan konkret daya serap fisik, bukan akumulasi ketiga
+                  komponen sekaligus. Biaya mengacu pada standar teknis
+                  kementerian teknis terkait.
+                </small>
+              </div>
             </div>
           )}
           <Link className="text-link" href="/metodologi">
@@ -269,18 +337,18 @@ export function Profile({
                 <tbody>
                   {monthly.map((row) => (
                     <tr key={row.month}>
-                        <th>
-                          {months[row.month]} {row.year}
-                        </th>
-                        <td title={fullMoney(row.total.budget)}>
-                          {compactMoney(row.total.budget)}
-                        </td>
-                        <td title={fullMoney(row.total.realized)}>
-                          {compactMoney(row.total.realized)}
-                        </td>
-                        <td>{percent(monthlyAbsorption(row))}</td>
-                      </tr>
-                    ))}
+                      <th>
+                        {months[row.month]} {row.year}
+                      </th>
+                      <td title={fullMoney(row.total.budget)}>
+                        {compactMoney(row.total.budget)}
+                      </td>
+                      <td title={fullMoney(row.total.realized)}>
+                        {compactMoney(row.total.realized)}
+                      </td>
+                      <td>{percent(monthlyAbsorption(row))}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

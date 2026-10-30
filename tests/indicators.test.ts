@@ -8,6 +8,7 @@ import {
   threeYearTrend,
   belowThreeYearReference,
   generateInquiryBrief,
+  yearEndPersistence,
 } from "../src/lib/indicators";
 
 test("penanda cocok dengan enam snapshot dan menangani tahun berjalan", () => {
@@ -198,10 +199,16 @@ test("pengurutan penumpukan akhir tahun mengurutkan nilai share dari tertinggi k
   const flagFor = (code: string) =>
     yearEndModalFlag(
       dataset.snapshots.find(
-        (s) => s.regionCode === code && s.year === latestCompleteYear && s.month === 10,
+        (s) =>
+          s.regionCode === code &&
+          s.year === latestCompleteYear &&
+          s.month === 10,
       ),
       dataset.snapshots.find(
-        (s) => s.regionCode === code && s.year === latestCompleteYear && s.month === 12,
+        (s) =>
+          s.regionCode === code &&
+          s.year === latestCompleteYear &&
+          s.month === 12,
       ),
     );
 
@@ -234,9 +241,38 @@ test("generateInquiryBrief menghasilkan telaah kritis berbasis temuan data", () 
     completeYears,
   );
 
-  // Deli Serdang 2025 memiliki flag 73.41% (> 40%), sehingga harus masuk kategori akhir-tahun dengan badge kritis
+  // Deli Serdang 2025 memiliki flag 73.41% (> 40%), sehingga harus masuk kategori akhir-tahun dengan badge atensi
   const yearEndItem = brief.find((item) => item.category === "akhir-tahun");
   assert.ok(yearEndItem);
-  assert.equal(yearEndItem?.badge, "kritis");
+  assert.equal(yearEndItem?.badge, "atensi");
   assert.ok(yearEndItem?.questions.length > 0);
+  assert.ok(yearEndItem?.period.length > 0);
+});
+
+test("yearEndPersistence mendeteksi persistensi 2 tahun lonjakan akhir tahun", () => {
+  const f24Ditandai = {
+    regionCode: "0203",
+    year: 2024,
+    status: "ditandai" as const,
+    share: 70,
+  };
+  const f25Ditandai = {
+    regionCode: "0203",
+    year: 2025,
+    status: "ditandai" as const,
+    share: 74,
+  };
+  const fWajar = {
+    regionCode: "0215",
+    year: 2024,
+    status: "wajar" as const,
+    share: 20,
+  };
+
+  assert.equal(
+    yearEndPersistence(f24Ditandai, f25Ditandai).status,
+    "dua-tahun-beruntun",
+  );
+  assert.equal(yearEndPersistence(fWajar, f25Ditandai).status, "baru-2025");
+  assert.equal(yearEndPersistence(fWajar, fWajar).status, "konsisten-wajar");
 });

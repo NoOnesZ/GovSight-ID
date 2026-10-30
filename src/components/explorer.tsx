@@ -3,7 +3,11 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import Decimal from "decimal.js";
-import { yearEndModalFlag, formatFlagShare } from "@/lib/indicators";
+import {
+  yearEndModalFlag,
+  yearEndPersistence,
+  formatFlagShare,
+} from "@/lib/indicators";
 import {
   AlertTriangle,
   ArrowDown,
@@ -59,23 +63,46 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
   const latestCompleteYear = Math.max(
     ...dataset.snapshots.filter((s) => s.month === 12).map((s) => s.year),
   );
-  const flagMap = useMemo(() => {
-    const map = new Map<string, ReturnType<typeof yearEndModalFlag>>();
-    const octSnapshots = new Map<string, (typeof dataset.snapshots)[0]>();
-    const decSnapshots = new Map<string, (typeof dataset.snapshots)[0]>();
+  const { flagMap, rankMap, persistenceMap } = useMemo(() => {
+    const fMap = new Map<string, ReturnType<typeof yearEndModalFlag>>();
+    const fPriorMap = new Map<string, ReturnType<typeof yearEndModalFlag>>();
+    const pMap = new Map<string, ReturnType<typeof yearEndPersistence>>();
+    const rMap = new Map<string, number>();
+
+    const oct25 = new Map<string, (typeof dataset.snapshots)[0]>();
+    const dec25 = new Map<string, (typeof dataset.snapshots)[0]>();
+    const oct24 = new Map<string, (typeof dataset.snapshots)[0]>();
+    const dec24 = new Map<string, (typeof dataset.snapshots)[0]>();
+
     for (const s of dataset.snapshots) {
       if (s.year === latestCompleteYear) {
-        if (s.month === 10) octSnapshots.set(s.regionCode, s);
-        else if (s.month === 12) decSnapshots.set(s.regionCode, s);
+        if (s.month === 10) oct25.set(s.regionCode, s);
+        else if (s.month === 12) dec25.set(s.regionCode, s);
+      } else if (s.year === latestCompleteYear - 1) {
+        if (s.month === 10) oct24.set(s.regionCode, s);
+        else if (s.month === 12) dec24.set(s.regionCode, s);
       }
     }
+
     for (const r of regions) {
-      map.set(
-        r.code,
-        yearEndModalFlag(octSnapshots.get(r.code), decSnapshots.get(r.code)),
-      );
+      const f25 = yearEndModalFlag(oct25.get(r.code), dec25.get(r.code));
+      const f24 = yearEndModalFlag(oct24.get(r.code), dec24.get(r.code));
+      fMap.set(r.code, f25);
+      fPriorMap.set(r.code, f24);
+      pMap.set(r.code, yearEndPersistence(f24, f25));
     }
-    return map;
+
+    const sortedByShare = [...regions]
+      .map((r) => ({ code: r.code, share: fMap.get(r.code)?.share ?? -1 }))
+      .sort((a, b) => b.share - a.share);
+
+    sortedByShare.forEach((item, index) => {
+      if (item.share >= 0) {
+        rMap.set(item.code, index + 1);
+      }
+    });
+
+    return { flagMap: fMap, rankMap: rMap, persistenceMap: pMap };
   }, [dataset.snapshots, latestCompleteYear]);
 
   const flagFor = (code: string) =>
@@ -138,7 +165,12 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
     : null;
 
   // Hitung total realisasi per kategori untuk daerah yang sedang ditampilkan
-  const aggregateCategories = ["pegawai", "barang-jasa", "modal", "lainnya"].map((code) => {
+  const aggregateCategories = [
+    "pegawai",
+    "barang-jasa",
+    "modal",
+    "lainnya",
+  ].map((code) => {
     const labelMap: Record<string, string> = {
       pegawai: "Belanja Pegawai",
       "barang-jasa": "Barang & Jasa",
@@ -146,10 +178,14 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
       lainnya: "Belanja Lainnya",
     };
     const sumBudget = sumAmounts(
-      visible.map((s) => s.categories.find((c) => c.code === code)?.budget ?? null),
+      visible.map(
+        (s) => s.categories.find((c) => c.code === code)?.budget ?? null,
+      ),
     );
     const sumRealized = sumAmounts(
-      visible.map((s) => s.categories.find((c) => c.code === code)?.realized ?? null),
+      visible.map(
+        (s) => s.categories.find((c) => c.code === code)?.realized ?? null,
+      ),
     );
     const shareOfRealized = percentage(sumRealized, totalRealized);
     return {
@@ -509,11 +545,28 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                               </div>
                             </td>
                             <td>
-                              <strong className="table-rate">
-                                {percent(rate)}
-                              </strong>
+                              <div className="table-rate-wrap">
+                                <strong
+                                  className={`table-rate ${rate !== null && rate > 100 ? "rate-overflow" : ""}`}
+                                >
+                                  {percent(rate)}
+                                </strong>
+                                {rate !== null && rate > 100 && (
+                                  <span
+                                    className="overflow-tag"
+                                    title="Realisasi melampaui pagu tercatat di SIKD (umumnya karena APBD-P belum tersinkronisasi di pusat data)"
+                                  >
+                                    ⚠ &gt;100%
+                                  </span>
+                                )}
+                              </div>
                               <span className="mini-progress">
                                 <span
+                                  className={
+                                    rate !== null && rate > 100
+                                      ? "progress-overflow"
+                                      : ""
+                                  }
                                   style={{
                                     width: `${Math.min(rate ?? 0, 100)}%`,
                                   }}
@@ -521,9 +574,51 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                               </span>
                             </td>
                             <td>
-                              {flagFor(region.code).share === null
-                                ? "Belum tersedia"
-                                : `${flagFor(region.code).status === "ditandai" ? "⚠ Ditandai" : "✓ Di bawah ambang"} · ${formatFlagShare(flagFor(region.code).share)}`}
+                              {flagFor(region.code).share === null ? (
+                                <span className="muted">Belum tersedia</span>
+                              ) : (
+                                <div className="table-flag-cell">
+                                  <div className="table-flag-top">
+                                    <span className="table-flag-rank">
+                                      #{rankMap.get(region.code)} se-Sumut
+                                    </span>
+                                    <strong className="table-flag-share">
+                                      {formatFlagShare(
+                                        flagFor(region.code).share,
+                                      )}
+                                    </strong>
+                                  </div>
+                                  <div className="table-flag-bottom">
+                                    {persistenceMap.get(region.code)?.status ===
+                                      "dua-tahun-beruntun" && (
+                                      <span
+                                        className="persistence-tag recurring"
+                                        title="Lonjakan belanja modal >40% berulang di akhir tahun 2024 dan 2025"
+                                      >
+                                        2 Th Beruntun
+                                      </span>
+                                    )}
+                                    {persistenceMap.get(region.code)?.status ===
+                                      "baru-2025" && (
+                                      <span
+                                        className="persistence-tag new"
+                                        title="Baru pertama kali melampaui ambang 40% pada tahun 2025"
+                                      >
+                                        Baru 2025
+                                      </span>
+                                    )}
+                                    {persistenceMap.get(region.code)?.status ===
+                                      "konsisten-wajar" && (
+                                      <span
+                                        className="persistence-tag normal"
+                                        title="Konsisten di bawah ambang 40% pada tahun 2024 dan 2025"
+                                      >
+                                        Di Bawah Ambang
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                             </td>
                             <td>
                               <Link
@@ -560,7 +655,8 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 <div className="chart-highlights-section">
                   <div className="chart-highlights-header">
                     <h4>
-                      <TrendingUp size={15} /> Sorotan Data ({visible.length} Daerah)
+                      <TrendingUp size={15} /> Sorotan Data ({visible.length}{" "}
+                      Daerah)
                     </h4>
                     <span className="small-label">
                       {periodLabel(year, month)}
@@ -581,13 +677,17 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                           {percent(highestAbsorption.rate)}
                         </span>
                         <small>
-                          pagu {compactMoney(highestAbsorption.snapshot.total.budget)}
+                          pagu{" "}
+                          {compactMoney(
+                            highestAbsorption.snapshot.total.budget,
+                          )}
                         </small>
                       </Link>
                     )}
 
                     {lowestAbsorption &&
-                      lowestAbsorption.region.code !== highestAbsorption?.region.code && (
+                      lowestAbsorption.region.code !==
+                        highestAbsorption?.region.code && (
                         <Link
                           href={`/daerah/${lowestAbsorption.region.code}?${period}`}
                           className="highlight-card"
@@ -600,7 +700,10 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                             {percent(lowestAbsorption.rate)}
                           </span>
                           <small>
-                            pagu {compactMoney(lowestAbsorption.snapshot.total.budget)}
+                            pagu{" "}
+                            {compactMoney(
+                              lowestAbsorption.snapshot.total.budget,
+                            )}
                           </small>
                         </Link>
                       )}
@@ -617,7 +720,11 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                         <span className="highlight-value">
                           {formatFlagShare(highestYearEnd.flag.share)}
                         </span>
-                        <small>penumpukan 2 bulan akhir</small>
+                        <small>
+                          #{rankMap.get(highestYearEnd.region.code)} se-Sumut ·{" "}
+                          {persistenceMap.get(highestYearEnd.region.code)
+                            ?.label ?? "2 bulan akhir"}
+                        </small>
                       </Link>
                     )}
                   </div>

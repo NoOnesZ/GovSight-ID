@@ -32,7 +32,9 @@ for (const item of pagesToCapture) {
 // Test interactive click on quick filter pill
 await page.goto(base + "/");
 await page.waitForLoadState("networkidle");
-const flaggedPill = page.locator("button.pill-button:has-text('Ditandai Akhir Tahun')");
+const flaggedPill = page.locator(
+  "button.pill-button:has-text('Ditandai Akhir Tahun')",
+);
 if (await flaggedPill.isVisible()) {
   await flaggedPill.click();
   await page.waitForTimeout(500);

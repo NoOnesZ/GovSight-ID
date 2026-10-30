@@ -3194,7 +3194,6 @@ table {
   background: white;
 }
 
-
 /* --- Quick Filter Pills (Explorer) --- */
 .quick-filter-pills {
   display: flex;
@@ -3275,14 +3274,17 @@ table {
   background: #fafbfd;
   transition: border-color 0.15s ease;
 }
+.inquiry-card-atensi,
 .inquiry-card-kritis {
   background: #fffdfa;
   border-color: #f6dca4;
 }
+.inquiry-card-konteks,
 .inquiry-card-perhatian {
   background: #f9fbff;
   border-color: #d1e0ff;
 }
+.inquiry-card-normal,
 .inquiry-card-positif {
   background: #f7fcf9;
   border-color: #c9eedf;
@@ -3293,6 +3295,14 @@ table {
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
+}
+.inquiry-period-pill {
+  font-size: 10px;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
 }
 .inquiry-card-top h3 {
   margin: 0;
@@ -3311,14 +3321,17 @@ table {
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
+.badge-atensi,
 .badge-kritis {
   background: #fef3c7;
   color: #92400e;
 }
+.badge-konteks,
 .badge-perhatian {
   background: #e0edff;
   color: #1d4ed8;
 }
+.badge-normal,
 .badge-positif {
   background: #dcfce7;
   color: #15803d;
@@ -3540,7 +3553,6 @@ table {
   }
 }
 
-
 /* --- Impact Box (Profile) --- */
 .impact-box {
   margin: 14px 0 16px;
@@ -3586,7 +3598,6 @@ table {
   color: #94a3b8;
   line-height: 1.35;
 }
-
 
 /* --- Explorer Chart Highlights & Aggregate Composition --- */
 .chart-highlights-section {
@@ -3804,4 +3815,161 @@ table {
   .highlights-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Table Rate Overflow & Anomaly styles */
+.table-rate-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rate-overflow {
+  color: #b45309 !important;
+}
+.overflow-tag {
+  font-size: 9px;
+  font-weight: 700;
+  color: #b45309;
+  background: #fef3c7;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid #fde68a;
+  white-space: nowrap;
+}
+.progress-overflow {
+  background: repeating-linear-gradient(
+    45deg,
+    #d97706,
+    #d97706 6px,
+    #f59e0b 6px,
+    #f59e0b 12px
+  ) !important;
+}
+
+/* Table Flag Cell with Rank & Persistence */
+.table-flag-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.table-flag-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.table-flag-rank {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+}
+.table-flag-share {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.table-flag-bottom {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.persistence-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+.persistence-tag.recurring {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+.persistence-tag.new {
+  background: #e0edff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+.persistence-tag.normal {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+/* Profile Anomaly Notice */
+.rate-value-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.anomaly-notice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  color: #92400e;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.anomaly-notice strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: #78350f;
+}
+.anomaly-notice p {
+  margin: 0;
+  color: #92400e;
+}
+.anomaly-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #b45309;
+}
+
+/* Impact Box Refinements */
+.impact-box-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.impact-mode-pill {
+  font-size: 10px;
+  font-weight: 600;
+  color: #1e40af;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+.impact-opt-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  width: fit-content;
+}
+.impact-item small {
+  display: block;
+  font-size: 9px;
+  color: #94a3b8;
+  margin-top: 3px;
+  line-height: 1.3;
+}
+.impact-disclaimer-block {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0;
 }

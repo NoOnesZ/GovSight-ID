@@ -75,7 +75,9 @@ export function InquiryToolkit({
     ];
 
     items.forEach((item, idx) => {
-      textLines.push(`[${idx + 1}] ${item.title.toUpperCase()}`);
+      textLines.push(
+        `[${idx + 1}] ${item.title.toUpperCase()} (${item.period})`,
+      );
       textLines.push(`Temuan Data: ${item.observation}`);
       textLines.push(`Rekomendasi Pertanyaan:`);
       item.questions.forEach((q, qIdx) => {
@@ -177,38 +179,39 @@ export function InquiryToolkit({
 
       <div className="inquiry-grid">
         {items.map((item) => {
-          const isKritis = item.badge === "kritis";
-          const isPerhatian = item.badge === "perhatian";
+          const isAtensi = item.badge === "atensi";
+          const isKonteks = item.badge === "konteks";
           return (
             <div
               key={item.id}
               className={`inquiry-card ${
-                isKritis
-                  ? "inquiry-card-kritis"
-                  : isPerhatian
-                    ? "inquiry-card-perhatian"
-                    : "inquiry-card-positif"
+                isAtensi
+                  ? "inquiry-card-atensi"
+                  : isKonteks
+                    ? "inquiry-card-konteks"
+                    : "inquiry-card-normal"
               }`}
             >
               <div className="inquiry-card-top">
                 <span
                   className={`inquiry-badge ${
-                    isKritis
-                      ? "badge-kritis"
-                      : isPerhatian
-                        ? "badge-perhatian"
-                        : "badge-positif"
+                    isAtensi
+                      ? "badge-atensi"
+                      : isKonteks
+                        ? "badge-konteks"
+                        : "badge-normal"
                   }`}
                 >
-                  {isKritis ? (
+                  {isAtensi ? (
                     <AlertTriangle size={13} />
-                  ) : isPerhatian ? (
+                  ) : isKonteks ? (
                     <Info size={13} />
                   ) : (
                     <CheckCircle2 size={13} />
                   )}
                   {item.badgeLabel}
                 </span>
+                <span className="inquiry-period-pill">{item.period}</span>
                 <h3>{item.title}</h3>
               </div>
               <p className="inquiry-observation">{item.observation}</p>
@@ -233,21 +236,27 @@ export function InquiryToolkit({
           <span className="step-num">1</span>
           <div>
             <strong>Pelajari Data</strong>
-            <p>Periksa kembali angka realisasi dan tautan sumber resmi di bawah.</p>
+            <p>
+              Periksa kembali angka realisasi dan tautan sumber resmi di bawah.
+            </p>
           </div>
         </div>
         <div className="inquiry-guide-step">
           <span className="step-num">2</span>
           <div>
             <strong>Bawa ke Forum Resmi</strong>
-            <p>Gunakan pertanyaan di atas saat Musrenbang atau RDP Komisi DPRD.</p>
+            <p>
+              Gunakan pertanyaan di atas saat Musrenbang atau RDP Komisi DPRD.
+            </p>
           </div>
         </div>
         <div className="inquiry-guide-step">
           <span className="step-num">3</span>
           <div>
             <strong>Ajukan KIP / SP4N-LAPOR!</strong>
-            <p>Minta rincian proyek melalui PPID bila data rinci belum terbuka.</p>
+            <p>
+              Minta rincian proyek melalui PPID bila data rinci belum terbuka.
+            </p>
           </div>
         </div>
       </div>

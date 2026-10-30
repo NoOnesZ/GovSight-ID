@@ -19,14 +19,18 @@ Buka http://127.0.0.1:3100 di browser. Jika port sedang dipakai, ganti angka por
 
 ## Yang sudah ada
 
-- Beranda/jelajah dengan pencarian, filter tahun, periode, dan jenis daerah.
-- Profil sepuluh pemda Sumatera Utara, dengan komposisi dan riwayat pada bulan yang sama.
-- Perbandingan dua atau tiga daerah. Perbandingan kota dan kabupaten diberi penjelasan konteks.
-- Fitur DSS: penanda porsi realisasi belanja modal pada November–Desember dengan ambang metodologi 40% (mendeteksi lonjakan percepatan anggaran >2,4× dari laju normal 16,67% pada dua bulan terakhir), pertanyaan kritis lanjutan untuk publik/DPRD, dan tautan ke berkas sumber asli Oktober dan Desember. Ambang tersebut bukan batas hukum; data yang belum tersedia atau tidak konsisten tidak dihitung.
-- Perbandingan penanda antar daerah, porsi pagu dan realisasi modal serta pegawai, grafik serapan bulanan, dan pola tiga tahun dengan acuan yang dapat diisi pengguna.
-- Metodologi, tautan sumber, berkas asli XML, dan unduhan CSV sesuai filter.
-- URL menyimpan filter dan pilihan daerah; tombol bagikan menyalin URL.
-- Tampilan desktop, tablet, dan HP; navigasi keyboard, fokus terlihat, reduced motion, serta tabel pendamping grafik.
+- Beranda/jelajah dengan pencarian, filter tahun, periode, jenis daerah, Quick Perspective Pills, dan ringkasan agregat fiskal kolektif vertikal.
+- Profil sepuluh pemda Sumatera Utara, dengan rincian belanja, riwayat pada bulan pelaporan yang sama, serta **Simulasi Daya Beli Fiskal Rujukan (Pilihan Alternatif / Atau)** yang mengacu standar teknis kementerian (HSPK Bina Marga Kementerian PUPR, Standar Prototipe Pustu Kemenkes RI, dan Menu Rujukan DAK Fisik Kemendikbudristek).
+- **Transparansi Anomali Data Resmi (Realisasi >100%):** Mendeteksi dan menandai daerah dengan realisasi melebihi pagu tercatat di SIKD DJPK (seperti Kab. Langkat) dengan badge `⚠ Melampaui Pagu Tercatat` serta penjelasan edukatif keterlambatan sinkronisasi APBD-P di sistem pusat data DJPK.
+- **Decision Support System (DSS) & Lembar Advokasi Warga:**
+  - Penanda porsi realisasi belanja modal pada November–Desember dengan ambang metodologi 40% (mendeteksi akselerasi pencairan >2,4× dari laju normal 16,67% pada dua bulan akhir).
+  - **Peringkat Se-Sumatera Utara (#1 s.d. #10)** dan **Analisis Persistensi 2 Tahun (2024 & 2025)** untuk membedakan pola berulang (`2 Th Beruntun`) dari lonjakan baru (`Baru 2025`) atau daerah tertib (`Di Bawah Ambang`).
+  - **Rujukan Hukum Kepatuhan Fiskal:** Mengacu langsung ke **UU No. 1 Tahun 2022 (HKPD)** Pasal 146 ayat (1) (alokasi belanja pegawai ≤ 30%) dan Pasal 147 ayat (1) (belanja infrastruktur pelayanan publik ≥ 40%).
+  - **Citizen Advocacy Inquiry Toolkit:** Menghasilkan telaah kritis dengan nada objektif berbasis temuan data, lengkap dengan fitur salin pertanyaan, bagikan ke WhatsApp, serta cetak lembar advokasi siap bawa ke RDP DPRD / kanal SP4N-LAPOR! / PPID.
+- Perbandingan dua atau tiga daerah dengan smart peer picker dan penjelasan konteks kota vs kabupaten.
+- Metodologi transparan, alur siklus APBD (Perencanaan, Penetapan, Pelaksanaan, Pertanggungjawaban), 3 kanal advokasi resmi, tautan sumber asli XML, serta unduhan CSV instan.
+- **Keamanan & Otomasi:** HTTP Security Headers produksi (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`), workflow CI GitHub Actions, dan workflow pembaruan mingguan otomatis (`.github/workflows/data-refresh.yml`).
+- Tampilan responsif di seluruh perangkat (360px mobile, 768px tablet, 1280px desktop), aksesibilitas keyboard lengkap, reduced motion, dan zero horizontal overflow.
 
 ## Data dan batas prototipe
 
@@ -87,7 +91,7 @@ npx playwright install chromium
 npm run test:browser
 ```
 
-Hasil terakhir: 19 tes data/API lulus, TypeScript dan build lulus, serta keempat halaman dan interaksi utama lulus pemeriksaan browser di lebar 360, 768, dan 1280 piksel. Screenshot uji terbaru ada di `test-results/previews/` dan catatan lengkap ada di `docs/IMPLEMENTATION.md`.
+Hasil terakhir: 23 tes data/API lulus, TypeScript dan build lulus, serta keempat halaman dan interaksi utama lulus pemeriksaan browser di lebar 360, 768, dan 1280 piksel. Screenshot uji terbaru ada di `test-results/previews/` dan catatan lengkap ada di `docs/IMPLEMENTATION.md`.
 
 Untuk menjalankan build production (juga dipakai di hosting):
 

@@ -1,0 +1,44 @@
+name: Scheduled Data Refresh
+
+on:
+  schedule:
+    # Run every Tuesday at 02:00 WIB (Monday 19:00 UTC)
+    - cron: "0 19 * * 1"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force refresh all snapshots"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch and verify latest DJPK data
+        run: npm run data:refresh
+
+      - name: Run integrity tests on newly fetched data
+        run: npm test
+
+      - name: Commit & push if dataset updated
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(data): automated weekly sync with DJPK Kemenkeu [skip ci]"
+          file_pattern: "src/data/* src/lib/dataset.ts"

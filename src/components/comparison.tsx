@@ -6,7 +6,11 @@ import type { Dataset } from "@/lib/types";
 import { months, regions } from "@/lib/regions";
 import { compactMoney, fullMoney, percent } from "@/lib/format";
 import { percentage } from "@/lib/data-core";
-import { yearEndModalFlag, formatFlagShare, YEAR_END_THRESHOLD } from "@/lib/indicators";
+import {
+  yearEndModalFlag,
+  formatFlagShare,
+  YEAR_END_THRESHOLD,
+} from "@/lib/indicators";
 import {
   DownloadButton,
   EmptyState,
@@ -23,9 +27,7 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
   const { year, month, params, update, period, invalidPeriod } = useFilters();
   if (invalidPeriod) return <UnavailablePeriod />;
   const completeYear = Math.max(
-    ...dataset.snapshots
-      .filter((s) => s.month === 12)
-      .map((s) => s.year),
+    ...dataset.snapshots.filter((s) => s.month === 12).map((s) => s.year),
   );
   const requested = params.get("daerah");
   const codes =

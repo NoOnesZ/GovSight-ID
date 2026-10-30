@@ -114,8 +114,8 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           <strong>× 100%</strong>
         </div>
         <p>
-          Hasil perhitungan dibulatkan ke dua desimal sebelum dibandingkan dengan
-          ambang batas <strong>{YEAR_END_THRESHOLD}%</strong>.
+          Hasil perhitungan dibulatkan ke dua desimal sebelum dibandingkan
+          dengan ambang batas <strong>{YEAR_END_THRESHOLD}%</strong>.
         </p>
         <div className="method-explanation">
           <h3>Mengapa ambang {YEAR_END_THRESHOLD}% dipilih?</h3>
@@ -124,18 +124,20 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
             bulan, pengeluaran dua bulan terakhir (November–Desember) sewajarnya
             hanya menyerap sekitar <strong>16,67%</strong> (2/12) dari total
             tahunan. Ambang <strong>{YEAR_END_THRESHOLD}%</strong> menandai
-            terjadinya lonjakan percepatan anggaran lebih dari 2,4 kali lipat dari
-            laju normal hanya dalam rentang waktu 61 hari terakhir.
+            terjadinya lonjakan percepatan anggaran lebih dari 2,4 kali lipat
+            dari laju normal hanya dalam rentang waktu 61 hari terakhir.
           </p>
-          <h3>Mengapa penanda ini penting jika sebagian besar daerah terindikasi?</h3>
+          <h3>
+            Mengapa penanda ini penting jika sebagian besar daerah terindikasi?
+          </h3>
           <p>
             Dalam data APBD sepuluh daerah Sumatera Utara yang dianalisis,
             sebanyak <strong>14 dari 20 tahun anggaran (70%)</strong> melampaui
             ambang {YEAR_END_THRESHOLD}%, bahkan Kabupaten Deli Serdang mencapai
-            73,41% pada tahun 2025. Fakta ini menegaskan bahwa penumpukan belanja
-            modal di akhir tahun bukanlah anomali tunggal, melainkan sebuah{" "}
-            <em>pola struktural sistemik</em> ("belanja kejar tayang") dalam tata
-            kelola anggaran daerah.
+            73,41% pada tahun 2025. Fakta ini menegaskan bahwa penumpukan
+            belanja modal di akhir tahun bukanlah anomali tunggal, melainkan
+            sebuah <em>pola struktural sistemik</em> ("belanja kejar tayang")
+            dalam tata kelola anggaran daerah.
           </p>
           <p>
             Status penanda: <em>Perlu ditanyakan (ditandai)</em>,{" "}
@@ -242,8 +244,8 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
             <h3>Audit & Pertanggungjawaban</h3>
             <p>
               Pemeriksaan Laporan Keuangan Pemerintah Daerah (LKPD) oleh BPK RI
-              dan evaluasi LKPJ di DPRD. Warga dapat menguji kesesuaian fisik aset
-              di lapangan.
+              dan evaluasi LKPJ di DPRD. Warga dapat menguji kesesuaian fisik
+              aset di lapangan.
             </p>
           </div>
         </div>

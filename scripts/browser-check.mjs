@@ -100,7 +100,11 @@ try {
   assert.equal(await page.locator("#riwayat-tahunan tbody tr").count(), 3);
   await page.getByLabel("Tahun anggaran").selectOption("2026");
   await page.waitForURL(/tahun=2026/);
-  await page.waitForFunction(() => document.querySelector('select[aria-label="Bulan pelaporan"]')?.value === "10");
+  await page.waitForFunction(
+    () =>
+      document.querySelector('select[aria-label="Bulan pelaporan"]')?.value ===
+      "10",
+  );
   await page.waitForFunction(
     () => document.querySelectorAll("#riwayat-tahunan tbody tr").length === 3,
   );
@@ -129,9 +133,16 @@ try {
   console.log("PASS comparison selection and mixed-region context");
 
   await page.goto(base + "/daerah/0203?tahun=2025&bulan=12");
-  await page.getByText(/73,41%/).first().waitFor();
-  assert.ok(await page.getByRole("link", { name: "Unduh Oktober" }).count() > 0);
-  assert.ok(await page.getByRole("link", { name: "Unduh Desember" }).count() > 0);
+  await page
+    .getByText(/73,41%/)
+    .first()
+    .waitFor();
+  assert.ok(
+    (await page.getByRole("link", { name: "Unduh Oktober" }).count()) > 0,
+  );
+  assert.ok(
+    (await page.getByRole("link", { name: "Unduh Desember" }).count()) > 0,
+  );
   console.log("PASS Deli Serdang flag and original sources");
 
   await page.goto(base + "/metodologi");
