@@ -98,50 +98,63 @@ export function yearEndModalFlag(
 
 export type PersistenceStatus =
   | "dua-tahun-beruntun"
+  | "baru-tahun-ini"
   | "baru-2025"
+  | "hanya-tahun-lalu"
   | "baru-2024"
   | "konsisten-wajar"
   | "belum-lengkap";
 
 export function yearEndPersistence(
-  flag2024: ReturnType<typeof yearEndModalFlag>,
-  flag2025: ReturnType<typeof yearEndModalFlag>,
+  priorFlag?: ReturnType<typeof yearEndModalFlag>,
+  currentFlag?: ReturnType<typeof yearEndModalFlag>,
 ): {
   status: PersistenceStatus;
   label: string;
 } {
-  const f24 = flag2024.status === "ditandai";
-  const f25 = flag2025.status === "ditandai";
-  const w24 = flag2024.status === "wajar";
-  const w25 = flag2025.status === "wajar";
+  if (!priorFlag || !currentFlag) {
+    return {
+      status: "belum-lengkap",
+      label: "Data Belum Lengkap",
+    };
+  }
 
-  if (f24 && f25) {
+  const validPrior =
+    priorFlag.status === "ditandai" || priorFlag.status === "wajar";
+  const validCurrent =
+    currentFlag.status === "ditandai" || currentFlag.status === "wajar";
+
+  if (!validPrior || !validCurrent) {
+    return {
+      status: "belum-lengkap",
+      label: "Data Belum Lengkap",
+    };
+  }
+
+  const fPrior = priorFlag.status === "ditandai";
+  const fCurrent = currentFlag.status === "ditandai";
+
+  if (fPrior && fCurrent) {
     return {
       status: "dua-tahun-beruntun",
       label: "Pola 2 Tahun Berurutan",
     };
   }
-  if (!f24 && f25) {
+  if (!fPrior && fCurrent) {
     return {
       status: "baru-2025",
-      label: "Baru Terindikasi di 2025",
+      label: `Baru Terindikasi di ${currentFlag.year}`,
     };
   }
-  if (f24 && !f25) {
+  if (fPrior && !fCurrent) {
     return {
       status: "baru-2024",
-      label: "Terindikasi di 2024 Saja",
-    };
-  }
-  if (w24 && w25) {
-    return {
-      status: "konsisten-wajar",
-      label: "Konsisten di Bawah Ambang",
+      label: `Terindikasi di ${priorFlag.year} Saja`,
     };
   }
   return {
-    status: "belum-lengkap",
-    label: "Data Belum Lengkap",
+    status: "konsisten-wajar",
+    label: "Konsisten di Bawah Ambang",
   };
 }
 
@@ -196,43 +209,7 @@ export function generateInquiryBrief(
     });
   }
 
-  // 2. Keseimbangan Belanja Pegawai vs Belanja Modal (Berakar pada UU HKPD No. 1/2022)
-  const pegawai = categoryShares(currentSnapshot, "pegawai");
-  const modal = categoryShares(currentSnapshot, "modal");
-  if (pegawai.budget !== null && modal.budget !== null) {
-    if (pegawai.budget > 30) {
-      items.push({
-        id: "alokasi-pegawai",
-        category: "alokasi",
-        period: `Pagu APBD ${currentSnapshot.year}`,
-        title: `Porsi Belanja Pegawai ${formatFlagShare(pegawai.budget)} (Konteks UU HKPD Pasal 146)`,
-        badge: "konteks",
-        badgeLabel: "Konteks Regulasi",
-        observation: `Alokasi belanja pegawai menyerap ${formatFlagShare(pegawai.budget)} dari total pagu belanja daerah. Sebagai acuan regulasi, UU No. 1 Tahun 2022 (HKPD) Pasal 146 ayat (1) mengarahkan batas maksimal belanja pegawai sebesar 30% dari APBD (dengan masa transisi 5 tahun hingga 2027).`,
-        questions: [
-          `Bagaimana rencana strategis pemerintah daerah dalam penyesuaian bertahap porsi belanja pegawai menuju target maksimal 30% sesuai amanat UU HKPD?`,
-          `Upaya digitalisasi birokrasi dan penyederhanaan proses apa yang dirancang guna memperluas ruang fiskal untuk belanja publik?`,
-        ],
-      });
-    }
-
-    if (modal.budget !== null && modal.budget < 20) {
-      items.push({
-        id: "alokasi-modal",
-        category: "alokasi",
-        period: `Pagu APBD ${currentSnapshot.year}`,
-        title: `Porsi Belanja Modal ${formatFlagShare(modal.budget)} (Konteks UU HKPD Pasal 147)`,
-        badge: "konteks",
-        badgeLabel: "Kapasitas Fiskal",
-        observation: `Alokasi belanja modal untuk aset infrastruktur publik tercatat ${formatFlagShare(modal.budget)} dari pagu APBD. UU HKPD Pasal 147 ayat (1) mengarahkan pemda bertahap mengalokasikan minimal 40% belanja infrastruktur pelayanan publik.`,
-        questions: [
-          `Langkah apa yang dipersiapkan daerah untuk meningkatkan porsi investasi modal fisik bagi pemeliharaan dan penambahan fasilitas dasar warga?`,
-        ],
-      });
-    }
-  }
-
-  // 3. Tren Investasi Modal 3 Tahun Berturut-turut
+  // 2. Tren Investasi Modal 3 Tahun Berturut-turut
   if (completeYearsSnapshots && completeYearsSnapshots.length === 3) {
     const trend = threeYearTrend(completeYearsSnapshots);
     if (trend === "menurun") {

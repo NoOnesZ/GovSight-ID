@@ -20,35 +20,35 @@ Buka http://127.0.0.1:3100 di browser. Jika port sedang dipakai, ganti angka por
 ## Yang sudah ada
 
 - Beranda/jelajah dengan pencarian, filter tahun, periode, jenis daerah, Quick Perspective Pills, dan ringkasan agregat fiskal kolektif vertikal.
-- Profil sepuluh pemda Sumatera Utara, dengan rincian belanja, riwayat pada bulan pelaporan yang sama, serta **Simulasi Daya Beli Fiskal Rujukan (Pilihan Alternatif / Atau)** yang mengacu standar teknis kementerian (HSPK Bina Marga Kementerian PUPR, Standar Prototipe Pustu Kemenkes RI, dan Menu Rujukan DAK Fisik Kemendikbudristek).
-- **Transparansi Anomali Data Resmi (Realisasi >100%):** Mendeteksi dan menandai daerah dengan realisasi melebihi pagu tercatat di SIKD DJPK (seperti Kab. Langkat) dengan badge `⚠ Melampaui Pagu Tercatat` serta penjelasan edukatif keterlambatan sinkronisasi APBD-P di sistem pusat data DJPK.
+- Profil sepuluh pemda Sumatera Utara, dengan rincian belanja, riwayat pada bulan pelaporan yang sama, serta **Simulasi Kapasitas Belanja Modal (Asumsi Rujukan Model Tim)** yang menyajikan perbandingan rujukan (_pilihan salah satu / atau_, bukan kumulatif) dengan standar kebinamargaan, prototipe Pustu Kemenkes, dan DAK Fisik pendidikan dasar.
+- **Transparansi Anomali Data Resmi (Realisasi >100%):** Mendeteksi dan menandai daerah dengan realisasi melebihi pagu tercatat di SIKD DJPK (seperti Kab. Langkat) dengan badge `⚠ Melampaui Pagu Tercatat` serta `Catatan GovSight ID` mengenai kemungkinan keterlambatan sinkronisasi data APBD-P di basis data pusat DJPK.
 - **Decision Support System (DSS) & Lembar Advokasi Warga:**
   - Penanda porsi realisasi belanja modal pada November–Desember dengan ambang metodologi 40% (mendeteksi akselerasi pencairan >2,4× dari laju normal 16,67% pada dua bulan akhir).
-  - **Peringkat Se-Sumatera Utara (#1 s.d. #10)** dan **Analisis Persistensi 2 Tahun (2024 & 2025)** untuk membedakan pola berulang (`2 Th Beruntun`) dari lonjakan baru (`Baru 2025`) atau daerah tertib (`Di Bawah Ambang`).
-  - **Rujukan Hukum Kepatuhan Fiskal:** Mengacu langsung ke **UU No. 1 Tahun 2022 (HKPD)** Pasal 146 ayat (1) (alokasi belanja pegawai ≤ 30%) dan Pasal 147 ayat (1) (belanja infrastruktur pelayanan publik ≥ 40%).
-  - **Citizen Advocacy Inquiry Toolkit:** Menghasilkan telaah kritis dengan nada objektif berbasis temuan data, lengkap dengan fitur salin pertanyaan, bagikan ke WhatsApp, serta cetak lembar advokasi siap bawa ke RDP DPRD / kanal SP4N-LAPOR! / PPID.
+  - **Peringkat di Antara 10 Daerah Pantauan (#1 s.d. #10)** dan **Analisis Persistensi 2 Tahun** untuk membedakan pola berulang (`2 Th Beruntun`) dari lonjakan baru (`Baru [Tahun]`) atau daerah tertib (`Di Bawah Ambang`).
+  - **Konteks Komposisi Anggaran & Regulasi:** Menjelaskan proporsi belanja berlandaskan rujukan **UU No. 1 Tahun 2022 (HKPD)** Pasal 146 (masa transisi belanja pegawai ≤ 30% hingga 2027 serta komponen yang dikecualikan seperti tunjangan guru TKD dan bagi hasil desa) dan Pasal 147 (mandat fungsional infrastruktur publik ≥ 40% yang berbeda dari belanja modal aset fisik).
+  - **Citizen Advocacy Inquiry Toolkit:** Menghasilkan telaah kritis dengan nada objektif berbasis temuan data, lengkap dengan fitur salin pertanyaan, bagikan ke WhatsApp, serta cetak lembar advokasi siap bawa ke forum DPRD / kanal SP4N-LAPOR! / PPID.
 - Perbandingan dua atau tiga daerah dengan smart peer picker dan penjelasan konteks kota vs kabupaten.
-- Metodologi transparan, alur siklus APBD (Perencanaan, Penetapan, Pelaksanaan, Pertanggungjawaban), 3 kanal advokasi resmi, tautan sumber asli XML, serta unduhan CSV instan.
-- **Keamanan & Otomasi:** HTTP Security Headers produksi (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`), workflow CI GitHub Actions, dan workflow pembaruan mingguan otomatis (`.github/workflows/data-refresh.yml`).
+- Metodologi transparan, kutipan pasal regulasi HKPD dan batas penafsirannya, alur siklus APBD (Perencanaan, Penetapan, Pelaksanaan, Pertanggungjawaban), 3 kanal advokasi resmi, tautan sumber asli XML, serta unduhan CSV instan.
+- **Keamanan & Integritas:** HTTP Security Headers produksi (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`), workflow CI GitHub Actions, dan draf workflow pembaruan data berkala via Pull Request (`.github/workflows/data-refresh.yml`).
 - Tampilan responsif di seluruh perangkat (360px mobile, 768px tablet, 1280px desktop), aksesibilitas keyboard lengkap, reduced motion, dan zero horizontal overflow.
 
 ## Data dan batas prototipe
 
 Sumber: https://djpk.kemenkeu.go.id/portal/data/apbd
 
-Snapshot mencakup Desember 2023, Januari–Desember 2024 dan 2025, serta Januari–Oktober 2026 untuk sepuluh pemda. Tanggal pemeriksaan dicatat otomatis di `data/snapshots.json`; tanggal penerimaan SIKD berasal dari keterangan portal saat pemeriksaan dan bukan tanggal terbit masing-masing angka.
+Snapshot mencakup Desember 2023, Januari–Desember 2024 dan 2025, serta Januari–Oktober 2026 untuk sepuluh pemda pantauan. Tanggal pemeriksaan dicatat otomatis di `data/snapshots.json`; tanggal penerimaan SIKD berasal dari keterangan portal saat pemeriksaan dan bukan tanggal terbit masing-masing angka.
 
 Ekspor DJPK bernama `csv_apbd` tetapi isi yang diperiksa berupa Excel XML. Berkas asli tersimpan di `public/data/raw/` dan SHA-256 dicatat per snapshot. Parser mempertahankan nilai uang sebagai string desimal, mengabaikan duplikasi kategori identik, dan menolak konflik serta total kategori yang tidak cocok dengan sumber. Data yang tidak tersedia memakai `null`, bukan nol.
 
-Refresh seluruh snapshot secara manual:
+Penyegaran seluruh snapshot dijalankan melalui skrip audit manual:
 
 ```bash
 npm run data:refresh
 ```
 
-Daerah ditambahkan di `src/lib/regions.ts`, periode di `src/lib/periods.ts`. Data lama dan berkas asli baru ditulis setelah seluruh batch lolos pemeriksaan. Jangan menjalankan dua proses refresh bersamaan. Pada production nanti, refresh memerlukan deployment ulang karena prototipe membundel data pada build.
+Daerah ditambahkan di `src/lib/regions.ts`, periode di `src/lib/periods.ts`. Data lama dan berkas asli baru ditulis setelah seluruh batch lolos pemeriksaan. Pada tahap produksi, pembaruan data berkala difasilitasi oleh draf GitHub Actions workflow melalui Pull Request agar tetap tervalidasi oleh rangkaian uji CI.
 
-**Belum terhubung ke Neon dan belum di-deploy ke Vercel.** Tidak ada pembaruan real-time atau penjadwalan harian. Tidak ada penilaian mutu layanan, skor pemda, atau deteksi korupsi. Integrasi database eksternal dan otomasi sinkronisasi harian menjadi tahap berikutnya (cakupan 10 daerah dengan 350 snapshot telah diimplementasikan).
+**Cakupan dan Batasan Analisis:** Peringkat yang disajikan adalah perbandingan di antara 10 daerah pantauan Sumatera Utara, bukan generalisasi atas seluruh 33 kabupaten/kota. Porsi belanja modal dan pegawai disajikan sebagai gambaran komposisi fiskal, bukan vonis pelanggaran hukum atau penilaian mutu layanan. Angka simulasi kapasitas modal merupakan estimasi model rujukan tim, bukan angka realisasi riil kontrak dinas terkait.
 
 Porsi modal dan pegawai merupakan deskripsi komposisi, bukan pemeriksaan kepatuhan hukum. Garis serapan merata adalah ilustrasi, dan acuan tiga tahun yang diisi pengguna bukan standar hukum. Pembandingan perlu mempertimbangkan konteks daerah dan perubahan pagu.
 

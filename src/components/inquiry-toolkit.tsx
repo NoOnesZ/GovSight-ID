@@ -192,39 +192,49 @@ export function InquiryToolkit({
                     : "inquiry-card-normal"
               }`}
             >
-              <div className="inquiry-card-top">
-                <span
-                  className={`inquiry-badge ${
-                    isAtensi
-                      ? "badge-atensi"
-                      : isKonteks
-                        ? "badge-konteks"
-                        : "badge-normal"
-                  }`}
-                >
-                  {isAtensi ? (
-                    <AlertTriangle size={13} />
-                  ) : isKonteks ? (
-                    <Info size={13} />
-                  ) : (
-                    <CheckCircle2 size={13} />
-                  )}
-                  {item.badgeLabel}
-                </span>
-                <span className="inquiry-period-pill">{item.period}</span>
-                <h3>{item.title}</h3>
+              <div className="inquiry-card-header">
+                <div className="inquiry-card-meta">
+                  <span
+                    className={`inquiry-badge ${
+                      isAtensi
+                        ? "badge-atensi"
+                        : isKonteks
+                          ? "badge-konteks"
+                          : "badge-normal"
+                    }`}
+                  >
+                    {isAtensi ? (
+                      <AlertTriangle size={12} />
+                    ) : isKonteks ? (
+                      <Info size={12} />
+                    ) : (
+                      <CheckCircle2 size={12} />
+                    )}
+                    {item.badgeLabel}
+                  </span>
+                  <span className="inquiry-period-pill">{item.period}</span>
+                </div>
+                <h3 className="inquiry-card-title">{item.title}</h3>
               </div>
-              <p className="inquiry-observation">{item.observation}</p>
+
+              <div className="inquiry-observation">
+                <span className="observation-tag">Temuan Data</span>
+                <p>{item.observation}</p>
+              </div>
 
               <div className="inquiry-questions-box">
-                <h4>
-                  <FileQuestion size={15} /> Pertanyaan yang Disarankan:
-                </h4>
-                <ol>
+                <div className="questions-box-header">
+                  <FileQuestion size={14} />
+                  <span>Rekomendasi Pertanyaan untuk Pengawasan / RDP:</span>
+                </div>
+                <div className="questions-list">
                   {item.questions.map((q, idx) => (
-                    <li key={idx}>{q}</li>
+                    <div key={idx} className="question-item">
+                      <span className="question-num">{idx + 1}</span>
+                      <p className="question-text">{q}</p>
+                    </div>
                   ))}
-                </ol>
+                </div>
               </div>
             </div>
           );
@@ -232,31 +242,37 @@ export function InquiryToolkit({
       </div>
 
       <div className="inquiry-footer">
-        <div className="inquiry-guide-step">
-          <span className="step-num">1</span>
-          <div>
-            <strong>Pelajari Data</strong>
-            <p>
-              Periksa kembali angka realisasi dan tautan sumber resmi di bawah.
-            </p>
-          </div>
+        <div className="inquiry-footer-title">
+          <Sparkles size={14} />
+          <span>Panduan Alur Advokasi Warga Berdaya:</span>
         </div>
-        <div className="inquiry-guide-step">
-          <span className="step-num">2</span>
-          <div>
-            <strong>Bawa ke Forum Resmi</strong>
-            <p>
-              Gunakan pertanyaan di atas saat Musrenbang atau RDP Komisi DPRD.
-            </p>
+        <div className="inquiry-steps-grid">
+          <div className="inquiry-guide-step">
+            <span className="step-num">1</span>
+            <div>
+              <strong>Pelajari Data</strong>
+              <p>
+                Periksa kembali angka realisasi dan tautan sumber resmi di bawah.
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="inquiry-guide-step">
-          <span className="step-num">3</span>
-          <div>
-            <strong>Ajukan KIP / SP4N-LAPOR!</strong>
-            <p>
-              Minta rincian proyek melalui PPID bila data rinci belum terbuka.
-            </p>
+          <div className="inquiry-guide-step">
+            <span className="step-num">2</span>
+            <div>
+              <strong>Bawa ke Forum Resmi</strong>
+              <p>
+                Gunakan pertanyaan di atas saat Musrenbang atau RDP Komisi DPRD.
+              </p>
+            </div>
+          </div>
+          <div className="inquiry-guide-step">
+            <span className="step-num">3</span>
+            <div>
+              <strong>Ajukan KIP / SP4N-LAPOR!</strong>
+              <p>
+                Minta rincian proyek melalui PPID bila data rinci belum terbuka.
+              </p>
+            </div>
           </div>
         </div>
       </div>

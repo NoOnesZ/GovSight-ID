@@ -196,6 +196,67 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </div>
         </dl>
       </section>
+      <section className="panel definitions-panel" style={{ marginTop: 24 }}>
+        <h2>Rujukan Regulasi & Batas Penafsiran Hukum</h2>
+        <p style={{ fontSize: 13, color: "#64748b", marginBottom: 16 }}>
+          GovSight ID menyajikan rujukan hukum nasional untuk membantu pemahaman
+          konteks kebijakan anggaran daerah, bukan untuk memvonis pelanggaran
+          hukum.
+        </p>
+        <dl>
+          <div>
+            <dt>UU No. 1/2022 (HKPD) Pasal 146 ayat (1) — Belanja Pegawai</dt>
+            <dd>
+              <em>
+                "Daerah wajib mengalokasikan belanja pegawai di luar tunjangan
+                guru yang dialokasikan melalui TKD paling tinggi 30% (tiga puluh
+                persen) dari total belanja APBD."
+              </em>
+              <br />
+              <strong
+                style={{ display: "block", marginTop: 6, color: "#334155" }}
+              >
+                Penerapan & Pengecualian Resmi:
+              </strong>
+              Ketentuan ini memiliki masa transisi penyesuaian 5 tahun sejak
+              diundangkan (berlaku penuh pada 2027). Data DJPK yang ditampilkan
+              pada GovSight ID merupakan pagu dan realisasi belanja murni dari
+              portal SIKD yang belum dikurangi komponen pengecualian resmi
+              (seperti tunjangan guru TKD dan bagi hasil desa). Oleh karenanya,
+              persentase belanja pegawai di GovSight ID berfungsi sebagai
+              indikator ruang fiskal antardaerah, bukan audit kepatuhan hukum
+              mandatori.
+            </dd>
+          </div>
+          <div>
+            <dt>
+              UU No. 1/2022 (HKPD) Pasal 147 ayat (1) — Infrastruktur Publik
+            </dt>
+            <dd>
+              <em>
+                "Daerah wajib mengalokasikan belanja infrastruktur pelayanan
+                publik paling rendah 40% (empat puluh persen) dari total belanja
+                APBD di luar belanja bagi hasil dan/atau transfer kepada daerah
+                dan/atau desa."
+              </em>
+              <br />
+              <strong
+                style={{ display: "block", marginTop: 6, color: "#334155" }}
+              >
+                Pembedaan Penting:
+              </strong>
+              <em>Belanja infrastruktur pelayanan publik</em> merupakan{" "}
+              <strong>klasifikasi fungsi</strong> (pelayanan dasar publik di
+              berbagai pos belanja). Ini <strong>berbeda</strong> dengan{" "}
+              <em>belanja modal</em> yang merupakan{" "}
+              <strong>klasifikasi ekonomi</strong> (perolehan aset tetap fisik).
+              Belanja modal hanyalah salah satu komponen pembentuk
+              infrastruktur, sehingga angka belanja modal di GovSight ID tidak
+              dapat disamakan secara langsung dengan kepatuhan Pasal 147 HKPD.
+            </dd>
+          </div>
+        </dl>
+      </section>
       <section className="panel education-panel">
         <div className="section-heading">
           <div>

@@ -269,10 +269,22 @@ test("yearEndPersistence mendeteksi persistensi 2 tahun lonjakan akhir tahun", (
     share: 20,
   };
 
+  const fBelumTersedia = {
+    regionCode: "0215",
+    year: 2024,
+    status: "belum-tersedia" as const,
+    share: null,
+  };
+
   assert.equal(
     yearEndPersistence(f24Ditandai, f25Ditandai).status,
     "dua-tahun-beruntun",
   );
   assert.equal(yearEndPersistence(fWajar, f25Ditandai).status, "baru-2025");
   assert.equal(yearEndPersistence(fWajar, fWajar).status, "konsisten-wajar");
+  // Data 2024 belum tersedia + 2025 ditandai harus menghasilkan 'belum-lengkap', bukan 'baru-2025'
+  assert.equal(
+    yearEndPersistence(fBelumTersedia, f25Ditandai).status,
+    "belum-lengkap",
+  );
 });

@@ -580,7 +580,8 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                                 <div className="table-flag-cell">
                                   <div className="table-flag-top">
                                     <span className="table-flag-rank">
-                                      #{rankMap.get(region.code)} se-Sumut
+                                      #{rankMap.get(region.code)} dari{" "}
+                                      {regions.length} daerah
                                     </span>
                                     <strong className="table-flag-share">
                                       {formatFlagShare(
@@ -593,25 +594,27 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                                       "dua-tahun-beruntun" && (
                                       <span
                                         className="persistence-tag recurring"
-                                        title="Lonjakan belanja modal >40% berulang di akhir tahun 2024 dan 2025"
+                                        title={`Lonjakan belanja modal >40% berulang 2 tahun anggaran terakhir (${latestCompleteYear - 1} & ${latestCompleteYear})`}
                                       >
                                         2 Th Beruntun
                                       </span>
                                     )}
-                                    {persistenceMap.get(region.code)?.status ===
-                                      "baru-2025" && (
+                                    {(persistenceMap.get(region.code)
+                                      ?.status === "baru-2025" ||
+                                      persistenceMap.get(region.code)
+                                        ?.status === "baru-tahun-ini") && (
                                       <span
                                         className="persistence-tag new"
-                                        title="Baru pertama kali melampaui ambang 40% pada tahun 2025"
+                                        title={`Baru melampaui ambang 40% pada tahun ${latestCompleteYear}, tahun sebelumnya di bawah ambang`}
                                       >
-                                        Baru 2025
+                                        Baru {latestCompleteYear}
                                       </span>
                                     )}
                                     {persistenceMap.get(region.code)?.status ===
                                       "konsisten-wajar" && (
                                       <span
                                         className="persistence-tag normal"
-                                        title="Konsisten di bawah ambang 40% pada tahun 2024 dan 2025"
+                                        title={`Konsisten di bawah ambang 40% pada tahun ${latestCompleteYear - 1} dan ${latestCompleteYear}`}
                                       >
                                         Di Bawah Ambang
                                       </span>
@@ -721,7 +724,8 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                           {formatFlagShare(highestYearEnd.flag.share)}
                         </span>
                         <small>
-                          #{rankMap.get(highestYearEnd.region.code)} se-Sumut ·{" "}
+                          #{rankMap.get(highestYearEnd.region.code)} dari{" "}
+                          {regions.length} daerah ·{" "}
                           {persistenceMap.get(highestYearEnd.region.code)
                             ?.label ?? "2 bulan akhir"}
                         </small>

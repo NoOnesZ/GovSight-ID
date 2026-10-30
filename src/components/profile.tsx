@@ -68,6 +68,30 @@ export function Profile({
     .slice(0, 3)
     .reverse();
   if (!snapshot) return <EmptyState />;
+  const periodSnapshots = dataset.snapshots.filter(
+    (s) => s.year === year && s.month === month,
+  );
+  const sharesPegawai = categoryShares(snapshot, "pegawai");
+  const sharesModal = categoryShares(snapshot, "modal");
+
+  const rankedPegawai = [...periodSnapshots]
+    .map((s) => ({
+      code: s.regionCode,
+      share: categoryShares(s, "pegawai").budget ?? -1,
+    }))
+    .sort((a, b) => b.share - a.share);
+  const pegawaiRank =
+    rankedPegawai.findIndex((item) => item.code === region.code) + 1;
+
+  const rankedModal = [...periodSnapshots]
+    .map((s) => ({
+      code: s.regionCode,
+      share: categoryShares(s, "modal").budget ?? -1,
+    }))
+    .sort((a, b) => b.share - a.share);
+  const modalRank =
+    rankedModal.findIndex((item) => item.code === region.code) + 1;
+
   const rate = percentage(snapshot.total.realized, snapshot.total.budget);
   const modalRealized =
     snapshot.categories.find((c) => c.code === "modal")?.realized ?? null;
@@ -164,16 +188,17 @@ export function Profile({
           <AlertTriangle size={18} className="anomaly-icon" />
           <div>
             <strong>
-              Catatan Resmi: Realisasi Tercatat {percent(rate)} Melampaui Pagu
-              Tercatat
+              Catatan GovSight ID: Kemungkinan Penyebab Realisasi Tercatat{" "}
+              {percent(rate)} Melampaui Pagu
             </strong>
             <p>
-              Pada portal SIKD DJPK Kementerian Keuangan, realisasi belanja
-              melampaui pagu umumnya terjadi saat APBD Perubahan (APBD-P) belum
-              selesai disinkronisasikan ke sistem pusat data sehingga realisasi
-              dibandingkan dengan pagu induk awal, atau terdapat pengesahan
-              belanja mendahului perubahan anggaran. Data ini disajikan apa
-              adanya sesuai dokumen publikasi DJPK tanpa modifikasi angka.
+              Pada portal SIKD DJPK Kementerian Keuangan, terdapat kemungkinan
+              realisasi belanja melebihi pagu tercatat akibat penetapan APBD
+              Perubahan (APBD-P) belum selesai disinkronisasikan ke sistem pusat
+              data sehingga realisasi dibandingkan dengan pagu induk awal, atau
+              terdapat pengesahan belanja mendahului perubahan anggaran. Tim
+              GovSight ID menyajikan data apa adanya sesuai dokumen publikasi
+              DJPK tanpa modifikasi angka.
             </p>
           </div>
         </div>
@@ -235,8 +260,8 @@ export function Profile({
               <p className="impact-intro">
                 Total realisasi modal{" "}
                 <strong>{compactMoney(modalRealized)}</strong> setara jika
-                dialokasikan penuh untuk salah satu kebutuhan fisik standar
-                kementerian berikut:
+                dialokasikan penuh untuk salah satu alternatif simulasi model
+                berikut:
               </p>
               <div className="impact-items">
                 <div className="impact-item">
@@ -244,7 +269,8 @@ export function Profile({
                   <strong>~{kmJalan.toLocaleString("id-ID")} km</strong>
                   <span>Peningkatan jalan mantap</span>
                   <small>
-                    Asumsi ~Rp1,5 M/km (HSPK Bina Marga Kementerian PUPR)
+                    Asumsi model ~Rp1,5 M/km (Pemeliharaan berkala jalan 2
+                    lajur, standar kebinamargaan)
                   </small>
                 </div>
                 <div className="impact-item">
@@ -252,7 +278,8 @@ export function Profile({
                   <strong>~{unitFaskes.toLocaleString("id-ID")} unit</strong>
                   <span>Puskesmas Pembantu (Pustu)</span>
                   <small>
-                    Asumsi ~Rp2,0 M/unit (Standar Prototipe Kemenkes RI)
+                    Asumsi model ~Rp2,0 M/unit (Rujukan prototipe fisik faskes
+                    pembantu Kemenkes RI)
                   </small>
                 </div>
                 <div className="impact-item">
@@ -260,17 +287,19 @@ export function Profile({
                   <strong>~{ruangKelas.toLocaleString("id-ID")} ruang</strong>
                   <span>Rehabilitasi kelas sekolah</span>
                   <small>
-                    Asumsi ~Rp150 Jt/ruang (Menu DAK Fisik Kemendikbudristek)
+                    Asumsi model ~Rp150 Jt/ruang (Rujukan menu rehabilitasi DAK
+                    Fisik pendidikan dasar)
                   </small>
                 </div>
               </div>
               <div className="impact-disclaimer-block">
                 <small className="impact-disclaimer">
-                  *Simulasi rujukan di atas merupakan{" "}
-                  <strong>pilihan alternatif (atau)</strong> untuk memberikan
-                  perbandingan konkret daya serap fisik, bukan akumulasi ketiga
-                  komponen sekaligus. Biaya mengacu pada standar teknis
-                  kementerian teknis terkait.
+                  *Simulasi di atas merupakan asumsi model estimasi tim GovSight
+                  ID untuk memberikan gambaran konkret kapasitas fiskal jika
+                  belanja modal dialokasikan penuh untuk salah satu alternatif
+                  (atau), bukan akumulasi ketiganya sekaligus. Biaya riil di
+                  lapangan dipengaruhi oleh indeks kemahalan konstruksi dan HSPK
+                  ketetapan kepala daerah setempat.
                 </small>
               </div>
             </div>
@@ -309,6 +338,51 @@ export function Profile({
               })}
             </tbody>
           </table>
+        </div>
+        <div className="hkpd-context-card">
+          <div className="hkpd-context-header">
+            <h4>Konteks Komposisi Anggaran & Regulasi</h4>
+            <span className="small-label">Rujukan UU No. 1/2022 (HKPD)</span>
+          </div>
+          <div className="hkpd-context-grid">
+            <div className="hkpd-context-item">
+              <div className="hkpd-item-top">
+                <strong>
+                  Belanja Pegawai: {formatFlagShare(sharesPegawai.budget)} pagu
+                </strong>
+                <span className="hkpd-rank-pill">
+                  Peringkat #{pegawaiRank} tertinggi dari{" "}
+                  {periodSnapshots.length} daerah pantauan
+                </span>
+              </div>
+              <p>
+                UU HKPD Pasal 146 ayat (1) mengarahkan belanja pegawai maksimal
+                30% APBD (masa transisi bertahap hingga 2027). Formula resmi
+                HKPD mengecualikan tunjangan guru DAK Nonfisik dan bagi
+                hasil/transfer desa, sehingga persentase belanja pegawai murni
+                pada data APBD ini belum dapat disamakan langsung dengan
+                kepatuhan hukum HKPD.
+              </p>
+            </div>
+            <div className="hkpd-context-item">
+              <div className="hkpd-item-top">
+                <strong>
+                  Belanja Modal: {formatFlagShare(sharesModal.budget)} pagu
+                </strong>
+                <span className="hkpd-rank-pill">
+                  Peringkat #{modalRank} tertinggi dari {periodSnapshots.length}{" "}
+                  daerah pantauan
+                </span>
+              </div>
+              <p>
+                Belanja modal mencerminkan alokasi aset fisik (klasifikasi
+                ekonomi). Kategori ini berbeda dengan mandat belanja
+                infrastruktur pelayanan publik minimal 40% pada Pasal 147 ayat
+                (1) HKPD yang berbasis klasifikasi fungsi dan mencakup pula
+                pemeliharaan sarana umum lintas dinas.
+              </p>
+            </div>
+          </div>
         </div>
         <InfoNote>
           Persentase pagu dan realisasi memakai total yang berbeda. Keduanya
