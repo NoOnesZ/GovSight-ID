@@ -3539,3 +3539,50 @@ table {
     background: #fafafa !important;
   }
 }
+
+
+/* --- Impact Box (Profile) --- */
+.impact-box {
+  margin: 14px 0 16px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+.impact-intro {
+  font-size: 11px;
+  color: #475569;
+  margin: 4px 0 10px;
+  line-height: 1.45;
+}
+.impact-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.impact-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.impact-item strong {
+  display: block;
+  font-size: 13px;
+  color: #2457e7;
+  font-variant-numeric: tabular-nums;
+}
+.impact-item span {
+  display: block;
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+.impact-disclaimer {
+  display: block;
+  font-size: 9px;
+  color: #94a3b8;
+  line-height: 1.35;
+}

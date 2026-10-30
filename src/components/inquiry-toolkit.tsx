@@ -9,6 +9,7 @@ import {
   FileQuestion,
   HelpCircle,
   Info,
+  MessageCircle,
   Printer,
   Sparkles,
   Users,
@@ -16,7 +17,8 @@ import {
 import type { Dataset, Region, Snapshot } from "@/lib/types";
 import { generateInquiryBrief } from "@/lib/indicators";
 import { months } from "@/lib/regions";
-import { fullMoney, periodLabel } from "@/lib/format";
+import { compactMoney, fullMoney, percent, periodLabel } from "@/lib/format";
+import { percentage } from "@/lib/data-core";
 
 export function InquiryToolkit({
   region,
@@ -96,6 +98,30 @@ export function InquiryToolkit({
     window.print();
   }
 
+  function shareToWhatsApp() {
+    const rate = percentage(
+      currentSnapshot.total.realized,
+      currentSnapshot.total.budget,
+    );
+    const textLines = [
+      `🔍 *Telaah Kritis APBD ${region.name} — GovSight ID*`,
+      `Periode: ${periodLabel(currentSnapshot.year, currentSnapshot.month)}`,
+      `Realisasi: ${compactMoney(currentSnapshot.total.realized)} (${percent(rate)} terserap)`,
+      ``,
+      `*Temuan Kunci Advokasi:*`,
+    ];
+    items.forEach((item, idx) => {
+      textLines.push(`${idx + 1}. *${item.title}*`);
+      textLines.push(`   ${item.observation}`);
+    });
+    textLines.push(``);
+    textLines.push(
+      `Buka lembar telaah & data lengkap di: ${typeof window !== "undefined" ? window.location.href : ""}`,
+    );
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(textLines.join("\n"))}`;
+    window.open(url, "_blank");
+  }
+
   return (
     <section className="panel inquiry-toolkit-panel" id="lembar-advokasi">
       <div className="inquiry-header">
@@ -110,6 +136,15 @@ export function InquiryToolkit({
           </p>
         </div>
         <div className="inquiry-actions no-print">
+          <button
+            type="button"
+            className="button button-secondary"
+            onClick={shareToWhatsApp}
+            aria-label="Bagikan ringkasan telaah ke WhatsApp"
+          >
+            <MessageCircle size={16} className="text-emerald-600" />
+            <span>Bagikan ke WhatsApp</span>
+          </button>
           <button
             type="button"
             className="button button-secondary"

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Decimal from "decimal.js";
 import { ArrowLeft, ArrowUpRight, BarChart3, Info, MapPin } from "lucide-react";
 import type { Dataset, Region } from "@/lib/types";
 import { months, regions } from "@/lib/regions";
@@ -61,6 +62,12 @@ export function Profile({
     .reverse();
   if (!snapshot) return <EmptyState />;
   const rate = percentage(snapshot.total.realized, snapshot.total.budget);
+  const modalRealized =
+    snapshot.categories.find((c) => c.code === "modal")?.realized ?? null;
+  const modalNum = modalRealized ? new Decimal(modalRealized).toNumber() : 0;
+  const kmJalan = Math.round(modalNum / 1_500_000_000);
+  const unitFaskes = Math.round(modalNum / 2_000_000_000);
+  const ruangKelas = Math.round(modalNum / 150_000_000);
   const peer =
     regions.find((r) => r.type === region.type && r.code !== region.code)
       ?.code ?? (region.code === "0215" ? "0214" : "0215");
@@ -173,6 +180,33 @@ export function Profile({
             Angka ini menjelaskan pelaksanaan anggaran. Untuk menilai
             manfaatnya, kita masih perlu data hasil pembangunan dan layanan.
           </p>
+          {modalNum > 0 && (
+            <div className="impact-box">
+              <span className="small-label">Kapasitas Belanja Modal</span>
+              <p className="impact-intro">
+                Realisasi modal {compactMoney(modalRealized)} setara dengan daya
+                pembangunan fisik rujukan warga:
+              </p>
+              <div className="impact-items">
+                <div className="impact-item">
+                  <strong>~{kmJalan.toLocaleString("id-ID")} km</strong>
+                  <span>Peningkatan jalan mantap</span>
+                </div>
+                <div className="impact-item">
+                  <strong>~{unitFaskes.toLocaleString("id-ID")} unit</strong>
+                  <span>Puskesmas / faskes pembantu</span>
+                </div>
+                <div className="impact-item">
+                  <strong>~{ruangKelas.toLocaleString("id-ID")} ruang</strong>
+                  <span>Rehabilitasi kelas sekolah</span>
+                </div>
+              </div>
+              <small className="impact-disclaimer">
+                *Estimasi ilustratif daya beli fiskal berdasarkan standar
+                rujukan biaya konstruksi kementerian (PU/Kemendikbud/Kemenkes).
+              </small>
+            </div>
+          )}
           <Link className="text-link" href="/metodologi">
             Pelajari metodologi <ArrowUpRight size={15} />
           </Link>
