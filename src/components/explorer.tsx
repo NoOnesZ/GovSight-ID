@@ -24,6 +24,7 @@ import {
   MapPin,
   Search,
   SlidersHorizontal,
+  Sparkles,
   TrendingUp,
   Wallet,
 } from "lucide-react";
@@ -219,6 +220,19 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
     })
     .filter((item) => item.flag.share !== null)
     .sort((a, b) => (b.flag.share ?? 0) - (a.flag.share ?? 0))[0];
+
+  // Prioritas daerah dengan penumpukan modal di akhir tahun untuk telaah warga (DSS)
+  const topFlaggedRegions = visible
+    .map((s) => ({
+      region: regions.find((r) => r.code === s.regionCode)!,
+      flag: flagFor(s.regionCode),
+      persistence: persistenceMap.get(s.regionCode),
+    }))
+    .filter(
+      (item) => item.flag.status === "ditandai" && item.flag.share !== null,
+    )
+    .sort((a, b) => (b.flag.share ?? 0) - (a.flag.share ?? 0))
+    .slice(0, 3);
 
   return (
     <>
@@ -535,12 +549,14 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                                 className="table-money"
                                 title={fullMoney(snapshot.total.budget)}
                               >
+                                <span className="mobile-budget-label">Pagu </span>
                                 {compactMoney(snapshot.total.budget)}
                               </div>
                               <div
                                 className="table-realized"
                                 title={fullMoney(snapshot.total.realized)}
                               >
+                                <span className="mobile-budget-label">Realisasi </span>
                                 {compactMoney(snapshot.total.realized)}
                               </div>
                             </td>
@@ -579,15 +595,14 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                               ) : (
                                 <div className="table-flag-cell">
                                   <div className="table-flag-top">
-                                    <span className="table-flag-rank">
-                                      #{rankMap.get(region.code)} dari{" "}
-                                      {regions.length} daerah
-                                    </span>
                                     <strong className="table-flag-share">
                                       {formatFlagShare(
                                         flagFor(region.code).share,
                                       )}
                                     </strong>
+                                    <span className="table-flag-rank">
+                                      #{rankMap.get(region.code)}/10
+                                    </span>
                                   </div>
                                   <div className="table-flag-bottom">
                                     {persistenceMap.get(region.code)?.status ===
@@ -724,8 +739,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                           {formatFlagShare(highestYearEnd.flag.share)}
                         </span>
                         <small>
-                          #{rankMap.get(highestYearEnd.region.code)} dari{" "}
-                          {regions.length} daerah ·{" "}
+                          #{rankMap.get(highestYearEnd.region.code)}/10 ·{" "}
                           {persistenceMap.get(highestYearEnd.region.code)
                             ?.label ?? "2 bulan akhir"}
                         </small>
@@ -776,6 +790,48 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                       ))}
                     </div>
                   </div>
+
+                  {topFlaggedRegions.length > 0 && (
+                    <div className="dss-priority-box">
+                      <div className="dss-priority-header">
+                        <div className="dss-priority-title">
+                          <Sparkles size={14} className="dss-icon" />
+                          <h5>Prioritas Telaah Pengawasan Warga</h5>
+                        </div>
+                        <span className="dss-badge">DSS Rekomendasi</span>
+                      </div>
+                      <p className="dss-priority-desc">
+                        Daerah dengan konsentrasi pencairan modal fisik di akhir tahun (&gt;40%) berturut-turut yang paling mendesak untuk ditelaah:
+                      </p>
+                      <div className="dss-priority-list">
+                        {topFlaggedRegions.map((item, idx) => (
+                          <Link
+                            key={item.region.code}
+                            href={`/daerah/${item.region.code}?${period}#pertanyaan`}
+                            className="dss-priority-item"
+                          >
+                            <span className="dss-priority-num">{idx + 1}</span>
+                            <div className="dss-priority-info">
+                              <div className="dss-priority-name-row">
+                                <strong>{item.region.name}</strong>
+                                <span className="dss-priority-share">
+                                  {formatFlagShare(item.flag.share)} modal akhir TA
+                                </span>
+                              </div>
+                              <div className="dss-priority-meta">
+                                <span className="persistence-tag recurring small">
+                                  {item.persistence?.label ?? "2 Th Beruntun"}
+                                </span>
+                                <span className="dss-action-text">
+                                  Buka Pertanyaan Publik <ArrowRight size={11} />
+                                </span>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

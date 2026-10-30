@@ -798,9 +798,9 @@ svg {
 }
 .explore-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 19px;
-  align-items: stretch;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 20px;
+  align-items: start;
 }
 .panel {
   background: white;
@@ -892,7 +892,7 @@ table {
   padding-right: 20px;
 }
 .region-table td {
-  padding: 16px 12px;
+  padding: 12px 12px;
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
 }
@@ -1029,6 +1029,10 @@ table {
 }
 .chart-panel .spending-chart {
   height: 285px;
+}
+.spending-chart.spending-chart-horizontal-bars,
+.chart-panel .spending-chart.spending-chart-horizontal-bars {
+  height: 380px;
 }
 .muted {
   color: #a2aec0;
@@ -3869,7 +3873,7 @@ table {
 }
 .highlights-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
 .highlight-card {
@@ -3932,11 +3936,11 @@ table {
   color: #b45309;
 }
 .highlight-card small {
-  font-size: 9px;
+  font-size: 10px;
   color: #64748b;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  line-height: 1.35;
+  margin-top: 3px;
 }
 
 /* Aggregate Composition Box */
@@ -4095,20 +4099,21 @@ table {
 .table-flag-cell {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
+  white-space: nowrap;
 }
 .table-flag-top {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: baseline;
+  gap: 6px;
 }
 .table-flag-rank {
   font-size: 11px;
-  font-weight: 600;
-  color: #475569;
+  font-weight: 500;
+  color: #64748b;
 }
 .table-flag-share {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   color: #0f172a;
 }
@@ -4140,6 +4145,214 @@ table {
   background: #f1f5f9;
   color: #64748b;
   border: 1px solid #e2e8f0;
+}
+
+/* DSS Priority Box in Explorer */
+.dss-priority-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 18px;
+}
+.dss-priority-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dss-priority-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dss-priority-title h5 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+.dss-priority-title .dss-icon {
+  color: #2563eb;
+}
+.dss-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+.dss-priority-desc {
+  font-size: 11px;
+  color: #64748b;
+  margin: 6px 0 12px;
+  line-height: 1.45;
+}
+.dss-priority-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dss-priority-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #f59e0b;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.15s ease;
+}
+.dss-priority-item:hover {
+  background: #fefce8;
+  border-color: #fcd34d;
+  transform: translateY(-1px);
+}
+.dss-priority-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #b45309;
+  font-weight: 700;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.dss-priority-info {
+  flex: 1;
+  min-width: 0;
+}
+.dss-priority-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.dss-priority-name-row strong {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+}
+.dss-priority-share {
+  font-size: 11px;
+  font-weight: 700;
+  color: #b45309;
+  font-variant-numeric: tabular-nums;
+}
+.dss-priority-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+.persistence-tag.small {
+  font-size: 8px;
+  padding: 1px 5px;
+}
+.dss-action-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+/* Mobile Table Card Transformation for Screen <= 640px */
+.mobile-budget-label {
+  display: none;
+}
+@media (max-width: 640px) {
+  .mobile-budget-label {
+    display: inline;
+    font-size: 11px;
+    font-weight: 500;
+    color: #64748b;
+  }
+  .table-scroll {
+    overflow: visible;
+  }
+  .table-hint {
+    display: none;
+  }
+  .region-table {
+    display: block;
+    min-width: 0;
+    width: 100%;
+  }
+  .region-table thead {
+    display: none;
+  }
+  .region-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .region-table tbody > tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name link"
+      "budget rate"
+      "flag flag";
+    gap: 10px 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  }
+  .region-table tbody > tr:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+  .region-table td {
+    display: block;
+    padding: 0 !important;
+    border: none !important;
+  }
+  .region-table td:nth-child(1) {
+    grid-area: name;
+  }
+  .region-table td:nth-child(5) {
+    grid-area: link;
+    align-self: start;
+    justify-self: end;
+  }
+  .region-table td:nth-child(2) {
+    grid-area: budget;
+    padding-top: 8px !important;
+    border-top: 1px dashed #edf2f7 !important;
+  }
+  .region-table td:nth-child(3) {
+    grid-area: rate;
+    padding-top: 8px !important;
+    border-top: 1px dashed #edf2f7 !important;
+    text-align: right;
+  }
+  .region-table td:nth-child(4) {
+    grid-area: flag;
+    padding-top: 10px !important;
+    border-top: 1px solid #f1f5f9 !important;
+  }
+  .table-flag-cell {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+  .highlights-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Profile Anomaly Notice */

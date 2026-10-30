@@ -106,16 +106,25 @@ function trillionTick(value: number) {
   return `${value.toLocaleString("id-ID")} T`;
 }
 
-export function SpendingChart({ snapshots }: { snapshots: Snapshot[] }) {
+export function SpendingChart({
+  snapshots,
+  layout = snapshots.length > 4 ? "vertical" : "horizontal",
+}: {
+  snapshots: Snapshot[];
+  layout?: "horizontal" | "vertical";
+}) {
   const data = snapshots.map((row) => ({
-    name: regions.find((region) => region.code === row.regionCode)?.shortName,
+    name: regions.find((region) => region.code === row.regionCode)?.shortName ?? "",
     Pagu: row.total.budget === null ? null : Number(row.total.budget) / 1e12,
     Realisasi:
       row.total.realized === null ? null : Number(row.total.realized) / 1e12,
   }));
+
+  const isVertical = layout === "vertical";
+
   return (
     <div
-      className="spending-chart"
+      className={`spending-chart ${isVertical ? "spending-chart-horizontal-bars" : ""}`}
       role="img"
       aria-label="Grafik perbandingan pagu dan realisasi. Angka lengkap tersedia pada tabel daerah."
     >
@@ -123,57 +132,113 @@ export function SpendingChart({ snapshots }: { snapshots: Snapshot[] }) {
         width="100%"
         height="100%"
         minWidth={1}
-        initialDimension={{ width: 650, height: 290 }}
+        initialDimension={{ width: 650, height: isVertical ? 380 : 290 }}
       >
-        <BarChart
-          data={data}
-          margin={{ top: 14, left: -19, right: 8, bottom: 0 }}
-          barGap={6}
-          barCategoryGap="28%"
-        >
-          <CartesianGrid
-            strokeDasharray="3 5"
-            vertical={false}
-            stroke="#EAF0F6"
-          />
-          <XAxis
-            dataKey="name"
-            axisLine={false}
-            tickLine={false}
-            tick={axis}
-            dy={8}
-          />
-          <YAxis
-            tickFormatter={trillionTick}
-            axisLine={false}
-            tickLine={false}
-            tick={axis}
-          />
-          <Tooltip
-            contentStyle={tooltipStyle}
-            cursor={{ fill: "#f6f8fd" }}
-            formatter={(value) => compactMoney(String(Number(value) * 1e12))}
-          />
-          <Legend
-            iconType="circle"
-            iconSize={7}
-            wrapperStyle={{ fontSize: 12, paddingTop: 20 }}
-          />
-          <Bar
-            isAnimationActive={false}
-            dataKey="Pagu"
-            fill="#DDE6FB"
-            radius={[4, 4, 0, 0]}
-            maxBarSize={36}
-          />
-          <Bar
-            isAnimationActive={false}
-            dataKey="Realisasi"
-            fill="#2457E7"
-            radius={[4, 4, 0, 0]}
-            maxBarSize={36}
-          />
-        </BarChart>
+        {isVertical ? (
+          <BarChart
+            layout="vertical"
+            data={data}
+            margin={{ top: 8, left: -4, right: 16, bottom: 0 }}
+            barGap={3}
+            barCategoryGap="22%"
+          >
+            <CartesianGrid
+              strokeDasharray="3 5"
+              horizontal={false}
+              stroke="#EAF0F6"
+            />
+            <XAxis
+              type="number"
+              tickFormatter={trillionTick}
+              axisLine={false}
+              tickLine={false}
+              tick={axis}
+            />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={100}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: "#334155", fontSize: 11, fontWeight: 500 }}
+              interval={0}
+            />
+            <Tooltip
+              contentStyle={tooltipStyle}
+              cursor={{ fill: "#f6f8fd" }}
+              formatter={(value) => compactMoney(String(Number(value) * 1e12))}
+            />
+            <Legend
+              iconType="circle"
+              iconSize={8}
+              wrapperStyle={{ fontSize: 12, paddingTop: 10 }}
+            />
+            <Bar
+              isAnimationActive={false}
+              dataKey="Pagu"
+              fill="#93B4F5"
+              radius={[0, 4, 4, 0]}
+              maxBarSize={14}
+            />
+            <Bar
+              isAnimationActive={false}
+              dataKey="Realisasi"
+              fill="#2457E7"
+              radius={[0, 4, 4, 0]}
+              maxBarSize={14}
+            />
+          </BarChart>
+        ) : (
+          <BarChart
+            data={data}
+            margin={{ top: 14, left: -19, right: 8, bottom: 0 }}
+            barGap={6}
+            barCategoryGap="28%"
+          >
+            <CartesianGrid
+              strokeDasharray="3 5"
+              vertical={false}
+              stroke="#EAF0F6"
+            />
+            <XAxis
+              dataKey="name"
+              axisLine={false}
+              tickLine={false}
+              tick={axis}
+              dy={8}
+            />
+            <YAxis
+              tickFormatter={trillionTick}
+              axisLine={false}
+              tickLine={false}
+              tick={axis}
+            />
+            <Tooltip
+              contentStyle={tooltipStyle}
+              cursor={{ fill: "#f6f8fd" }}
+              formatter={(value) => compactMoney(String(Number(value) * 1e12))}
+            />
+            <Legend
+              iconType="circle"
+              iconSize={8}
+              wrapperStyle={{ fontSize: 12, paddingTop: 20 }}
+            />
+            <Bar
+              isAnimationActive={false}
+              dataKey="Pagu"
+              fill="#93B4F5"
+              radius={[4, 4, 0, 0]}
+              maxBarSize={36}
+            />
+            <Bar
+              isAnimationActive={false}
+              dataKey="Realisasi"
+              fill="#2457E7"
+              radius={[4, 4, 0, 0]}
+              maxBarSize={36}
+            />
+          </BarChart>
+        )}
       </ResponsiveContainer>
     </div>
   );
