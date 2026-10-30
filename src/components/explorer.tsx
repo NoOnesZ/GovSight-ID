@@ -12,12 +12,15 @@ import {
   BarChart3,
   Building2,
   Check,
+  CheckCircle2,
   ChevronDown,
   CircleHelp,
   FileText,
+  Info,
   MapPin,
   Search,
   SlidersHorizontal,
+  TrendingUp,
   Wallet,
 } from "lucide-react";
 import type { Dataset } from "@/lib/types";
@@ -133,6 +136,54 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
   const rate = featured
     ? percentage(featured.total.realized, featured.total.budget)
     : null;
+
+  // Hitung total realisasi per kategori untuk daerah yang sedang ditampilkan
+  const aggregateCategories = ["pegawai", "barang-jasa", "modal", "lainnya"].map((code) => {
+    const labelMap: Record<string, string> = {
+      pegawai: "Belanja Pegawai",
+      "barang-jasa": "Barang & Jasa",
+      modal: "Belanja Modal",
+      lainnya: "Belanja Lainnya",
+    };
+    const sumBudget = sumAmounts(
+      visible.map((s) => s.categories.find((c) => c.code === code)?.budget ?? null),
+    );
+    const sumRealized = sumAmounts(
+      visible.map((s) => s.categories.find((c) => c.code === code)?.realized ?? null),
+    );
+    const shareOfRealized = percentage(sumRealized, totalRealized);
+    return {
+      code,
+      label: labelMap[code],
+      budget: sumBudget,
+      realized: sumRealized,
+      share: shareOfRealized,
+    };
+  });
+
+  // Hitung daerah dengan serapan tertinggi & terendah di visible
+  const absorptionList = visible
+    .map((s) => {
+      const rate = percentage(s.total.realized, s.total.budget);
+      const region = regions.find((r) => r.code === s.regionCode)!;
+      return { region, rate, snapshot: s };
+    })
+    .filter((item) => item.rate !== null)
+    .sort((a, b) => (b.rate ?? 0) - (a.rate ?? 0));
+
+  const highestAbsorption = absorptionList[0];
+  const lowestAbsorption = absorptionList[absorptionList.length - 1];
+
+  // Cari daerah dengan penumpukan akhir tahun tertinggi di visible
+  const highestYearEnd = [...visible]
+    .map((s) => {
+      const flag = flagFor(s.regionCode);
+      const region = regions.find((r) => r.code === s.regionCode)!;
+      return { region, flag };
+    })
+    .filter((item) => item.flag.share !== null)
+    .sort((a, b) => (b.flag.share ?? 0) - (a.flag.share ?? 0))[0];
+
   return (
     <>
       <section className="hero">
@@ -505,6 +556,116 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                   <BarChart3 size={18} className="muted" />
                 </div>
                 <SpendingChart snapshots={visible} />
+
+                <div className="chart-highlights-section">
+                  <div className="chart-highlights-header">
+                    <h4>
+                      <TrendingUp size={15} /> Sorotan Data ({visible.length} Daerah)
+                    </h4>
+                    <span className="small-label">
+                      {periodLabel(year, month)}
+                    </span>
+                  </div>
+
+                  <div className="highlights-grid">
+                    {highestAbsorption && (
+                      <Link
+                        href={`/daerah/${highestAbsorption.region.code}?${period}`}
+                        className="highlight-card"
+                      >
+                        <span className="highlight-tag green">
+                          <CheckCircle2 size={11} /> Serapan Tertinggi
+                        </span>
+                        <strong>{highestAbsorption.region.shortName}</strong>
+                        <span className="highlight-value">
+                          {percent(highestAbsorption.rate)}
+                        </span>
+                        <small>
+                          pagu {compactMoney(highestAbsorption.snapshot.total.budget)}
+                        </small>
+                      </Link>
+                    )}
+
+                    {lowestAbsorption &&
+                      lowestAbsorption.region.code !== highestAbsorption?.region.code && (
+                        <Link
+                          href={`/daerah/${lowestAbsorption.region.code}?${period}`}
+                          className="highlight-card"
+                        >
+                          <span className="highlight-tag blue">
+                            <Info size={11} /> Serapan Terendah
+                          </span>
+                          <strong>{lowestAbsorption.region.shortName}</strong>
+                          <span className="highlight-value">
+                            {percent(lowestAbsorption.rate)}
+                          </span>
+                          <small>
+                            pagu {compactMoney(lowestAbsorption.snapshot.total.budget)}
+                          </small>
+                        </Link>
+                      )}
+
+                    {highestYearEnd && (
+                      <Link
+                        href={`/daerah/${highestYearEnd.region.code}?${period}`}
+                        className="highlight-card alert"
+                      >
+                        <span className="highlight-tag amber">
+                          <AlertTriangle size={11} /> Lonjakan Nov–Des
+                        </span>
+                        <strong>{highestYearEnd.region.shortName}</strong>
+                        <span className="highlight-value">
+                          {formatFlagShare(highestYearEnd.flag.share)}
+                        </span>
+                        <small>penumpukan 2 bulan akhir</small>
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className="aggregate-composition-box">
+                    <div className="aggregate-composition-header">
+                      <span>Komposisi Realisasi Kolektif</span>
+                      <strong>Total {compactMoney(totalRealized)}</strong>
+                    </div>
+
+                    <div
+                      className="aggregate-bar"
+                      role="img"
+                      aria-label="Komposisi realisasi belanja kumulatif seluruh daerah yang ditampilkan"
+                    >
+                      {aggregateCategories.map((cat) => {
+                        const width = Math.max(cat.share ?? 0, 0);
+                        return (
+                          <div
+                            key={cat.code}
+                            className={`aggregate-bar-segment ${cat.code}`}
+                            style={{ width: `${width}%` }}
+                            title={`${cat.label}: ${percent(cat.share)} (${compactMoney(cat.realized)})`}
+                          />
+                        );
+                      })}
+                    </div>
+
+                    <div className="aggregate-list">
+                      {aggregateCategories.map((cat) => (
+                        <div key={cat.code} className="aggregate-row">
+                          <div className="aggregate-row-name">
+                            <span className={`legend-dot ${cat.code}`} />
+                            <span className="legend-label">{cat.label}</span>
+                          </div>
+                          <div className="aggregate-row-stats">
+                            <strong className="aggregate-row-percent">
+                              {percent(cat.share)}
+                            </strong>
+                            <span className="aggregate-row-amount">
+                              {compactMoney(cat.realized)}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <SourceNote snapshot={visible[0]} />
