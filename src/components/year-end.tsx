@@ -17,14 +17,72 @@ export function YearEnd({ dataset, code }: { dataset: Dataset; code: string }) {
     ),
   ].sort((a, b) => b - a);
 
+  const runningYears = years.filter((y) => {
+    const dec = dataset.snapshots.find(
+      (s) => s.regionCode === code && s.year === y && s.month === 12,
+    );
+    return !dec;
+  });
+
+  const completeYears = years.filter((y) => {
+    const dec = dataset.snapshots.find(
+      (s) => s.regionCode === code && s.year === y && s.month === 12,
+    );
+    return !!dec;
+  });
+
   return (
     <section className="panel year-end-panel" style={{ marginTop: 24 }}>
       <SectionHeading
         title="Audit Lonjakan Belanja Modal Akhir Tahun"
         subtitle="Pemeriksaan konsentrasi pencairan modal pada November–Desember terhadap arsip resmi DJPK."
       />
+
+      {runningYears.map((year) => {
+        const october = dataset.snapshots.find(
+          (s) => s.regionCode === code && s.year === year && s.month === 10,
+        );
+        return (
+          <div key={year} className="audit-running-year-card">
+            <div className="audit-card-top">
+              <span className="audit-status-badge badge-pending">
+                <Info size={13} />
+                Tahun Berjalan — Menunggu Laporan Penutup Desember
+              </span>
+              <span className="audit-year-label">TA {year} (Aktif)</span>
+            </div>
+            <div className="audit-running-content">
+              <div className="audit-running-info">
+                <p>
+                  Realisasi modal s.d. Oktober {year} tercatat sebesar{" "}
+                  <strong>
+                    {fullMoney(
+                      october?.categories.find((c) => c.code === "modal")
+                        ?.realized ?? null,
+                    )}
+                  </strong>
+                  . Audit indikasi lonjakan akhir tahun (Nov–Des) baru dapat dievaluasi setelah berkas penutupan TA {year} resmi dipublikasikan DJPK Kemenkeu.
+                </p>
+              </div>
+              {october && (
+                <div className="audit-running-action">
+                  <a
+                    className="audit-download-link"
+                    href={october.source.rawPath}
+                    download
+                    title={`Unduh berkas XML laporan Oktober ${year}`}
+                  >
+                    <Download size={12} /> Unduh Oktober
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
       <div className="audit-years-grid">
-        {years.map((year) => {
+        {completeYears.map((year) => {
           const october = dataset.snapshots.find(
             (s) => s.regionCode === code && s.year === year && s.month === 10,
           );

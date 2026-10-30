@@ -18,6 +18,7 @@ import { monthlyAbsorption } from "@/lib/indicators";
 import { months } from "@/lib/regions";
 import { compactMoney } from "@/lib/format";
 import { regions } from "@/lib/regions";
+import { percentage } from "@/lib/data-core";
 
 const axis = { fontSize: 11, fill: "#788497", fontFamily: "inherit" };
 const tooltipStyle = {
@@ -104,6 +105,77 @@ export function MonthlyChart({ snapshots }: { snapshots: Snapshot[] }) {
 
 function trillionTick(value: number) {
   return `${value.toLocaleString("id-ID")} T`;
+}
+
+export function ComparisonRateChart({ snapshots }: { snapshots: Snapshot[] }) {
+  const data = snapshots.map((row) => {
+    const rate = percentage(row.total.realized, row.total.budget);
+    return {
+      name:
+        regions.find((region) => region.code === row.regionCode)?.shortName ??
+        "",
+      Serapan: rate !== null ? Math.round(rate * 10) / 10 : 0,
+    };
+  });
+
+  return (
+    <div
+      className="spending-chart"
+      role="img"
+      aria-label="Grafik perbandingan persentase serapan belanja anggaran."
+    >
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        minWidth={1}
+        initialDimension={{ width: 650, height: 290 }}
+      >
+        <BarChart
+          data={data}
+          margin={{ top: 14, left: -15, right: 8, bottom: 0 }}
+          barGap={6}
+          barCategoryGap="32%"
+        >
+          <CartesianGrid
+            strokeDasharray="3 5"
+            vertical={false}
+            stroke="#EAF0F6"
+          />
+          <XAxis
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
+            tick={axis}
+            dy={8}
+          />
+          <YAxis
+            domain={[0, 100]}
+            tickFormatter={(val) => `${val}%`}
+            axisLine={false}
+            tickLine={false}
+            tick={axis}
+          />
+          <Tooltip
+            contentStyle={tooltipStyle}
+            cursor={{ fill: "#f6f8fd" }}
+            formatter={(value) => `${value}%`}
+          />
+          <Legend
+            iconType="circle"
+            iconSize={8}
+            wrapperStyle={{ fontSize: 12, paddingTop: 20 }}
+          />
+          <Bar
+            isAnimationActive={false}
+            dataKey="Serapan"
+            fill="#2457E7"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={48}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
 }
 
 export function SpendingChart({

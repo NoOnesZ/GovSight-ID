@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Building2, Check, Plus, Scale, X } from "lucide-react";
 import Link from "next/link";
 import type { Dataset } from "@/lib/types";
@@ -16,14 +17,16 @@ import {
   EmptyState,
   InfoNote,
   PeriodControls,
+  SectionHeading,
   ShareButton,
   SourceNote,
   UnavailablePeriod,
   useFilters,
 } from "./shared";
-import { SpendingChart } from "./charts";
+import { ComparisonRateChart, SpendingChart } from "./charts";
 
 export function Comparison({ dataset }: { dataset: Dataset }) {
+  const [chartMode, setChartMode] = useState<"nominal" | "serapan">("nominal");
   const { year, month, params, update, period, invalidPeriod } = useFilters();
   if (invalidPeriod) return <UnavailablePeriod />;
   const completeYear = Math.max(
@@ -233,21 +236,49 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
           <section className="panel compare-chart-panel">
             <div className="section-heading">
               <div>
-                <h2>Pagu dan realisasi, berdampingan</h2>
+                <h2>
+                  {chartMode === "nominal"
+                    ? "Pagu dan realisasi, berdampingan"
+                    : "Tingkat serapan anggaran, berdampingan"}
+                </h2>
                 <p>
-                  Nilai nominal dalam triliun rupiah. Perhatikan perbedaan skala
-                  anggaran tiap daerah.
+                  {chartMode === "nominal"
+                    ? "Nilai nominal dalam triliun rupiah. Perhatikan perbedaan skala anggaran tiap daerah."
+                    : "Persentase realisasi terhadap pagu (0–100%). Menunjukkan kinerja serapan belanja secara setara."}
                 </p>
               </div>
+              <div
+                className="chart-mode-toggle"
+                role="group"
+                aria-label="Pilihan skala grafik"
+              >
+                <button
+                  type="button"
+                  className={`toggle-pill ${chartMode === "nominal" ? "active" : ""}`}
+                  onClick={() => setChartMode("nominal")}
+                >
+                  Nominal (Rp)
+                </button>
+                <button
+                  type="button"
+                  className={`toggle-pill ${chartMode === "serapan" ? "active" : ""}`}
+                  onClick={() => setChartMode("serapan")}
+                >
+                  % Serapan
+                </button>
+              </div>
             </div>
-            <SpendingChart snapshots={snapshots} />
+            {chartMode === "nominal" ? (
+              <SpendingChart snapshots={snapshots} layout="horizontal" />
+            ) : (
+              <ComparisonRateChart snapshots={snapshots} />
+            )}
           </section>
           <section className="panel compare-chart-panel">
-            <h2>Penanda akhir tahun berdampingan</h2>
-            <p>
-              Penanda menggunakan tahun lengkap terakhir yang tersedia, terpisah
-              dari filter periode di atas.
-            </p>
+            <SectionHeading
+              title="Penanda akhir tahun berdampingan"
+              subtitle="Pemeriksaan perbandingan lonjakan pencairan belanja modal fisik pada dua bulan penutup tahun anggaran."
+            />
             <div className="table-scroll">
               <table className="data-table">
                 <thead>

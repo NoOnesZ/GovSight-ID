@@ -222,6 +222,32 @@ export function Profile({
             subtitle="Porsi setiap kategori dari total realisasi belanja."
           />
           <Composition snapshot={snapshot} />
+          <div className="cat-breakdown-list">
+            {snapshot.categories.map((cat) => {
+              const catRate = percentage(cat.realized, cat.budget);
+              return (
+                <div key={cat.code} className="cat-breakdown-row">
+                  <div className="cat-breakdown-header">
+                    <div className="cat-name-group">
+                      <span className={`cat-dot ${cat.code}`} />
+                      <strong>{cat.label}</strong>
+                    </div>
+                    <span className="cat-rate-tag">
+                      {catRate !== null ? `${percent(catRate)} terserap` : "—"}
+                    </span>
+                  </div>
+                  <div className="cat-breakdown-meta">
+                    <span className="cat-realized-val">
+                      Realisasi: <strong>{compactMoney(cat.realized)}</strong>
+                    </span>
+                    <span className="cat-budget-val">
+                      Pagu: {compactMoney(cat.budget)}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
           <InfoNote>
             Belanja pegawai juga mencakup tenaga pelayanan publik. Belanja modal
             tidak otomatis menunjukkan mutu pembangunan.
