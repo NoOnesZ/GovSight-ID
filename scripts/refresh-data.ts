@@ -109,9 +109,7 @@ async function main() {
     await writeFile(path.join(rawDirectory, file), raw, "utf8");
   await writeFile(destination + ".pending", text, "utf8");
   await rename(destination + ".pending", destination);
-  console.log(
-    `Published ${snapshots.length} snapshots. Batch failed = old snapshots remain unchanged.`,
-  );
+  console.log(`Published ${snapshots.length} snapshots successfully.`);
 }
 main().catch((error) => {
   console.error(error.message);

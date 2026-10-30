@@ -22,7 +22,7 @@ Buka http://127.0.0.1:3100 di browser. Jika port sedang dipakai, ganti angka por
 - Beranda/jelajah dengan pencarian, filter tahun, periode, dan jenis daerah.
 - Profil sepuluh pemda Sumatera Utara, dengan komposisi dan riwayat pada bulan yang sama.
 - Perbandingan dua atau tiga daerah. Perbandingan kota dan kabupaten diberi penjelasan konteks.
-- Fitur awal DSS: penanda porsi realisasi belanja modal pada November–Desember, dengan ambang metodologi 40%, pertanyaan lanjutan, dan tautan ke berkas sumber Oktober dan Desember. Ambang tersebut bukan batas hukum; data yang belum tersedia atau tidak konsisten tidak dihitung.
+- Fitur DSS: penanda porsi realisasi belanja modal pada November–Desember dengan ambang metodologi 40% (mendeteksi lonjakan percepatan anggaran >2,4× dari laju normal 16,67% pada dua bulan terakhir), pertanyaan kritis lanjutan untuk publik/DPRD, dan tautan ke berkas sumber asli Oktober dan Desember. Ambang tersebut bukan batas hukum; data yang belum tersedia atau tidak konsisten tidak dihitung.
 - Perbandingan penanda antar daerah, porsi pagu dan realisasi modal serta pegawai, grafik serapan bulanan, dan pola tiga tahun dengan acuan yang dapat diisi pengguna.
 - Metodologi, tautan sumber, berkas asli XML, dan unduhan CSV sesuai filter.
 - URL menyimpan filter dan pilihan daerah; tombol bagikan menyalin URL.
@@ -44,7 +44,7 @@ npm run data:refresh
 
 Daerah ditambahkan di `src/lib/regions.ts`, periode di `src/lib/periods.ts`. Data lama dan berkas asli baru ditulis setelah seluruh batch lolos pemeriksaan. Jangan menjalankan dua proses refresh bersamaan. Pada production nanti, refresh memerlukan deployment ulang karena prototipe membundel data pada build.
 
-**Belum terhubung ke Neon dan belum di-deploy ke Vercel.** Tidak ada pembaruan real-time atau penjadwalan harian. Tidak ada penilaian mutu layanan, skor pemda, atau deteksi korupsi. Integrasi database dan penambahan sepuluh daerah menjadi tahap berikutnya.
+**Belum terhubung ke Neon dan belum di-deploy ke Vercel.** Tidak ada pembaruan real-time atau penjadwalan harian. Tidak ada penilaian mutu layanan, skor pemda, atau deteksi korupsi. Integrasi database eksternal dan otomasi sinkronisasi harian menjadi tahap berikutnya (cakupan 10 daerah dengan 350 snapshot telah diimplementasikan).
 
 Porsi modal dan pegawai merupakan deskripsi komposisi, bukan pemeriksaan kepatuhan hukum. Garis serapan merata adalah ilustrasi, dan acuan tiga tahun yang diisi pengguna bukan standar hukum. Pembandingan perlu mempertimbangkan konteks daerah dan perubahan pagu.
 

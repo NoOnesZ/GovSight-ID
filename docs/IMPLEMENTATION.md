@@ -1,10 +1,10 @@
-# Rapor Belanja Daerah — prototipe
+# GovSight ID — prototipe
 
 ## Batas tahap ini
 
-Next.js App Router, TypeScript, Tailwind, Recharts. Empat halaman interaktif menggunakan snapshot sumber DJPK untuk Medan, Binjai, dan Deli Serdang. Tidak ada skor pemda, tuduhan, atau klaim data real-time.
+Next.js App Router, TypeScript, Tailwind, Recharts. Empat halaman interaktif menggunakan snapshot sumber DJPK untuk sepuluh pemda Sumatera Utara. Tidak ada skor pemda, tuduhan, atau klaim data real-time.
 
-Neon, deployment Vercel, penjadwalan harian, perluasan sepuluh daerah, proposal lomba, dan pengujian dengan lima orang menunggu tahap berikutnya.
+Neon, deployment Vercel, penjadwalan harian, proposal lomba, dan pengujian dengan lima orang menunggu tahap berikutnya (perluasan sepuluh daerah telah selesai).
 
 ## Keputusan visual
 
@@ -45,7 +45,7 @@ Neon, deployment Vercel, penjadwalan harian, perluasan sepuluh daerah, proposal 
 
 ## Tahap berikutnya
 
-Neon, deployment/redeploy publik, penjadwalan harian, perluasan menjadi sepuluh daerah, materi submission, serta pengujian dengan lima orang belum dilakukan dan tidak diklaim selesai. Prototipe tetap memakai snapshot lokal, bukan data real-time.
+Neon, deployment/redeploy publik, penjadwalan harian, materi submission, serta pengujian dengan lima orang belum dilakukan dan tidak diklaim selesai. Perluasan sepuluh daerah telah selesai. Prototipe tetap memakai snapshot lokal, bukan data real-time.
 
 ## GovSight ID — 30 Oktober 2026
 
@@ -53,6 +53,6 @@ Neon, deployment/redeploy publik, penjadwalan harian, perluasan menjadi sepuluh 
 - Data diperluas menjadi 10 pemda dan 350 snapshot: Desember 2023; semua bulan 2024–2025; Januari–Oktober 2026. Batch diperiksa pada 30 Oktober 2026, dan keterangan penerimaan SIKD di portal adalah 29 Oktober 2026. Tanggal ini bukan tanggal terbit setiap angka.
 - Penanda November–Desember ditampilkan pada profil, beranda, dan perbandingan, dengan rumus terbuka, sumber asli, konteks, dan pilihan urutan. Pagu dan realisasi modal/pegawai, grafik serapan bulanan, dan pola modal tiga tahun juga ditampilkan. Acuan tiga tahun dimasukkan pengguna dan disimpan pada URL; bukan batas hukum.
 - Angka Deli Serdang 2025 diperiksa langsung terhadap ekspor DJPK: realisasi modal Oktober Rp200.361.874.998,65 dan Desember Rp753.608.964.203,45; selisihnya 73,41% dari realisasi Desember.
-- Batch pertama berhenti karena satu respons berisi baris kategori yang bertentangan. Pemeriksaan ulang respons konsisten; skrip kini mencoba ulang secara terbatas dan menerbitkan data hanya setelah seluruh batch valid. Snapshot lama dan berkas asli tetap dipertahankan.
+- Batch pertama berhenti karena satu respons berisi baris kategori yang bertentangan. Pemeriksaan ulang respons konsisten; skrip kini mencoba ulang secara terbatas dan menerbitkan data hanya setelah seluruh batch valid. Berkas asli lama dipertahankan sebagai arsip riwayat, sedangkan seluruh snapshot aktif kini merujuk pada batch folder 30 Oktober 2026.
 - `npm test`: 19/19 lulus, termasuk pemeriksaan hash dan parser seluruh 350 berkas. `npm run typecheck` dan `npm run build` lulus. Uji browser lulus pada 360, 768, dan 1280 px, termasuk filter, CSV, penanda Deli Serdang, perbandingan, acuan yang dibagikan, unduhan, dan keadaan gagal.
 - Panduan deploy nanti: `docs/VERCEL.md`. Rencana uji lima orang: `docs/UJI-PENGGUNA.md`. Pengujian dengan peserta nyata dan deployment publik belum dilakukan. Pembaruan data masih manual melalui skrip dan redeploy; ini bukan real-time.
