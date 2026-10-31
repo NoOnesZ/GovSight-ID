@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Shell } from "@/components/shell";
-import "@fontsource/plus-jakarta-sans/400.css";
-import "@fontsource/plus-jakarta-sans/500.css";
-import "@fontsource/plus-jakarta-sans/600.css";
-import "@fontsource/plus-jakarta-sans/700.css";
-import "@fontsource/plus-jakarta-sans/800.css";
+import "@fontsource-variable/inter/index.css";
+import "@fontsource-variable/source-serif-4/index.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,6 +12,7 @@ export const metadata: Metadata = {
   description:
     "Jelajahi dan bandingkan pagu, realisasi, serta komposisi belanja daerah Sumatera Utara dengan data terbuka DJPK.",
 };
+
 export default function RootLayout({
   children,
 }: {

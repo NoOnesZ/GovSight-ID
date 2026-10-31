@@ -9,23 +9,23 @@ import {
   formatFlagShare,
 } from "@/lib/indicators";
 import {
-  AlertTriangle,
   ArrowDown,
   ArrowRight,
   ArrowUpRight,
   BarChart3,
   Building2,
+  CalendarRange,
   Check,
   CheckCircle2,
   ChevronDown,
   CircleHelp,
   FileText,
   Info,
+  Landmark,
   MapPin,
   Search,
-  SlidersHorizontal,
-  Sparkles,
-  TrendingUp,
+  Target,
+  TriangleAlert,
   Wallet,
 } from "lucide-react";
 import type { Dataset } from "@/lib/types";
@@ -39,7 +39,7 @@ import {
   periodLabel,
 } from "@/lib/format";
 import { percentage, sumAmounts } from "@/lib/data-core";
-import { SpendingChart } from "./charts";
+import { ChartLegend, SpendingChart, chartColors } from "./charts";
 import {
   Composition,
   DownloadButton,
@@ -50,6 +50,7 @@ import {
   ShareButton,
   SourceNote,
   UnavailablePeriod,
+  kindLabel,
   useFilters,
 } from "./shared";
 
@@ -173,10 +174,10 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
     "lainnya",
   ].map((code) => {
     const labelMap: Record<string, string> = {
-      pegawai: "Belanja Pegawai",
-      "barang-jasa": "Barang & Jasa",
-      modal: "Belanja Modal",
-      lainnya: "Belanja Lainnya",
+      pegawai: "Belanja pegawai",
+      "barang-jasa": "Barang & jasa",
+      modal: "Belanja modal",
+      lainnya: "Belanja lainnya",
     };
     const sumBudget = sumAmounts(
       visible.map(
@@ -198,7 +199,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
     };
   });
 
-  // Hitung daerah dengan serapan tertinggi & terendah di visible
+  // Daerah dengan serapan tertinggi & terendah di antara yang tampil
   const absorptionList = visible
     .map((s) => {
       const rate = percentage(s.total.realized, s.total.budget);
@@ -211,7 +212,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
   const highestAbsorption = absorptionList[0];
   const lowestAbsorption = absorptionList[absorptionList.length - 1];
 
-  // Cari daerah dengan penumpukan akhir tahun tertinggi di visible
+  // Penumpukan akhir tahun tertinggi di antara yang tampil
   const highestYearEnd = [...visible]
     .map((s) => {
       const flag = flagFor(s.regionCode);
@@ -221,7 +222,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
     .filter((item) => item.flag.share !== null)
     .sort((a, b) => (b.flag.share ?? 0) - (a.flag.share ?? 0))[0];
 
-  // Prioritas daerah dengan penumpukan modal di akhir tahun untuk telaah warga (DSS)
+  // Prioritas telaah warga (DSS)
   const topFlaggedRegions = visible
     .map((s) => ({
       region: regions.find((r) => r.code === s.regionCode)!,
@@ -234,281 +235,295 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
     .sort((a, b) => (b.flag.share ?? 0) - (a.flag.share ?? 0))
     .slice(0, 3);
 
+  function persistenceChip(code: string) {
+    const status = persistenceMap.get(code)?.status;
+    if (status === "dua-tahun-beruntun")
+      return (
+        <span
+          className="chip chip--warn chip--square"
+          title={`Lonjakan belanja modal >40% berulang pada ${latestCompleteYear - 1} dan ${latestCompleteYear}`}
+        >
+          2 tahun beruntun
+        </span>
+      );
+    if (status === "baru-2025" || status === "baru-tahun-ini")
+      return (
+        <span
+          className="chip chip--info chip--square"
+          title={`Baru melampaui ambang 40% pada ${latestCompleteYear}`}
+        >
+          Baru {latestCompleteYear}
+        </span>
+      );
+    if (status === "konsisten-wajar")
+      return (
+        <span
+          className="chip chip--ok chip--square"
+          title={`Di bawah ambang 40% pada ${latestCompleteYear - 1} dan ${latestCompleteYear}`}
+        >
+          Di bawah ambang
+        </span>
+      );
+    return null;
+  }
+
   return (
     <>
       <section className="hero">
-        <div className="hero-copy">
-          <span className="location-label">
-            <MapPin size={14} /> Sumatera Utara <span /> Data terbuka untuk
-            warga
-          </span>
-          <h1>Pemda mana yang perlu ditanya soal belanjanya?</h1>
-          <p>
-            Kami membaca data APBD resmi dan menandai pola yang perlu
-            ditanyakan, dengan metode terbuka.
+        <div className="hero__copy">
+          <p className="eyebrow">
+            <MapPin size={13} /> Sumatera Utara · {regions.length} pemda
           </p>
-          <div className="hero-actions">
-            <a className="button button-primary" href="#jelajah">
-              Mulai jelajahi <ArrowDown size={16} />
+          <h1>Pemda mana yang perlu ditanya soal belanjanya?</h1>
+          <p className="hero__lead">
+            Kami membaca data APBD resmi, lalu menandai pola belanja yang patut
+            ditanyakan — dengan rumus yang terbuka dan sumber yang bisa kamu
+            unduh.
+          </p>
+          <div className="hero__actions">
+            <a className="btn btn--primary" href="#jelajah">
+              Mulai jelajahi <ArrowDown size={15} />
             </a>
-            <Link className="hero-secondary" href="/metodologi">
-              <CircleHelp size={16} /> Cara membaca data
+            <Link className="btn btn--secondary" href="/metodologi">
+              <CircleHelp size={15} /> Cara membaca data
             </Link>
           </div>
-          <div className="hero-trust">
-            <Check size={14} /> Sumber resmi <span />
-            <Check size={14} /> Metode terbuka <span />
-            <Check size={14} /> Tanpa akun
-          </div>
+          <p className="hero__trust">
+            <span>
+              <Check size={14} /> Sumber resmi DJPK
+            </span>
+            <span>
+              <Check size={14} /> Metode terbuka
+            </span>
+            <span>
+              <Check size={14} /> Tanpa akun
+            </span>
+          </p>
         </div>
         {featured && featuredRegion && (
-          <div className="hero-visual">
-            <div className="preview-card">
-              <div className="preview-heading">
-                <span className="preview-icon">
-                  <Building2 size={18} />
-                </span>
+          <div className="hero__panel">
+            <div className="spotlight">
+              <div className="spotlight__head">
                 <div>
                   <strong>{featuredRegion.name}</strong>
-                  <span>Realisasi belanja {year}</span>
+                  <span>Realisasi belanja TA {year}</span>
                 </div>
                 <Link
+                  className="icon-link"
                   href={`/daerah/${featuredRegion.code}?${period}`}
                   aria-label={`Lihat profil ${featuredRegion.name}`}
                 >
-                  <ArrowUpRight size={19} />
+                  <ArrowUpRight size={17} />
                 </Link>
               </div>
-              <div className="preview-main">
-                <div>
-                  <span className="small-label">Sudah dibelanjakan</span>
-                  <strong className="preview-amount">
+              <div className="spotlight__body">
+                <div className="spotlight__amount">
+                  <span className="eyebrow">Sudah dibelanjakan</span>
+                  <strong title={fullMoney(featured.total.realized)}>
                     {compactMoney(featured.total.realized)}
                   </strong>
-                  <span className="preview-budget">
-                    dari pagu {compactMoney(featured.total.budget)}
-                  </span>
-                  <span className="preview-period">
+                  <p>
+                    dari pagu {compactMoney(featured.total.budget)} ·{" "}
                     {periodLabel(year, month)}
-                  </span>
+                  </p>
                 </div>
-                <div className="progress-ring">
+                <div className="gauge">
                   <svg viewBox="0 0 108 108" aria-hidden="true">
                     <circle
                       cx="54"
                       cy="54"
-                      r="45"
+                      r="47"
                       fill="none"
-                      stroke="#E8EEFC"
-                      strokeWidth="9"
+                      stroke="#eceae6"
+                      strokeWidth="7"
                     />
                     <circle
                       cx="54"
                       cy="54"
-                      r="45"
+                      r="47"
                       fill="none"
-                      stroke="#2457E7"
-                      strokeWidth="9"
+                      stroke={chartColors.realized}
+                      strokeWidth="7"
                       strokeLinecap="round"
-                      strokeDasharray={`${Math.min(rate ?? 0, 100) * 2.827} 282.7`}
+                      strokeDasharray={`${Math.min(rate ?? 0, 100) * 2.953} 295.3`}
                       transform="rotate(-90 54 54)"
                     />
                   </svg>
-                  <span>
+                  <span className="gauge__value">
                     <strong>{percent(rate)}</strong>
                     <small>terserap</small>
                   </span>
                 </div>
               </div>
-              <div className="preview-composition">
-                <span className="small-label">Komposisi realisasi</span>
+              <div className="spotlight__foot">
+                <span className="eyebrow">Komposisi realisasi</span>
                 <Composition snapshot={featured} showAmounts={false} />
               </div>
             </div>
-            <div className="visual-note">
-              <span className="visual-note-check">
-                <Check size={12} />
-              </span>
-              Setiap angka punya sumber yang bisa kamu buka.
-            </div>
-            <span className="visual-grid" aria-hidden="true" />
+            <p className="spotlight__note">
+              <Check size={13} /> Setiap angka punya berkas sumber yang bisa
+              kamu buka.
+            </p>
           </div>
         )}
       </section>
 
-      <section className="explore-section" id="jelajah">
+      <section id="jelajah">
         <SectionHeading
           title="Jelajahi belanja daerah"
-          subtitle="Mulai dari daerahmu. Temukan gambaran yang lebih utuh."
+          subtitle="Mulai dari daerahmu, lalu baca gambaran yang lebih utuh."
         >
-          <div className="heading-actions">
-            <ShareButton />
-            <DownloadButton
-              codes={visible.map((row) => row.regionCode)}
-              year={year}
-              month={month}
-            />
-          </div>
+          <ShareButton />
+          <DownloadButton
+            codes={visible.map((row) => row.regionCode)}
+            year={year}
+            month={month}
+          />
         </SectionHeading>
-        <div className="filter-bar">
-          <label className="search-field">
-            <Search size={18} />
+
+        <div className="toolbar">
+          <label className="field field--search">
+            <Search size={17} />
             <span className="sr-only">Cari daerah</span>
             <input
               aria-label="Cari daerah"
               value={query}
               onChange={(event) => update({ q: event.target.value })}
-              placeholder="Cari kota atau kabupaten..."
+              placeholder="Cari kota atau kabupaten…"
             />
-            <span className="search-shortcut" aria-hidden="true">
-              Cari
-            </span>
           </label>
-          <div className="filter-controls">
+          <div className="toolbar__group toolbar__group--end">
             <PeriodControls year={year} month={month} onChange={update} />
-            <label className="select-control">
-              <SlidersHorizontal size={15} />
-              <select
-                aria-label="Jenis daerah"
-                value={kind}
-                onChange={(event) => update({ jenis: event.target.value })}
-              >
-                <option value="semua">Semua daerah</option>
-                <option value="kota">Kota</option>
-                <option value="kabupaten">Kabupaten</option>
-              </select>
-              <ChevronDown size={14} />
-            </label>
           </div>
         </div>
-        <div
-          className="quick-filter-pills"
-          role="tablist"
-          aria-label="Filter cepat perspektif"
-        >
-          <button
-            type="button"
-            className={`pill-button ${fokus === "semua" && kind === "semua" ? "active" : ""}`}
-            onClick={() => update({ jenis: "semua", fokus: null })}
+
+        <div className="filter-strip">
+          <div
+            className="segmented"
+            role="group"
+            aria-label="Filter cepat daerah"
           >
-            Semua ({snapshots.length})
-          </button>
-          <button
-            type="button"
-            className={`pill-button ${fokus === "penanda" ? "active amber" : ""}`}
-            onClick={() =>
-              update({ fokus: fokus === "penanda" ? null : "penanda" })
-            }
-          >
-            <AlertTriangle size={13} /> Ditandai Akhir Tahun ({flaggedCount})
-          </button>
-          <button
-            type="button"
-            className={`pill-button ${fokus !== "penanda" && kind === "kota" ? "active" : ""}`}
-            onClick={() => update({ jenis: "kota", fokus: null })}
-          >
-            <Building2 size={13} /> Kota ({kotaCount})
-          </button>
-          <button
-            type="button"
-            className={`pill-button ${fokus !== "penanda" && kind === "kabupaten" ? "active" : ""}`}
-            onClick={() => update({ jenis: "kabupaten", fokus: null })}
-          >
-            <MapPin size={13} /> Kabupaten ({kabCount})
-          </button>
+            <button
+              type="button"
+              className={`segmented__item ${fokus === "semua" && kind === "semua" ? "is-active" : ""}`}
+              onClick={() => update({ jenis: null, fokus: null })}
+            >
+              Semua <span className="count">{snapshots.length}</span>
+            </button>
+            <button
+              type="button"
+              className={`segmented__item ${fokus !== "penanda" && kind === "kota" ? "is-active" : ""}`}
+              onClick={() => update({ jenis: "kota", fokus: null })}
+            >
+              <Building2 size={13} /> Kota{" "}
+              <span className="count">{kotaCount}</span>
+            </button>
+            <button
+              type="button"
+              className={`segmented__item ${fokus !== "penanda" && kind === "kabupaten" ? "is-active" : ""}`}
+              onClick={() => update({ jenis: "kabupaten", fokus: null })}
+            >
+              <Landmark size={13} /> Kabupaten{" "}
+              <span className="count">{kabCount}</span>
+            </button>
+            <button
+              type="button"
+              className={`segmented__item ${fokus === "penanda" ? "is-active is-warn" : ""}`}
+              onClick={() =>
+                update({ fokus: fokus === "penanda" ? null : "penanda" })
+              }
+            >
+              <TriangleAlert size={13} /> Ditandai{" "}
+              <span className="count">{flaggedCount}</span>
+            </button>
+          </div>
+          <label className="field">
+            <span className="sr-only">Urutkan daerah</span>
+            <select
+              aria-label="Urutkan daerah"
+              value={sort}
+              onChange={(event) =>
+                update({
+                  urut:
+                    event.target.value === "nama" ? null : event.target.value,
+                })
+              }
+            >
+              <option value="nama">Urut: nama daerah</option>
+              <option value="realisasi">Urut: realisasi terbesar</option>
+              <option value="penumpukan">Urut: penumpukan akhir tahun</option>
+            </select>
+            <ChevronDown size={14} className="field__caret" />
+          </label>
         </div>
+
         {visible.length ? (
-          <>
-            <div className="summary-band">
-              <div className="summary-item">
-                <span className="metric-icon">
-                  <Building2 size={20} />
+          <div className="stack" style={{ marginTop: "var(--gap)" }}>
+            <div className="summary">
+              <div className="summary__item">
+                <span className="summary__label">
+                  <Building2 size={14} /> Daerah ditampilkan
                 </span>
-                <div>
-                  <span>Daerah ditampilkan</span>
-                  <strong>
-                    {visible.length}
-                    <small> daerah</small>
-                  </strong>
-                </div>
-              </div>
-              <div className="summary-item">
-                <span className="metric-icon">
-                  <Wallet size={20} />
+                <span className="summary__value">
+                  {visible.length}
+                  <small> dari {snapshots.length}</small>
                 </span>
-                <div>
-                  <span>Total pagu belanja</span>
-                  <strong title={fullMoney(totalBudget)}>
-                    {compactMoney(totalBudget)}
-                  </strong>
-                </div>
               </div>
-              <div className="summary-item">
-                <span className="metric-icon blue">
-                  <BarChart3 size={20} />
+              <div className="summary__item">
+                <span className="summary__label">
+                  <Wallet size={14} /> Total pagu belanja
                 </span>
-                <div>
-                  <span>Total realisasi belanja</span>
-                  <strong title={fullMoney(totalRealized)}>
-                    {compactMoney(totalRealized)}
-                  </strong>
-                </div>
+                <span className="summary__value" title={fullMoney(totalBudget)}>
+                  {compactMoney(totalBudget)}
+                </span>
               </div>
-              <div className="summary-period">
-                <span className="status-dot" />
-                <div>
-                  <strong>{periodLabel(year, month)}</strong>
-                  <span>
-                    {year === runningYear
-                      ? "Tahun berjalan"
-                      : "Periode historis"}
-                  </span>
-                </div>
+              <div className="summary__item summary__item--accent">
+                <span className="summary__label">
+                  <BarChart3 size={14} /> Total realisasi
+                </span>
+                <span
+                  className="summary__value"
+                  title={fullMoney(totalRealized)}
+                >
+                  {compactMoney(totalRealized)}
+                </span>
+              </div>
+              <div className="summary__item">
+                <span className="summary__label">
+                  <CalendarRange size={14} /> Periode laporan
+                </span>
+                <span className="summary__value summary__value--sm">
+                  {periodLabel(year, month)}
+                  <small>
+                    {" "}
+                    · {year === runningYear ? "tahun berjalan" : "historis"}
+                  </small>
+                </span>
               </div>
             </div>
-            <div className="explore-grid">
-              <div className="panel regions-panel">
-                <div className="panel-heading">
+
+            <div className="split">
+              <div className="card regions">
+                <div className="card__head">
                   <div>
-                    <h3>
+                    <h3 className="card__title">
                       Daerah pilihanmu{" "}
-                      <span className="count-badge">{visible.length}</span>
+                      <span className="count">{visible.length}</span>
                     </h3>
-                    <p>Pagu dan realisasi dalam rupiah.</p>
-                    <p className="table-hint">
-                      Geser tabel ke samping untuk melihat penanda.
+                    <p className="card__sub">
+                      Pagu, realisasi, dan penanda akhir tahun{" "}
+                      {latestCompleteYear}.
                     </p>
                   </div>
-                  <label className="sort-control">
-                    <span className="sr-only">Urutkan daerah</span>
-                    <select
-                      aria-label="Urutkan daerah"
-                      value={sort}
-                      onChange={(event) =>
-                        update({
-                          urut:
-                            event.target.value === "nama"
-                              ? null
-                              : event.target.value,
-                        })
-                      }
-                    >
-                      <option value="nama">Nama daerah</option>
-                      <option value="realisasi">Realisasi terbesar</option>
-                      <option value="penumpukan">
-                        Penumpukan akhir tahun tertinggi
-                      </option>
-                    </select>
-                    <ChevronDown size={13} />
-                  </label>
                 </div>
-                <div className="table-scroll">
+
+                <div className="table-wrap">
                   <table className="region-table">
                     <thead>
                       <tr>
                         <th>Daerah</th>
-                        <th>Pagu / Realisasi</th>
-                        <th>Serapan</th>
+                        <th className="is-num">Pagu / realisasi</th>
+                        <th className="is-num">Serapan</th>
                         <th>Penanda {latestCompleteYear}</th>
                         <th>
                           <span className="sr-only">Profil</span>
@@ -520,122 +535,81 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                         const region = regions.find(
                           (item) => item.code === snapshot.regionCode,
                         )!;
-                        const rate = percentage(
+                        const rowRate = percentage(
                           snapshot.total.realized,
                           snapshot.total.budget,
                         );
+                        const over = rowRate !== null && rowRate > 100;
                         return (
                           <tr key={region.code}>
                             <td>
                               <Link
-                                className="region-name"
+                                className="region-cell"
                                 href={`/daerah/${region.code}?${period}`}
                               >
-                                <span className="region-avatar">
-                                  <Building2 size={18} />
+                                <span className="region-cell__name">
+                                  {region.shortName}
                                 </span>
-                                <span>
-                                  <strong>{region.shortName}</strong>
-                                  <small>
-                                    {region.type === "kota"
-                                      ? "Kota"
-                                      : "Kabupaten"}
-                                  </small>
+                                <span className="region-cell__kind">
+                                  {kindLabel(region.type)}
                                 </span>
                               </Link>
                             </td>
-                            <td>
-                              <div
-                                className="table-money"
-                                title={fullMoney(snapshot.total.budget)}
-                              >
-                                <span className="mobile-budget-label">Pagu </span>
-                                {compactMoney(snapshot.total.budget)}
-                              </div>
-                              <div
-                                className="table-realized"
-                                title={fullMoney(snapshot.total.realized)}
-                              >
-                                <span className="mobile-budget-label">Realisasi </span>
-                                {compactMoney(snapshot.total.realized)}
-                              </div>
-                            </td>
-                            <td>
-                              <div className="table-rate-wrap">
+                            <td className="is-num">
+                              <span className="money-pair">
                                 <strong
-                                  className={`table-rate ${rate !== null && rate > 100 ? "rate-overflow" : ""}`}
+                                  title={fullMoney(snapshot.total.realized)}
                                 >
-                                  {percent(rate)}
+                                  {compactMoney(snapshot.total.realized)}
                                 </strong>
-                                {rate !== null && rate > 100 && (
+                                <span title={fullMoney(snapshot.total.budget)}>
+                                  pagu {compactMoney(snapshot.total.budget)}
+                                </span>
+                              </span>
+                            </td>
+                            <td className="is-num">
+                              <span className="rate-cell">
+                                <span className="rate-cell__top">
+                                  <strong className={over ? "is-over" : ""}>
+                                    {percent(rowRate)}
+                                  </strong>
+                                  {over && (
+                                    <span
+                                      className="chip chip--warn chip--square"
+                                      title="Realisasi melampaui pagu tercatat di SIKD (umumnya karena APBD-P belum tersinkronisasi di pusat data)"
+                                    >
+                                      &gt;100%
+                                    </span>
+                                  )}
+                                </span>
+                                <span className="meter meter--thin">
                                   <span
-                                    className="overflow-tag"
-                                    title="Realisasi melampaui pagu tercatat di SIKD (umumnya karena APBD-P belum tersinkronisasi di pusat data)"
-                                  >
-                                    ⚠ &gt;100%
-                                  </span>
-                                )}
-                              </div>
-                              <span className="mini-progress">
-                                <span
-                                  className={
-                                    rate !== null && rate > 100
-                                      ? "progress-overflow"
-                                      : ""
-                                  }
-                                  style={{
-                                    width: `${Math.min(rate ?? 0, 100)}%`,
-                                  }}
-                                />
+                                    className={over ? "is-over" : ""}
+                                    style={{
+                                      width: `${Math.min(rowRate ?? 0, 100)}%`,
+                                    }}
+                                  />
+                                </span>
                               </span>
                             </td>
                             <td>
                               {flagFor(region.code).share === null ? (
                                 <span className="muted">Belum tersedia</span>
                               ) : (
-                                <div className="table-flag-cell">
-                                  <div className="table-flag-top">
-                                    <strong className="table-flag-share">
+                                <span className="flag-cell">
+                                  <span className="flag-cell__top">
+                                    <span className="flag-cell__share">
                                       {formatFlagShare(
                                         flagFor(region.code).share,
                                       )}
-                                    </strong>
-                                    <span className="table-flag-rank">
-                                      #{rankMap.get(region.code)}/10
                                     </span>
-                                  </div>
-                                  <div className="table-flag-bottom">
-                                    {persistenceMap.get(region.code)?.status ===
-                                      "dua-tahun-beruntun" && (
-                                      <span
-                                        className="persistence-tag recurring"
-                                        title={`Lonjakan belanja modal >40% berulang 2 tahun anggaran terakhir (${latestCompleteYear - 1} & ${latestCompleteYear})`}
-                                      >
-                                        2 Th Beruntun
-                                      </span>
-                                    )}
-                                    {(persistenceMap.get(region.code)
-                                      ?.status === "baru-2025" ||
-                                      persistenceMap.get(region.code)
-                                        ?.status === "baru-tahun-ini") && (
-                                      <span
-                                        className="persistence-tag new"
-                                        title={`Baru melampaui ambang 40% pada tahun ${latestCompleteYear}, tahun sebelumnya di bawah ambang`}
-                                      >
-                                        Baru {latestCompleteYear}
-                                      </span>
-                                    )}
-                                    {persistenceMap.get(region.code)?.status ===
-                                      "konsisten-wajar" && (
-                                      <span
-                                        className="persistence-tag normal"
-                                        title={`Konsisten di bawah ambang 40% pada tahun ${latestCompleteYear - 1} dan ${latestCompleteYear}`}
-                                      >
-                                        Di Bawah Ambang
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
+                                    <span className="flag-cell__rank">
+                                      #{rankMap.get(region.code)} dari{" "}
+                                      {regions.length}
+                                    </span>
+                                  </span>
+                                  {persistenceChip(region.code)}
+                                </span>
                               )}
                             </td>
                             <td>
@@ -644,7 +618,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                                 href={`/daerah/${region.code}?${period}`}
                                 aria-label={`Lihat profil ${region.name}`}
                               >
-                                <ArrowUpRight size={17} />
+                                <ArrowUpRight size={16} />
                               </Link>
                             </td>
                           </tr>
@@ -653,222 +627,309 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                     </tbody>
                   </table>
                 </div>
-                <div className="panel-foot">
+
+                <div className="region-cards">
+                  {visible.map((snapshot) => {
+                    const region = regions.find(
+                      (item) => item.code === snapshot.regionCode,
+                    )!;
+                    const rowRate = percentage(
+                      snapshot.total.realized,
+                      snapshot.total.budget,
+                    );
+                    const over = rowRate !== null && rowRate > 100;
+                    const flag = flagFor(region.code);
+                    return (
+                      <Link
+                        key={region.code}
+                        className="region-card"
+                        href={`/daerah/${region.code}?${period}`}
+                      >
+                        <span className="region-card__top">
+                          <span>
+                            <span className="region-cell__name">
+                              {region.shortName}
+                            </span>
+                            <span className="region-cell__kind">
+                              {kindLabel(region.type)}
+                            </span>
+                          </span>
+                          <ArrowUpRight size={16} />
+                        </span>
+                        <span className="region-card__grid">
+                          <span className="region-card__item">
+                            <span>Realisasi</span>
+                            <strong>
+                              {compactMoney(snapshot.total.realized)}
+                            </strong>
+                          </span>
+                          <span className="region-card__item">
+                            <span>Pagu</span>
+                            <strong>
+                              {compactMoney(snapshot.total.budget)}
+                            </strong>
+                          </span>
+                          <span className="region-card__item">
+                            <span>Serapan</span>
+                            <strong className={over ? "is-over" : ""}>
+                              {percent(rowRate)}
+                            </strong>
+                          </span>
+                          <span className="region-card__item">
+                            <span>Penanda {latestCompleteYear}</span>
+                            <strong>{formatFlagShare(flag.share)}</strong>
+                          </span>
+                        </span>
+                        <span className="region-card__flags">
+                          {over && (
+                            <span className="chip chip--warn chip--square">
+                              Realisasi &gt;100% pagu
+                            </span>
+                          )}
+                          {persistenceChip(region.code)}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                <div className="card__foot">
                   <InfoNote>
                     Serapan menunjukkan bagian pagu yang sudah dibelanjakan,
                     bukan penilaian mutu layanan.
                   </InfoNote>
                 </div>
               </div>
-              <div className="panel chart-panel">
-                <div className="panel-heading">
-                  <div>
-                    <h3>Rencana & realisasi</h3>
-                    <p>Dalam triliun rupiah (T).</p>
+
+              <div className="stack">
+                <div className="card">
+                  <div className="card__head">
+                    <div>
+                      <h3 className="card__title">
+                        <Target size={16} /> Sorotan data
+                      </h3>
+                      <p className="card__sub">
+                        {visible.length} daerah · {periodLabel(year, month)}
+                      </p>
+                    </div>
                   </div>
-                  <BarChart3 size={18} className="muted" />
-                </div>
-                <SpendingChart snapshots={visible} />
-
-                <div className="chart-highlights-section">
-                  <div className="chart-highlights-header">
-                    <h4>
-                      <TrendingUp size={15} /> Sorotan Data ({visible.length}{" "}
-                      Daerah)
-                    </h4>
-                    <span className="small-label">
-                      {periodLabel(year, month)}
-                    </span>
-                  </div>
-
-                  <div className="highlights-grid">
-                    {highestAbsorption && (
-                      <Link
-                        href={`/daerah/${highestAbsorption.region.code}?${period}`}
-                        className="highlight-card"
-                      >
-                        <span className="highlight-tag green">
-                          <CheckCircle2 size={11} /> Serapan Tertinggi
-                        </span>
-                        <strong>{highestAbsorption.region.shortName}</strong>
-                        <span className="highlight-value">
-                          {percent(highestAbsorption.rate)}
-                        </span>
-                        <small>
-                          pagu{" "}
-                          {compactMoney(
-                            highestAbsorption.snapshot.total.budget,
-                          )}
-                        </small>
-                      </Link>
-                    )}
-
-                    {lowestAbsorption &&
-                      lowestAbsorption.region.code !==
-                        highestAbsorption?.region.code && (
+                  <div className="card__body">
+                    <div className="highlights">
+                      {highestAbsorption && (
                         <Link
-                          href={`/daerah/${lowestAbsorption.region.code}?${period}`}
-                          className="highlight-card"
+                          href={`/daerah/${highestAbsorption.region.code}?${period}`}
+                          className="highlight"
                         >
-                          <span className="highlight-tag blue">
-                            <Info size={11} /> Serapan Terendah
+                          <span className="chip chip--ok chip--square">
+                            <CheckCircle2 size={11} /> Serapan tertinggi
                           </span>
-                          <strong>{lowestAbsorption.region.shortName}</strong>
-                          <span className="highlight-value">
-                            {percent(lowestAbsorption.rate)}
+                          <strong>{highestAbsorption.region.shortName}</strong>
+                          <span className="highlight__value">
+                            {percent(highestAbsorption.rate)}
                           </span>
                           <small>
                             pagu{" "}
                             {compactMoney(
-                              lowestAbsorption.snapshot.total.budget,
+                              highestAbsorption.snapshot.total.budget,
                             )}
                           </small>
                         </Link>
                       )}
 
-                    {highestYearEnd && (
-                      <Link
-                        href={`/daerah/${highestYearEnd.region.code}?${period}`}
-                        className="highlight-card alert"
-                      >
-                        <span className="highlight-tag amber">
-                          <AlertTriangle size={11} /> Lonjakan Nov–Des
-                        </span>
-                        <strong>{highestYearEnd.region.shortName}</strong>
-                        <span className="highlight-value">
-                          {formatFlagShare(highestYearEnd.flag.share)}
-                        </span>
-                        <small>
-                          #{rankMap.get(highestYearEnd.region.code)}/10 ·{" "}
-                          {persistenceMap.get(highestYearEnd.region.code)
-                            ?.label ?? "2 bulan akhir"}
-                        </small>
-                      </Link>
-                    )}
-                  </div>
+                      {lowestAbsorption &&
+                        lowestAbsorption.region.code !==
+                          highestAbsorption?.region.code && (
+                          <Link
+                            href={`/daerah/${lowestAbsorption.region.code}?${period}`}
+                            className="highlight"
+                          >
+                            <span className="chip chip--info chip--square">
+                              <Info size={11} /> Serapan terendah
+                            </span>
+                            <strong>{lowestAbsorption.region.shortName}</strong>
+                            <span className="highlight__value">
+                              {percent(lowestAbsorption.rate)}
+                            </span>
+                            <small>
+                              pagu{" "}
+                              {compactMoney(
+                                lowestAbsorption.snapshot.total.budget,
+                              )}
+                            </small>
+                          </Link>
+                        )}
 
-                  <div className="aggregate-composition-box">
-                    <div className="aggregate-composition-header">
-                      <span>Komposisi Realisasi Kolektif</span>
-                      <strong>Total {compactMoney(totalRealized)}</strong>
+                      {highestYearEnd && (
+                        <Link
+                          href={`/daerah/${highestYearEnd.region.code}?${period}`}
+                          className="highlight"
+                        >
+                          <span className="chip chip--warn chip--square">
+                            <TriangleAlert size={11} /> Lonjakan Nov–Des
+                          </span>
+                          <strong>{highestYearEnd.region.shortName}</strong>
+                          <span className="highlight__value">
+                            {formatFlagShare(highestYearEnd.flag.share)}
+                          </span>
+                          <small>
+                            #{rankMap.get(highestYearEnd.region.code)} dari{" "}
+                            {regions.length} ·{" "}
+                            {persistenceMap.get(highestYearEnd.region.code)
+                              ?.label ?? "2 bulan akhir"}
+                          </small>
+                        </Link>
+                      )}
                     </div>
+                  </div>
+                </div>
 
+                <div className="card">
+                  <div className="card__head">
+                    <div>
+                      <h3 className="card__title">Komposisi kolektif</h3>
+                      <p className="card__sub">
+                        Porsi dari total realisasi {compactMoney(totalRealized)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="card__body">
                     <div
-                      className="aggregate-bar"
+                      className="stack-bar"
                       role="img"
                       aria-label="Komposisi realisasi belanja kumulatif seluruh daerah yang ditampilkan"
                     >
-                      {aggregateCategories.map((cat) => {
-                        const width = Math.max(cat.share ?? 0, 0);
-                        return (
-                          <div
-                            key={cat.code}
-                            className={`aggregate-bar-segment ${cat.code}`}
-                            style={{ width: `${width}%` }}
-                            title={`${cat.label}: ${percent(cat.share)} (${compactMoney(cat.realized)})`}
-                          />
-                        );
-                      })}
-                    </div>
-
-                    <div className="aggregate-list">
                       {aggregateCategories.map((cat) => (
-                        <div key={cat.code} className="aggregate-row">
-                          <div className="aggregate-row-name">
-                            <span className={`legend-dot ${cat.code}`} />
-                            <span className="legend-label">{cat.label}</span>
-                          </div>
-                          <div className="aggregate-row-stats">
-                            <strong className="aggregate-row-percent">
-                              {percent(cat.share)}
-                            </strong>
-                            <span className="aggregate-row-amount">
+                        <span
+                          key={cat.code}
+                          className={`seg--${cat.code}`}
+                          style={{ width: `${Math.max(cat.share ?? 0, 0)}%` }}
+                          title={`${cat.label}: ${percent(cat.share)} (${compactMoney(cat.realized)})`}
+                        />
+                      ))}
+                    </div>
+                    <div className="legend">
+                      {aggregateCategories.map((cat) => (
+                        <div key={cat.code} className="legend__row">
+                          <span className={`dot dot--${cat.code}`} />
+                          <span className="legend__name">{cat.label}</span>
+                          <span className="legend__value">
+                            <strong>{percent(cat.share)}</strong>
+                            <small title={fullMoney(cat.realized)}>
                               {compactMoney(cat.realized)}
-                            </span>
-                          </div>
+                            </small>
+                          </span>
                         </div>
                       ))}
                     </div>
                   </div>
+                </div>
 
-                  {topFlaggedRegions.length > 0 && (
-                    <div className="dss-priority-box">
-                      <div className="dss-priority-header">
-                        <div className="dss-priority-title">
-                          <Sparkles size={14} className="dss-icon" />
-                          <h5>Prioritas Telaah Pengawasan Warga</h5>
-                        </div>
-                        <span className="dss-badge">DSS Rekomendasi</span>
+                {topFlaggedRegions.length > 0 && (
+                  <div className="card">
+                    <div className="card__head">
+                      <div>
+                        <h3 className="card__title">Prioritas telaah warga</h3>
+                        <p className="card__sub">
+                          Konsentrasi pencairan modal fisik di akhir tahun di
+                          atas ambang 40%.
+                        </p>
                       </div>
-                      <p className="dss-priority-desc">
-                        Daerah dengan konsentrasi pencairan modal fisik di akhir tahun (&gt;40%) berturut-turut yang paling mendesak untuk ditelaah:
-                      </p>
-                      <div className="dss-priority-list">
+                      <span className="chip chip--warn">DSS</span>
+                    </div>
+                    <div className="card__body">
+                      <div className="priority">
                         {topFlaggedRegions.map((item, idx) => (
                           <Link
                             key={item.region.code}
-                            href={`/daerah/${item.region.code}?${period}#pertanyaan`}
-                            className="dss-priority-item"
+                            href={`/daerah/${item.region.code}?${period}#lembar-advokasi`}
+                            className="priority__item"
                           >
-                            <span className="dss-priority-num">{idx + 1}</span>
-                            <div className="dss-priority-info">
-                              <div className="dss-priority-name-row">
+                            <span className="priority__rank">{idx + 1}</span>
+                            <span className="priority__body">
+                              <span className="priority__name">
                                 <strong>{item.region.name}</strong>
-                                <span className="dss-priority-share">
-                                  {formatFlagShare(item.flag.share)} modal akhir TA
+                                <span className="priority__share">
+                                  {formatFlagShare(item.flag.share)} modal akhir
+                                  TA
                                 </span>
-                              </div>
-                              <div className="dss-priority-meta">
-                                <span className="persistence-tag recurring small">
-                                  {item.persistence?.label ?? "2 Th Beruntun"}
+                              </span>
+                              <span className="priority__meta">
+                                <span className="chip chip--warn chip--square">
+                                  {item.persistence?.label ??
+                                    "2 tahun beruntun"}
                                 </span>
-                                <span className="dss-action-text">
-                                  Buka Pertanyaan Publik <ArrowRight size={11} />
+                                <span className="priority__cta">
+                                  Buka pertanyaan publik{" "}
+                                  <ArrowRight size={11} />
                                 </span>
-                              </div>
-                            </div>
+                              </span>
+                            </span>
                           </Link>
                         ))}
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
+
+            <div className="card">
+              <div className="card__head">
+                <div>
+                  <h3 className="card__title">Rencana dan realisasi</h3>
+                  <p className="card__sub">
+                    Nilai nominal dalam triliun rupiah. Perhatikan perbedaan
+                    skala anggaran antardaerah.
+                  </p>
+                </div>
+              </div>
+              <div className="card__body">
+                <SpendingChart snapshots={visible} />
+                <ChartLegend
+                  items={[
+                    { label: "Pagu belanja", color: chartColors.budget },
+                    { label: "Realisasi", color: chartColors.realized },
+                  ]}
+                />
+              </div>
+            </div>
+
             <SourceNote snapshot={visible[0]} />
-          </>
+          </div>
         ) : (
           <EmptyState title="Daerah tidak ditemukan">
             Coba cari {regionListLabel}, atau ubah filter jenis daerah.
           </EmptyState>
         )}
       </section>
-      <section className="bottom-cards">
+
+      <section className="next-cards">
         <Link
           href={`/bandingkan?tahun=${year}&bulan=${month}`}
-          className="feature-link"
+          className="next-card"
         >
-          <span className="feature-icon">
-            <BarChart3 size={23} />
+          <span className="next-card__mark">
+            <BarChart3 size={20} />
           </span>
           <div>
             <h3>Beda daerah, bagaimana belanjanya?</h3>
             <p>Bandingkan angka pada periode yang sama.</p>
           </div>
-          <ArrowRight size={20} />
+          <ArrowRight size={18} />
         </Link>
-        <Link href="/metodologi" className="feature-link">
-          <span className="feature-icon neutral">
-            <FileText size={23} />
+        <Link href="/metodologi" className="next-card">
+          <span className="next-card__mark">
+            <FileText size={20} />
           </span>
           <div>
             <h3>Datanya dari mana?</h3>
             <p>Buka sumber dan pahami cara menghitungnya.</p>
           </div>
-          <ArrowRight size={20} />
+          <ArrowRight size={18} />
         </Link>
       </section>
-      <p className="coverage-note">
+
+      <p className="footnote">
         Cakupan versi awal: {regionListLabel}. Data diperiksa{" "}
         {dateLabel(dataset.generatedAt)}. Pembaruan mengikuti publikasi sumber.
       </p>

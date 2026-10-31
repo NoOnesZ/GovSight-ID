@@ -8,10 +8,16 @@ Neon, deployment Vercel, penjadwalan harian, proposal lomba, dan pengujian denga
 
 ## Keputusan visual
 
-- Warna: latar #F5F7FA, permukaan #FFFFFF, teks #182133, sekunder #627085, aksen #2457E7, grafik pendamping #20A58A.
-- Tipografi: Plus Jakarta Sans untuk judul dan isi, angka tabular untuk data. Fallback sans-serif sistem.
-- Layout: navigasi samping pada desktop, navigasi ringkas pada mobile; hero berupa pertanyaan warga dan ilustrasi komposisi belanja nyata; area eksplorasi menyatukan tabel dan grafik, bukan kumpulan kartu identik.
-- Data menjadi fokus. Lencana periode, sumber, keterbatasan, dan tautan unduhan berada dekat angka.
+Seluruh UI ditulis ulang pada 31 Oktober 2026 sebagai satu sistem desain bertoken di `src/app/globals.css`. Rujukannya ruang kerja bertipe Notion (kertas hangat, garis rambut, hierarki tenang) dan pustaka komponen bertipe HeroUI (primitif konsisten, fokus terlihat, radius lembut).
+
+- Prinsip: chrome monokrom; warna hanya dipakai untuk data dan status. Tidak ada gradien, glass, atau glow.
+- Warna: kanvas #FBFAF9, permukaan #FFFFFF, tinta #1C1B19 dengan tiga tingkat abu hangat, garis #E7E5E0, aksen institusional #14395E. Warna data: pegawai #2E5C96, barang/jasa #7CA3CF, modal #1E7D6B, lainnya #C6C1B8. Status amber/hijau/merah bata punya pasangan latar, garis, dan tinta sendiri.
+- Tipografi: Source Serif 4 untuk judul utama, Inter untuk isi dan antarmuka, basis 15px. Seluruh angka memakai `tabular-nums` dan rata kanan agar kolom bisa dibandingkan sekilas.
+- Primitif yang dipakai ulang di semua halaman: `.btn`, `.chip`, `.card`, `.field`, `.segmented`, `.note`, `.table`, `.meter`, `.stack-bar`, `.empty`. Jarak antarblok diatur `.stack`, bukan margin bertumpuk.
+- Layout: rail navigasi kiri pada desktop dengan deskripsi tiap menu; pada ≤1024px rail berganti menjadi drawer yang bisa ditutup dengan Escape atau klik di luar.
+- Tabel daerah berubah menjadi daftar kartu pada ≤720px, sehingga tidak ada lagi instruksi "geser tabel ke samping" di layar kecil.
+- Grafik memakai palet yang sama dengan token, garis bantu tipis, dan legenda HTML (`ChartLegend`) agar tipografinya konsisten dengan sisa halaman.
+- Data tetap menjadi fokus. Lencana periode, sumber, keterbatasan, dan tautan unduhan berada dekat angka.
 
 ## Cakupan uji
 
@@ -66,3 +72,21 @@ Neon, deployment/redeploy publik, penjadwalan harian, materi submission, serta p
 - **Klarifikasi Model Simulasi Daya Beli:** Konversi kapasitas belanja modal ditandai secara tegas sebagai _Simulasi Rujukan Pilihan Alternatif (Salah Satu / Atau)_ dengan asumsi model estimasi tim, menghindari kesalahpahaman akumulasi ganda.
 - **Keamanan & CI/CD Produksi:** HTTP Security Headers produksi aktif di `next.config.ts`. Workflow GitHub Actions CI memverifikasi typecheck, test, dan build pada setiap push/PR. Draf workflow pembaruan berkala via Pull Request disiapkan untuk menjaga integritas data tanpa mengubah cabang utama secara sepihak.
 - **Hasil Pengujian:** `npm test` 23/23 lulus, `npm run typecheck` 0 error, `npm run build` sukses, dan seluruh halaman responsif tanpa overflow di 360, 768, dan 1280 px.
+
+## Rekonstruksi UI/UX menyeluruh — 31 Oktober 2026
+
+Seluruh lapisan tampilan ditulis ulang. Logika data, perhitungan indikator, endpoint, dan isi analisis tidak diubah.
+
+- **Sistem desain baru.** `src/app/globals.css` diganti dari nol (±2.200 baris) menjadi satu sistem bertoken: netral hangat, satu garis rambut, bayangan sangat halus. Warna hanya dipakai untuk data dan status, sehingga chrome tidak bersaing dengan angka. Rujukan: Notion untuk ketenangan dan ritme kertas, HeroUI untuk konsistensi primitif dan status fokus.
+- **Tipografi.** `@fontsource/plus-jakarta-sans` diganti `@fontsource-variable/inter` (isi, antarmuka, angka) dan `@fontsource-variable/source-serif-4` (judul utama). Keduanya tetap paket lokal, jadi aplikasi masih tidak memanggil Google Fonts. Basis naik dari 13px ke 15px dan semua angka memakai `tabular-nums`.
+- **Primitif pengganti.** ±280 kelas sekali-pakai diringkas menjadi primitif yang dipakai ulang: `.btn`, `.chip`, `.card`, `.field`, `.segmented`, `.note`, `.table`, `.meter`, `.stack-bar`, `.metrics`, `.empty`, `.skeleton`.
+- **Navigasi.** Rail kiri memuat deskripsi singkat tiap menu. Pada ≤1024px rail berganti menjadi drawer dengan scrim, penutupan lewat Escape, kunci scroll, dan penutupan otomatis saat rute berubah.
+- **Perubahan UX, bukan hanya tampilan.**
+  - Tabel daerah menjadi daftar kartu pada ≤720px; instruksi "geser tabel ke samping" dihapus karena tidak lagi diperlukan.
+  - Filter jenis daerah yang sebelumnya duplikat (dropdown dan pil) disatukan menjadi satu `segmented control` berisi jumlah per kelompok.
+  - Urutan daftar dipindah ke baris filter, bukan tersembunyi di dalam kepala panel.
+  - Grafik memakai legenda HTML (`ChartLegend`) agar tipografi legenda sama dengan isi halaman, dan palet grafik dikunci sejajar dengan token.
+  - Lembar advokasi memakai gaya cetak baru: rail, topbar, tombol, dan grafik disembunyikan; kartu tidak terpotong antarhalaman.
+- **Penanda inisial daerah dihapus.** Avatar monogram di tabel jelajah, kartu mobile, kartu sorotan, dan pemilih pembanding dibuang. Aturan inisialnya menghasilkan title case, sehingga nama satu kata terbaca sebagai kata, bukan monogram (Medan → "Me", Binjai → "Bi", Karo → "Ka"). Nama daerah sudah berdiri sendiri di sebelahnya, jadi penanda itu hanya mengulang informasi. Helper `initials()` ikut dihapus dari `shared.tsx`.
+- **Tailwind dibatasi pada reset.** `@import "tailwindcss"` diganti impor terpisah `theme.css` dan `preflight.css`; lapisan `utilities` sengaja tidak diimpor. Tailwind v4 membuat utility dari string apa pun yang ditemukannya di sumber, sehingga kelas semantik seperti `.ring` ikut tergenerasi sebagai utility `ring` dan menimpa gaya kita (`box-shadow: 0 0 0 1px`) — terlihat sebagai kotak tipis di sekeliling cincin serapan pada beranda. Kelas itu juga diganti nama menjadi `.gauge`. Nama lain yang berisiko sama bila lapisan utilities dihidupkan kembali: `.table`, `.border`, `.grid`, `.shadow`, `.block`, `.hidden`.
+- **Verifikasi.** `npm test` 23/23 lulus, `npm run typecheck` 0 error, `npm run build` lulus (18 halaman), dan `npm run test:browser` lulus seluruhnya pada 360, 768, dan 1280 px tanpa overflow horizontal dan tanpa runtime error.

@@ -6,14 +6,14 @@ import Link from "next/link";
 import {
   ArrowDownToLine,
   ArrowUpRight,
-  CalendarDays,
   Check,
   ChevronDown,
+  Compass,
   ExternalLink,
   Info,
   Link2,
 } from "lucide-react";
-import { categoryColors, months } from "@/lib/regions";
+import { months } from "@/lib/regions";
 import { dateLabel, fullMoney, percent, periodLabel } from "@/lib/format";
 import { percentage } from "@/lib/data-core";
 import {
@@ -22,10 +22,13 @@ import {
   latestPeriod,
   monthsInYear,
   reportMonths,
-  runningYear,
   years,
 } from "@/lib/periods";
 import type { Snapshot } from "@/lib/types";
+
+export function kindLabel(type: string): string {
+  return type === "kota" ? "Kota" : "Kabupaten";
+}
 
 export function useFilters() {
   const params = useSearchParams();
@@ -69,9 +72,8 @@ export function PeriodControls({
   onChange: (values: Record<string, string>) => void;
 }) {
   return (
-    <div className="period-controls">
-      <label className="select-control">
-        <CalendarDays size={16} />
+    <>
+      <label className="field">
         <span className="sr-only">Tahun anggaran</span>
         <select
           aria-label="Tahun anggaran"
@@ -90,13 +92,13 @@ export function PeriodControls({
         >
           {years.map((value) => (
             <option key={value} value={value}>
-              {value}
+              TA {value}
             </option>
           ))}
         </select>
-        <ChevronDown size={14} />
+        <ChevronDown size={14} className="field__caret" />
       </label>
-      <label className="select-control month-control">
+      <label className="field">
         <span className="sr-only">Bulan pelaporan</span>
         <select
           aria-label="Bulan pelaporan"
@@ -113,9 +115,9 @@ export function PeriodControls({
             );
           })}
         </select>
-        <ChevronDown size={14} />
+        <ChevronDown size={14} className="field__caret" />
       </label>
-    </div>
+    </>
   );
 }
 
@@ -133,20 +135,20 @@ export function ShareButton() {
     }
   }
   return (
-    <div className="share-wrap">
-      <button className="button button-secondary" onClick={share}>
-        {copied ? <Check size={16} /> : <Link2 size={16} />}{" "}
+    <>
+      <button className="btn btn--secondary" onClick={share}>
+        {copied ? <Check size={15} /> : <Link2 size={15} />}
         {copied ? "Tautan disalin" : "Bagikan"}
       </button>
       <span className="sr-only" role="status">
         {copied ? "Tautan halaman berhasil disalin" : ""}
       </span>
       {error && (
-        <span className="share-error" role="status">
-          Salin alamat halaman dari browser untuk membagikan.
+        <span className="chip chip--warn" role="status">
+          Salin alamat halaman dari browser
         </span>
       )}
-    </div>
+    </>
   );
 }
 
@@ -161,18 +163,18 @@ export function DownloadButton({
 }) {
   if (!codes.length)
     return (
-      <button className="button button-secondary" disabled>
-        <ArrowDownToLine size={16} />
+      <button className="btn btn--secondary" disabled>
+        <ArrowDownToLine size={15} />
         <span>Unduh CSV</span>
       </button>
     );
   return (
     <a
-      className="button button-secondary"
+      className="btn btn--secondary"
       href={`/api/ekspor?daerah=${codes.join(",")}&tahun=${year}&bulan=${month}`}
       download
     >
-      <ArrowDownToLine size={16} />
+      <ArrowDownToLine size={15} />
       <span>Unduh CSV</span>
     </a>
   );
@@ -180,35 +182,38 @@ export function DownloadButton({
 
 export function SourceNote({
   snapshot,
-  compact = false,
 }: {
   snapshot: Snapshot;
   compact?: boolean;
 }) {
   return (
-    <div className={compact ? "source-note compact" : "source-note"}>
-      <span className="status-dot" />
+    <div className="source-line">
+      <span className="live-dot" />
+      <strong>Data {periodLabel(snapshot.year, snapshot.month)}</strong>
+      <span className="source-line__sep">·</span>
       <span>
-        Data {periodLabel(snapshot.year, snapshot.month)}
-        <span className="source-note-divider">/</span>
-        <span className="source-meta">
-          Keterangan penerimaan SIKD pada portal:{" "}
-          {snapshot.source.publishedAt
-            ? dateLabel(snapshot.source.publishedAt)
-            : "belum dicantumkan"}
-        </span>
+        Keterangan penerimaan SIKD pada portal:{" "}
+        {snapshot.source.publishedAt
+          ? dateLabel(snapshot.source.publishedAt)
+          : "belum dicantumkan"}
       </span>
       <a href={snapshot.source.portalUrl} target="_blank" rel="noreferrer">
-        DJPK Kemenkeu <ArrowUpRight size={13} />
+        DJPK Kemenkeu <ArrowUpRight size={12} />
       </a>
     </div>
   );
 }
 
-export function InfoNote({ children }: { children: React.ReactNode }) {
+export function InfoNote({
+  children,
+  tone = "default",
+}: {
+  children: React.ReactNode;
+  tone?: "default" | "warn" | "alert" | "info";
+}) {
   return (
-    <div className="info-note">
-      <Info size={17} />
+    <div className={tone === "default" ? "note" : `note note--${tone}`}>
+      <Info size={15} />
       <p>{children}</p>
     </div>
   );
@@ -223,9 +228,9 @@ export function Composition({
 }) {
   const complete = snapshot.categories.every((line) => line.realized !== null);
   return (
-    <div className="composition">
+    <div>
       <div
-        className="stacked-bar"
+        className="stack-bar"
         role="img"
         aria-label={
           complete
@@ -236,29 +241,30 @@ export function Composition({
         {snapshot.categories.map((line) => (
           <span
             key={line.code}
+            className={`seg seg--${line.code}`}
             style={{
               width: `${percentage(line.realized, snapshot.total.realized) ?? 0}%`,
-              background: categoryColors[line.code],
             }}
           />
         ))}
       </div>
-      <div className="composition-legend">
+      <div className="legend">
         {snapshot.categories.map((line) => (
-          <div key={line.code} className="composition-row">
-            <span
-              className="legend-dot"
-              style={{ background: categoryColors[line.code] }}
-            />
-            <span>{line.label.replace("Belanja ", "")}</span>
-            <strong>
-              {percent(percentage(line.realized, snapshot.total.realized))}
-            </strong>
-            {showAmounts && (
-              <small title={fullMoney(line.realized)}>
-                {fullMoney(line.realized)}
-              </small>
-            )}
+          <div key={line.code} className="legend__row">
+            <span className={`dot dot--${line.code}`} />
+            <span className="legend__name">
+              {line.label.replace("Belanja ", "")}
+            </span>
+            <span className="legend__value">
+              <strong>
+                {percent(percentage(line.realized, snapshot.total.realized))}
+              </strong>
+              {showAmounts && (
+                <small title={fullMoney(line.realized)}>
+                  {fullMoney(line.realized)}
+                </small>
+              )}
+            </span>
           </div>
         ))}
       </div>
@@ -274,11 +280,13 @@ export function EmptyState({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="empty-state">
-      <Info size={28} />
+    <div className="empty">
+      <span className="empty__mark">
+        <Compass size={22} />
+      </span>
       <h3>{title}</h3>
       <p>{children ?? "Pilih daerah atau periode lain untuk melanjutkan."}</p>
-      <Link className="button button-secondary" href="/">
+      <Link className="btn btn--secondary" href="/">
         Kembali ke jelajah
       </Link>
     </div>
@@ -304,12 +312,12 @@ export function SectionHeading({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="section-heading">
-      <div>
+    <div className="section-head">
+      <div className="section-head__text">
         <h2>{title}</h2>
         {subtitle && <p>{subtitle}</p>}
       </div>
-      {children}
+      {children && <div className="section-head__actions">{children}</div>}
     </div>
   );
 }
@@ -317,12 +325,12 @@ export function SectionHeading({
 export function ExternalSource({ snapshot }: { snapshot: Snapshot }) {
   return (
     <a
-      className="text-link"
+      className="link"
       href={snapshot.source.portalUrl}
       target="_blank"
       rel="noreferrer"
     >
-      Buka sumber asli <ExternalLink size={14} />
+      Buka sumber asli <ExternalLink size={13} />
     </a>
   );
 }

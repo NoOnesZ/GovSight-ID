@@ -2,22 +2,18 @@
 
 import { useState } from "react";
 import {
-  AlertTriangle,
   Check,
   CheckCircle2,
   Copy,
   FileQuestion,
-  HelpCircle,
   Info,
   MessageCircle,
   Printer,
-  Sparkles,
-  Users,
+  TriangleAlert,
 } from "lucide-react";
 import type { Dataset, Region, Snapshot } from "@/lib/types";
 import { generateInquiryBrief } from "@/lib/indicators";
-import { months } from "@/lib/regions";
-import { compactMoney, fullMoney, percent, periodLabel } from "@/lib/format";
+import { compactMoney, percent, periodLabel } from "@/lib/format";
 import { percentage } from "@/lib/data-core";
 
 export function InquiryToolkit({
@@ -31,7 +27,7 @@ export function InquiryToolkit({
 }) {
   const [copied, setCopied] = useState(false);
 
-  // Cari tahun lengkap terakhir yang memiliki snapshot Oktober dan Desember
+  // Tahun lengkap terakhir yang memiliki snapshot Oktober dan Desember
   const completeYears = dataset.snapshots
     .filter((s) => s.regionCode === region.code && s.month === 12)
     .sort((a, b) => b.year - a.year)
@@ -106,7 +102,7 @@ export function InquiryToolkit({
       currentSnapshot.total.budget,
     );
     const textLines = [
-      `🔍 *Telaah Kritis APBD ${region.name} — GovSight ID*`,
+      `*Telaah Kritis APBD ${region.name} — GovSight ID*`,
       `Periode: ${periodLabel(currentSnapshot.year, currentSnapshot.month)}`,
       `Realisasi: ${compactMoney(currentSnapshot.total.realized)} (${percent(rate)} terserap)`,
       ``,
@@ -125,150 +121,143 @@ export function InquiryToolkit({
   }
 
   return (
-    <section className="panel inquiry-toolkit-panel" id="lembar-advokasi">
-      <div className="inquiry-header">
-        <div className="inquiry-header-text">
-          <span className="pill amber">
-            <Sparkles size={13} /> Decision Support System (DSS)
-          </span>
-          <h2>Panduan Advokasi & Lembar Pertanyaan Publik</h2>
-          <p>
+    <section className="card" id="lembar-advokasi">
+      <div className="card__head">
+        <div className="section-head__text">
+          <span className="chip chip--warn">Decision Support System</span>
+          <h2 className="inquiry-title">
+            Panduan advokasi & lembar pertanyaan publik
+          </h2>
+          <p className="card__sub">
             Daftar telaah otomatis berbasis data APBD untuk bahan Rapat Dengar
-            Pendapat (RDP) DPRD, liputan jurnalis, atau audiensi warga.
+            Pendapat DPRD, liputan jurnalis, atau audiensi warga.
           </p>
         </div>
-        <div className="inquiry-actions no-print">
+        <div className="page-actions no-print">
           <button
             type="button"
-            className="button button-secondary"
+            className="btn btn--secondary"
             onClick={shareToWhatsApp}
             aria-label="Bagikan ringkasan telaah ke WhatsApp"
           >
-            <MessageCircle size={16} className="text-emerald-600" />
-            <span>Bagikan ke WhatsApp</span>
+            <MessageCircle size={15} />
+            <span>WhatsApp</span>
           </button>
           <button
             type="button"
-            className="button button-secondary"
+            className="btn btn--secondary"
             onClick={copyQuestions}
             aria-label="Salin naskah pertanyaan ke clipboard"
           >
-            {copied ? (
-              <>
-                <Check size={16} className="text-emerald-600" />
-                <span>Naskah Tersalin!</span>
-              </>
-            ) : (
-              <>
-                <Copy size={16} />
-                <span>Salin Naskah Pertanyaan</span>
-              </>
-            )}
+            {copied ? <Check size={15} /> : <Copy size={15} />}
+            <span>{copied ? "Naskah tersalin" : "Salin naskah"}</span>
           </button>
           <button
             type="button"
-            className="button button-secondary"
+            className="btn btn--secondary"
             onClick={handlePrint}
             aria-label="Cetak lembar telaah atau simpan sebagai PDF"
           >
-            <Printer size={16} />
-            <span>Cetak / Simpan PDF</span>
+            <Printer size={15} />
+            <span>Cetak / PDF</span>
           </button>
         </div>
       </div>
 
-      <div className="inquiry-grid">
-        {items.map((item) => {
-          const isAtensi = item.badge === "atensi";
-          const isKonteks = item.badge === "konteks";
-          return (
-            <div
-              key={item.id}
-              className={`inquiry-card ${
-                isAtensi
-                  ? "inquiry-card-atensi"
-                  : isKonteks
-                    ? "inquiry-card-konteks"
-                    : "inquiry-card-normal"
-              }`}
-            >
-              <div className="inquiry-card-header">
-                <div className="inquiry-card-meta">
-                  <span
-                    className={`inquiry-badge ${
-                      isAtensi
-                        ? "badge-atensi"
-                        : isKonteks
-                          ? "badge-konteks"
-                          : "badge-normal"
-                    }`}
-                  >
-                    {isAtensi ? (
-                      <AlertTriangle size={12} />
-                    ) : isKonteks ? (
-                      <Info size={12} />
-                    ) : (
-                      <CheckCircle2 size={12} />
-                    )}
-                    {item.badgeLabel}
-                  </span>
-                  <span className="inquiry-period-pill">{item.period}</span>
+      <div className="card__body">
+        <div className="inquiry-grid">
+          {items.map((item) => {
+            const isAtensi = item.badge === "atensi";
+            const isKonteks = item.badge === "konteks";
+            return (
+              <article
+                key={item.id}
+                className={`inquiry-card ${
+                  isAtensi
+                    ? "inquiry-card--atensi"
+                    : isKonteks
+                      ? "inquiry-card--konteks"
+                      : ""
+                }`}
+              >
+                <div className="inquiry-card__head">
+                  <div className="inquiry-card__meta">
+                    <span
+                      className={`chip chip--square ${
+                        isAtensi
+                          ? "chip--warn"
+                          : isKonteks
+                            ? "chip--info"
+                            : "chip--ok"
+                      }`}
+                    >
+                      {isAtensi ? (
+                        <TriangleAlert size={11} />
+                      ) : isKonteks ? (
+                        <Info size={11} />
+                      ) : (
+                        <CheckCircle2 size={11} />
+                      )}
+                      {item.badgeLabel}
+                    </span>
+                    <span className="chip chip--square chip--ghost">
+                      {item.period}
+                    </span>
+                  </div>
+                  <h3>{item.title}</h3>
                 </div>
-                <h3 className="inquiry-card-title">{item.title}</h3>
-              </div>
 
-              <div className="inquiry-observation">
-                <span className="observation-tag">Temuan Data</span>
-                <p>{item.observation}</p>
-              </div>
+                <div className="inquiry-card__observation">
+                  <span>Temuan data</span>
+                  <p>{item.observation}</p>
+                </div>
 
-              <div className="inquiry-questions-box">
-                <div className="questions-box-header">
-                  <FileQuestion size={14} />
-                  <span>Rekomendasi Pertanyaan untuk Pengawasan / RDP:</span>
+                <div className="inquiry-card__questions">
+                  <div>
+                    <FileQuestion size={13} />
+                    Rekomendasi pertanyaan untuk pengawasan
+                  </div>
+                  <div className="qlist">
+                    {item.questions.map((q, idx) => (
+                      <div key={idx} className="qitem">
+                        <span>{idx + 1}</span>
+                        <p>{q}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="questions-list">
-                  {item.questions.map((q, idx) => (
-                    <div key={idx} className="question-item">
-                      <span className="question-num">{idx + 1}</span>
-                      <p className="question-text">{q}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+              </article>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="inquiry-footer">
-        <div className="inquiry-footer-title">
-          <Sparkles size={14} />
-          <span>Panduan Alur Advokasi Warga Berdaya:</span>
-        </div>
-        <div className="inquiry-steps-grid">
-          <div className="inquiry-guide-step">
-            <span className="step-num">1</span>
+      <div className="card__foot">
+        <p className="eyebrow">Alur advokasi warga berdaya</p>
+        <div className="steps" style={{ marginTop: 14 }}>
+          <div className="step">
+            <span className="step__num">1</span>
             <div>
-              <strong>Pelajari Data</strong>
+              <strong>Pelajari data</strong>
               <p>
-                Periksa kembali angka realisasi dan tautan sumber resmi di bawah.
+                Periksa kembali angka realisasi dan tautan sumber resmi di
+                bawah.
               </p>
             </div>
           </div>
-          <div className="inquiry-guide-step">
-            <span className="step-num">2</span>
+          <div className="step">
+            <span className="step__num">2</span>
             <div>
-              <strong>Bawa ke Forum Resmi</strong>
+              <strong>Bawa ke forum resmi</strong>
               <p>
-                Gunakan pertanyaan di atas saat Musrenbang atau RDP Komisi DPRD.
+                Gunakan pertanyaan di atas saat Musrenbang atau RDP komisi DPRD.
               </p>
             </div>
           </div>
-          <div className="inquiry-guide-step">
-            <span className="step-num">3</span>
+          <div className="step">
+            <span className="step__num">3</span>
             <div>
-              <strong>Ajukan KIP / SP4N-LAPOR!</strong>
+              <strong>Ajukan KIP atau SP4N-LAPOR!</strong>
               <p>
                 Minta rincian proyek melalui PPID bila data rinci belum terbuka.
               </p>

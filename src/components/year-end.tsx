@@ -5,8 +5,7 @@ import {
   YEAR_END_THRESHOLD,
 } from "@/lib/indicators";
 import { fullMoney } from "@/lib/format";
-import { SectionHeading } from "./shared";
-import { AlertTriangle, CheckCircle2, Download, Info } from "lucide-react";
+import { CheckCircle2, Download, Info, TriangleAlert } from "lucide-react";
 
 export function YearEnd({ dataset, code }: { dataset: Dataset; code: string }) {
   const years = [
@@ -32,161 +31,181 @@ export function YearEnd({ dataset, code }: { dataset: Dataset; code: string }) {
   });
 
   return (
-    <section className="panel year-end-panel" style={{ marginTop: 24 }}>
-      <SectionHeading
-        title="Audit Lonjakan Belanja Modal Akhir Tahun"
-        subtitle="Pemeriksaan konsentrasi pencairan modal pada November–Desember terhadap arsip resmi DJPK."
-      />
+    <section className="card">
+      <div className="card__head">
+        <div>
+          <h2 className="card__title">
+            Audit lonjakan belanja modal akhir tahun
+          </h2>
+          <p className="card__sub">
+            Konsentrasi pencairan modal pada November–Desember, diperiksa
+            terhadap arsip resmi DJPK.
+          </p>
+        </div>
+        <span className="chip chip--sunk">
+          Ambang wajar {YEAR_END_THRESHOLD}%
+        </span>
+      </div>
 
-      {runningYears.map((year) => {
-        const october = dataset.snapshots.find(
-          (s) => s.regionCode === code && s.year === year && s.month === 10,
-        );
-        return (
-          <div key={year} className="audit-running-year-card">
-            <div className="audit-card-top">
-              <span className="audit-status-badge badge-pending">
-                <Info size={13} />
-                Tahun Berjalan — Menunggu Laporan Penutup Desember
-              </span>
-              <span className="audit-year-label">TA {year} (Aktif)</span>
-            </div>
-            <div className="audit-running-content">
-              <div className="audit-running-info">
+      <div className="card__body">
+        {runningYears.map((year) => {
+          const october = dataset.snapshots.find(
+            (s) => s.regionCode === code && s.year === year && s.month === 10,
+          );
+          return (
+            <div key={year} className="audit-card audit-card--running">
+              <div className="audit-card__top">
+                <span className="chip chip--info">
+                  <Info size={12} />
+                  Menunggu laporan penutup Desember
+                </span>
+                <span className="audit-card__year">TA {year} · aktif</span>
+              </div>
+              <div className="audit-running">
                 <p>
-                  Realisasi modal s.d. Oktober {year} tercatat sebesar{" "}
+                  Realisasi modal s.d. Oktober {year} tercatat{" "}
                   <strong>
                     {fullMoney(
                       october?.categories.find((c) => c.code === "modal")
                         ?.realized ?? null,
                     )}
                   </strong>
-                  . Audit indikasi lonjakan akhir tahun (Nov–Des) baru dapat dievaluasi setelah berkas penutupan TA {year} resmi dipublikasikan DJPK Kemenkeu.
+                  . Indikasi lonjakan dua bulan penutup baru dapat dihitung
+                  setelah berkas penutupan TA {year} dipublikasikan DJPK
+                  Kemenkeu.
                 </p>
-              </div>
-              {october && (
-                <div className="audit-running-action">
+                {october && (
                   <a
-                    className="audit-download-link"
+                    className="file-link"
                     href={october.source.rawPath}
                     download
                     title={`Unduh berkas XML laporan Oktober ${year}`}
                   >
                     <Download size={12} /> Unduh Oktober
                   </a>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      })}
-
-      <div className="audit-years-grid">
-        {completeYears.map((year) => {
-          const october = dataset.snapshots.find(
-            (s) => s.regionCode === code && s.year === year && s.month === 10,
-          );
-          const december = dataset.snapshots.find(
-            (s) => s.regionCode === code && s.year === year && s.month === 12,
-          );
-          const flag = yearEndModalFlag(october, december);
-          const isDitandai = flag.status === "ditandai";
-
-          return (
-            <div
-              key={year}
-              className={`audit-year-card ${isDitandai ? "audit-flagged" : "audit-normal"}`}
-            >
-              <div className="audit-card-top">
-                <span
-                  className={`audit-status-badge ${isDitandai ? "badge-alert" : "badge-clean"}`}
-                >
-                  {isDitandai ? (
-                    <AlertTriangle size={13} />
-                  ) : flag.status === "wajar" ? (
-                    <CheckCircle2 size={13} />
-                  ) : (
-                    <Info size={13} />
-                  )}
-                  {isDitandai
-                    ? "Terkonsentrasi di Akhir Tahun"
-                    : flag.status === "wajar"
-                      ? "Distribusi Sesuai Ambang"
-                      : "Data Belum Lengkap"}
-                </span>
-                <span className="audit-year-label">TA {year}</span>
-              </div>
-
-              <div className="audit-share-row">
-                <div className="audit-share-value">
-                  <strong>
-                    {flag.share !== null
-                      ? formatFlagShare(flag.share)
-                      : "—"}
-                  </strong>
-                  <span>porsi modal di 2 bulan akhir</span>
-                </div>
-                <div className="audit-threshold-note">
-                  Ambang batas wajar: <strong>{YEAR_END_THRESHOLD}%</strong>
-                  <small>(Laju normal merata ~16,67%)</small>
-                </div>
-              </div>
-
-              {october && december && (
-                <div className="audit-data-points">
-                  <div className="audit-point">
-                    <span className="audit-point-label">Realisasi s.d. Oktober</span>
-                    <strong className="audit-point-val">
-                      {fullMoney(
-                        october.categories.find((c) => c.code === "modal")
-                          ?.realized ?? null,
-                      )}
-                    </strong>
-                  </div>
-                  <div className="audit-point">
-                    <span className="audit-point-label">Realisasi s.d. Desember</span>
-                    <strong className="audit-point-val">
-                      {fullMoney(
-                        december.categories.find((c) => c.code === "modal")
-                          ?.realized ?? null,
-                      )}
-                    </strong>
-                  </div>
-                </div>
-              )}
-
-              <div className="audit-sources-row">
-                <span className="audit-sources-label">Bukti Berkas Asli SIKD:</span>
-                <div className="audit-links">
-                  {october && (
-                    <a
-                      className="audit-download-link"
-                      href={october.source.rawPath}
-                      download
-                      title={`Unduh berkas XML laporan Oktober ${year}`}
-                    >
-                      <Download size={12} /> Unduh Oktober
-                    </a>
-                  )}
-                  {december && (
-                    <a
-                      className="audit-download-link"
-                      href={december.source.rawPath}
-                      download
-                      title={`Unduh berkas XML laporan Desember ${year}`}
-                    >
-                      <Download size={12} /> Unduh Desember
-                    </a>
-                  )}
-                </div>
+                )}
               </div>
             </div>
           );
         })}
+
+        <div className="audit-grid">
+          {completeYears.map((year) => {
+            const october = dataset.snapshots.find(
+              (s) => s.regionCode === code && s.year === year && s.month === 10,
+            );
+            const december = dataset.snapshots.find(
+              (s) => s.regionCode === code && s.year === year && s.month === 12,
+            );
+            const flag = yearEndModalFlag(october, december);
+            const flagged = flag.status === "ditandai";
+
+            return (
+              <div
+                key={year}
+                className={
+                  flagged ? "audit-card audit-card--flagged" : "audit-card"
+                }
+              >
+                <div className="audit-card__top">
+                  <span
+                    className={
+                      flagged
+                        ? "chip chip--warn"
+                        : flag.status === "wajar"
+                          ? "chip chip--ok"
+                          : "chip"
+                    }
+                  >
+                    {flagged ? (
+                      <TriangleAlert size={12} />
+                    ) : flag.status === "wajar" ? (
+                      <CheckCircle2 size={12} />
+                    ) : (
+                      <Info size={12} />
+                    )}
+                    {flagged
+                      ? "Terkonsentrasi di akhir tahun"
+                      : flag.status === "wajar"
+                        ? "Distribusi sesuai ambang"
+                        : "Data belum lengkap"}
+                  </span>
+                  <span className="audit-card__year">TA {year}</span>
+                </div>
+
+                <div className="audit-card__share">
+                  <div>
+                    <strong>
+                      {flag.share !== null ? formatFlagShare(flag.share) : "—"}
+                    </strong>
+                    <span>porsi modal di dua bulan akhir</span>
+                  </div>
+                  <div className="audit-card__threshold">
+                    ambang {YEAR_END_THRESHOLD}%
+                    <small>laju merata ~16,67%</small>
+                  </div>
+                </div>
+
+                {october && december && (
+                  <div className="audit-card__points">
+                    <div className="audit-card__point">
+                      <span>Realisasi s.d. Oktober</span>
+                      <strong>
+                        {fullMoney(
+                          october.categories.find((c) => c.code === "modal")
+                            ?.realized ?? null,
+                        )}
+                      </strong>
+                    </div>
+                    <div className="audit-card__point">
+                      <span>Realisasi s.d. Desember</span>
+                      <strong>
+                        {fullMoney(
+                          december.categories.find((c) => c.code === "modal")
+                            ?.realized ?? null,
+                        )}
+                      </strong>
+                    </div>
+                  </div>
+                )}
+
+                <div className="audit-card__sources">
+                  <span>Bukti berkas asli SIKD</span>
+                  <div className="audit-links">
+                    {october && (
+                      <a
+                        className="file-link"
+                        href={october.source.rawPath}
+                        download
+                        title={`Unduh berkas XML laporan Oktober ${year}`}
+                      >
+                        <Download size={12} /> Unduh Oktober
+                      </a>
+                    )}
+                    {december && (
+                      <a
+                        className="file-link"
+                        href={december.source.rawPath}
+                        download
+                        title={`Unduh berkas XML laporan Desember ${year}`}
+                      >
+                        <Download size={12} /> Unduh Desember
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <p className="footnote">
+          Penanda konsentrasi akhir tahun adalah indikator analitis untuk
+          melihat potensi penumpukan pencairan fisik di pengujung tahun
+          anggaran, bukan vonis pelanggaran hukum. Penyaluran akhir tahun dapat
+          memiliki alasan kontraktual termin proyek yang sah.
+        </p>
       </div>
-      <p className="audit-disclaimer">
-        *Penanda konsentrasi akhir tahun adalah indikator analitis untuk mengidentifikasi potensi penumpukan pencairan fisik di pengujung tahun anggaran, bukan vonis pelanggaran hukum. Penyaluran akhir tahun dapat memiliki alasan kontraktual termin proyek yang sah.
-      </p>
     </section>
   );
 }

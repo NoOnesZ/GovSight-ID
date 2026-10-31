@@ -56,7 +56,7 @@ Panduan publikasi yang direncanakan tersedia di [docs/VERCEL.md](docs/VERCEL.md)
 
 ## Stack dan struktur
 
-Next.js App Router, React, TypeScript, Tailwind CSS, Recharts, Decimal.js, fast-xml-parser. Font Plus Jakarta Sans disimpan lewat paket lokal, sehingga tidak bergantung pada Google Fonts saat membuka aplikasi.
+Next.js App Router, React, TypeScript, Tailwind CSS, Recharts, Decimal.js, fast-xml-parser. Antarmuka memakai satu sistem desain bertoken di `src/app/globals.css`: netral hangat untuk chrome, warna hanya untuk data dan status. Font Inter (teks dan angka tabular) serta Source Serif 4 (judul) disimpan lewat paket lokal `@fontsource-variable`, sehingga tidak bergantung pada Google Fonts saat membuka aplikasi.
 
 - `src/app/`: empat halaman dan endpoint GET.
 - `src/components/`: tampilan dan interaksi.
