@@ -2,6 +2,8 @@
 
 Prototipe web untuk memahami dan membandingkan belanja daerah Sumatera Utara. GovSight ID menggabungkan **Open Government Data** sebagai dasar data pemerintah yang terbuka dan dapat ditelusuri dengan fitur **Data-Driven Decision Support (DSS)** untuk membantu warga, jurnalis, dan DPRD menentukan pertanyaan yang perlu diajukan. Dibuat untuk MIA 2026, cabang Web In Action.
 
+> 🌐 **Live Demo (Vercel):** [https://govsight-id.vercel.app](https://govsight-id.vercel.app)
+
 Data dan analisis disajikan dalam satu aplikasi: pengguna dapat memeriksa angka beserta sumbernya, membandingkan daerah, lalu melihat penanda pola belanja yang patut ditelaah. Penanda adalah bahan pertanyaan, bukan bukti pelanggaran atau penilaian mutu layanan. Pemilihan subtema resmi yang terdaftar tetap perlu dikonfirmasi kepada panitia.
 
 ## Menjalankan
