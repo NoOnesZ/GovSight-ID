@@ -121,11 +121,21 @@ export function Profile({
 
       <div className="page-head">
         <div className="page-head__text">
-          <p className="eyebrow">
-            <MapPin size={13} /> Sumatera Utara · {kindLabel(region.type)}
+          <h1 style={{ margin: "0 0 8px" }}>{region.name}</h1>
+          <p>
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                fontWeight: 500,
+                color: "var(--ink-2)",
+              }}
+            >
+              <MapPin size={13} /> Sumatera Utara · {kindLabel(region.type)}
+            </span>{" "}
+            — Kenali rencana dan realisasi belanja daerah ini.
           </p>
-          <h1>{region.name}</h1>
-          <p>Kenali rencana dan realisasi belanja daerah ini.</p>
         </div>
         <div className="page-actions">
           <a className="btn btn--secondary" href="#lembar-advokasi">
@@ -180,7 +190,7 @@ export function Profile({
                   className="chip chip--warn chip--square"
                   title="Realisasi melampaui pagu awal di SIKD (umumnya karena pagu APBD-P belum tersinkronisasi di pusat data)"
                 >
-                  &gt;100% pagu
+                  Indikator Anomali: &gt;100% pagu
                 </span>
               )}
             </span>
@@ -203,7 +213,7 @@ export function Profile({
                 size={15}
                 style={{ verticalAlign: "-2px", marginRight: 6 }}
               />
-              Catatan GovSight ID: kemungkinan penyebab realisasi tercatat{" "}
+              Catatan Telaah Kritis: Kemungkinan penyebab realisasi tercatat{" "}
               {percent(rate)} melampaui pagu
             </strong>
             <p>
@@ -301,63 +311,169 @@ export function Profile({
             </p>
 
             {modalNum > 0 && (
-              <div className="sim">
-                <div className="sim__head">
-                  <span className="eyebrow">Simulasi daya beli fiskal</span>
-                  <span className="chip chip--square chip--ghost">
-                    Pilih salah satu, bukan akumulasi
-                  </span>
-                </div>
-                <p className="sim__intro">
-                  Total realisasi modal{" "}
-                  <strong>{compactMoney(modalRealized)}</strong> setara dengan
-                  salah satu alternatif berikut bila dialokasikan penuh:
+              <div
+                className="civic-note"
+                style={{
+                  margin: "20px 0 18px",
+                  padding: "16px 18px",
+                  borderLeft: "3px solid var(--ink)",
+                  background: "var(--canvas)",
+                  borderRadius: "0 var(--r-sm) var(--r-sm) 0",
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    color: "var(--ink)",
+                    margin: "0 0 8px",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  Estimasi Konversi Kapasitas Belanja Modal
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-2)",
+                    lineHeight: 1.6,
+                    margin: "0 0 12px",
+                  }}
+                >
+                  Realisasi belanja modal sebesar{" "}
+                  <strong style={{ color: "var(--ink)", fontWeight: 600 }}>
+                    {compactMoney(modalRealized)}
+                  </strong>{" "}
+                  dapat diilustrasikan ke dalam kapasitas penyediaan fasilitas fisik
+                  berdasarkan standar biaya rujukan teknis kementerian/lembaga:
                 </p>
-                <div className="sim__items">
-                  <div className="sim__item">
-                    <span className="chip chip--square chip--sunk">
-                      Alternatif A
+                <ul
+                  style={{
+                    listStyle: "none",
+                    padding: 0,
+                    margin: "0 0 12px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <li
+                    style={{
+                      display: "flex",
+                      alignItems: "baseline",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      fontSize: "0.8125rem",
+                      borderBottom: "1px dashed var(--line)",
+                      paddingBottom: "6px",
+                    }}
+                  >
+                    <span style={{ color: "var(--ink-2)" }}>
+                      Peningkatan jalan mantap dua lajur
+                      <span
+                        style={{
+                          display: "block",
+                          fontSize: "0.6875rem",
+                          color: "var(--ink-4)",
+                        }}
+                      >
+                        Asumsi rujukan kebinamargaan ~Rp1,5 M/km
+                      </span>
                     </span>
-                    <strong>~{kmJalan.toLocaleString("id-ID")} km</strong>
-                    <span>Peningkatan jalan mantap</span>
-                    <small>
-                      Asumsi model ~Rp1,5 M/km (pemeliharaan berkala jalan dua
-                      lajur, standar kebinamargaan)
-                    </small>
-                  </div>
-                  <div className="sim__item">
-                    <span className="chip chip--square chip--sunk">
-                      Alternatif B
+                    <strong
+                      style={{
+                        color: "var(--ink)",
+                        fontWeight: 600,
+                        fontVariantNumeric: "tabular-nums",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      ~{kmJalan.toLocaleString("id-ID")} km
+                    </strong>
+                  </li>
+                  <li
+                    style={{
+                      display: "flex",
+                      alignItems: "baseline",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      fontSize: "0.8125rem",
+                      borderBottom: "1px dashed var(--line)",
+                      paddingBottom: "6px",
+                    }}
+                  >
+                    <span style={{ color: "var(--ink-2)" }}>
+                      Puskesmas pembantu (Pustu)
+                      <span
+                        style={{
+                          display: "block",
+                          fontSize: "0.6875rem",
+                          color: "var(--ink-4)",
+                        }}
+                      >
+                        Rujukan prototipe fisik faskes Kemenkes RI ~Rp2,0 M/unit
+                      </span>
                     </span>
-                    <strong>~{unitFaskes.toLocaleString("id-ID")} unit</strong>
-                    <span>Puskesmas pembantu (Pustu)</span>
-                    <small>
-                      Asumsi model ~Rp2,0 M/unit (rujukan prototipe fisik faskes
-                      pembantu Kemenkes RI)
-                    </small>
-                  </div>
-                  <div className="sim__item">
-                    <span className="chip chip--square chip--sunk">
-                      Alternatif C
+                    <strong
+                      style={{
+                        color: "var(--ink)",
+                        fontWeight: 600,
+                        fontVariantNumeric: "tabular-nums",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      ~{unitFaskes.toLocaleString("id-ID")} unit
+                    </strong>
+                  </li>
+                  <li
+                    style={{
+                      display: "flex",
+                      alignItems: "baseline",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      fontSize: "0.8125rem",
+                      borderBottom: "1px dashed var(--line)",
+                      paddingBottom: "6px",
+                    }}
+                  >
+                    <span style={{ color: "var(--ink-2)" }}>
+                      Rehabilitasi ruang kelas sekolah dasar
+                      <span
+                        style={{
+                          display: "block",
+                          fontSize: "0.6875rem",
+                          color: "var(--ink-4)",
+                        }}
+                      >
+                        Rujukan menu rehabilitasi DAK Fisik pendidikan ~Rp150 jt/ruang
+                      </span>
                     </span>
-                    <strong>~{ruangKelas.toLocaleString("id-ID")} ruang</strong>
-                    <span>Rehabilitasi kelas sekolah</span>
-                    <small>
-                      Asumsi model ~Rp150 jt/ruang (rujukan menu rehabilitasi
-                      DAK Fisik pendidikan dasar)
-                    </small>
-                  </div>
-                </div>
-                <div className="sim__foot">
-                  <small>
-                    Simulasi di atas adalah asumsi model estimasi tim GovSight
-                    ID untuk menggambarkan kapasitas fiskal bila belanja modal
-                    dialokasikan penuh pada salah satu alternatif, bukan
-                    akumulasi ketiganya. Biaya riil di lapangan dipengaruhi
-                    indeks kemahalan konstruksi dan HSPK ketetapan kepala daerah
-                    setempat.
-                  </small>
-                </div>
+                    <strong
+                      style={{
+                        color: "var(--ink)",
+                        fontWeight: 600,
+                        fontVariantNumeric: "tabular-nums",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      ~{ruangKelas.toLocaleString("id-ID")} ruang
+                    </strong>
+                  </li>
+                </ul>
+                <p
+                  style={{
+                    fontSize: "0.6875rem",
+                    color: "var(--ink-4)",
+                    lineHeight: 1.55,
+                    margin: 0,
+                  }}
+                >
+                  <em>Catatan metodologi:</em> Konversi di atas merupakan model estimasi
+                  independen bila seluruh belanja modal dialokasikan ke salah satu
+                  opsi sarana (bukan penjumlahan gabungan). Realisasi fisik riil di
+                  lapangan dipengaruhi Indeks Kemahalan Konstruksi (IKK) serta Standar Satuan
+                  Harga (HSPK) ketetapan kepala daerah setempat.
+                </p>
               </div>
             )}
 
@@ -411,22 +527,89 @@ export function Profile({
               </table>
             </div>
 
-            <div className="hkpd">
-              <div className="hkpd__head">
-                <h4>Konteks komposisi anggaran dan regulasi</h4>
-                <span className="eyebrow">Rujukan UU No. 1/2022 (HKPD)</span>
+            <div
+              className="hkpd-comparison"
+              style={{
+                marginTop: "24px",
+                paddingTop: "20px",
+                borderTop: "1px solid var(--line)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "baseline",
+                  justifyContent: "space-between",
+                  gap: "8px",
+                  marginBottom: "16px",
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: "0.9375rem",
+                    fontWeight: 600,
+                    color: "var(--ink)",
+                    margin: 0,
+                  }}
+                >
+                  Konteks Komposisi Anggaran & Regulasi
+                </h3>
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: 500,
+                    color: "var(--ink-3)",
+                    letterSpacing: "0.02em",
+                  }}
+                >
+                  Rujukan UU No. 1/2022 (HKPD)
+                </span>
               </div>
-              <div className="hkpd__grid">
-                <div className="hkpd__item">
-                  <strong>
-                    Belanja pegawai {formatFlagShare(sharesPegawai.budget)} dari
-                    pagu
-                  </strong>
-                  <span className="chip chip--square chip--sunk">
-                    Peringkat #{pegawaiRank} tertinggi dari{" "}
-                    {periodSnapshots.length} daerah pantauan
-                  </span>
-                  <p>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                  gap: "24px",
+                }}
+              >
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "baseline",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      borderBottom: "1px solid var(--line)",
+                      paddingBottom: "8px",
+                    }}
+                  >
+                    <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--ink)" }}>
+                      Pasal 146 · Belanja Pegawai
+                    </span>
+                    <strong
+                      style={{
+                        fontSize: "0.875rem",
+                        fontWeight: 600,
+                        color: "var(--ink)",
+                        fontVariantNumeric: "tabular-nums",
+                      }}
+                    >
+                      {formatFlagShare(sharesPegawai.budget)} dari pagu
+                    </strong>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--ink-3)", fontVariantNumeric: "tabular-nums" }}>
+                    Peringkat #{pegawaiRank} tertinggi dari {periodSnapshots.length} daerah pantauan
+                  </div>
+                  <p
+                    style={{
+                      fontSize: "0.8125rem",
+                      color: "var(--ink-2)",
+                      lineHeight: 1.6,
+                      margin: 0,
+                    }}
+                  >
                     Pasal 146 ayat (1) mengarahkan belanja pegawai maksimal 30%
                     APBD, dengan masa transisi bertahap hingga 2027. Formula
                     resmi HKPD mengecualikan tunjangan guru DAK Nonfisik dan
@@ -435,16 +618,43 @@ export function Profile({
                     dengan kepatuhan hukum HKPD.
                   </p>
                 </div>
-                <div className="hkpd__item">
-                  <strong>
-                    Belanja modal {formatFlagShare(sharesModal.budget)} dari
-                    pagu
-                  </strong>
-                  <span className="chip chip--square chip--sunk">
-                    Peringkat #{modalRank} tertinggi dari{" "}
-                    {periodSnapshots.length} daerah pantauan
-                  </span>
-                  <p>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "baseline",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      borderBottom: "1px solid var(--line)",
+                      paddingBottom: "8px",
+                    }}
+                  >
+                    <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--ink)" }}>
+                      Pasal 147 · Belanja Modal
+                    </span>
+                    <strong
+                      style={{
+                        fontSize: "0.875rem",
+                        fontWeight: 600,
+                        color: "var(--ink)",
+                        fontVariantNumeric: "tabular-nums",
+                      }}
+                    >
+                      {formatFlagShare(sharesModal.budget)} dari pagu
+                    </strong>
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--ink-3)", fontVariantNumeric: "tabular-nums" }}>
+                    Peringkat #{modalRank} tertinggi dari {periodSnapshots.length} daerah pantauan
+                  </div>
+                  <p
+                    style={{
+                      fontSize: "0.8125rem",
+                      color: "var(--ink-2)",
+                      lineHeight: 1.6,
+                      margin: 0,
+                    }}
+                  >
                     Belanja modal mencerminkan alokasi aset fisik (klasifikasi
                     ekonomi). Kategori ini berbeda dari mandat belanja
                     infrastruktur pelayanan publik minimal 40% pada Pasal 147

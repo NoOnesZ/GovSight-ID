@@ -3,7 +3,6 @@
 import {
   ArrowDownToLine,
   ArrowUpRight,
-  BookOpen,
   Check,
   Database,
   FileText,
@@ -31,15 +30,15 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
   const snapshots = dataset.snapshots.filter(
     (row) => row.year === year && row.month === month,
   );
+
   return (
     <>
       <div className="page-head">
         <div className="page-head__text">
-          <p className="eyebrow">
-            <BookOpen size={13} /> Transparan sampai caranya
-          </p>
           <h1>Kenali angka di balik layar.</h1>
-          <p>Dari mana datanya, bagaimana dihitung, dan apa batasnya.</p>
+          <p style={{ maxWidth: "68ch" }}>
+            Dari mana datanya, bagaimana dihitung, dan apa batasnya.
+          </p>
         </div>
         <div className="page-actions">
           <ShareButton />
@@ -53,7 +52,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </span>
           <div className="method-hero__text">
             <h2>Keterbukaan dimulai dari sumber yang jelas.</h2>
-            <p>
+            <p style={{ maxWidth: "68ch", fontSize: "0.9375rem", lineHeight: 1.65 }}>
               GovSight ID mengolah data publik APBD dari DJPK Kementerian
               Keuangan. Kami menghitung indikator dengan rumus terbuka dan
               menandai pola yang perlu dipertanyakan. Penanda bukan vonis dan
@@ -74,18 +73,23 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           <section className="card">
             <div className="card__body">
               <span className="chip chip--sunk">Pelaksanaan anggaran</span>
-              <h2 className="inquiry-title">Serapan belanja</h2>
-              <p className="muted" style={{ fontSize: "0.875rem" }}>
+              <h2 className="inquiry-title" style={{ marginTop: 10 }}>
+                Serapan belanja
+              </h2>
+              <p
+                className="muted"
+                style={{ fontSize: "0.875rem", maxWidth: "65ch", lineHeight: 1.6 }}
+              >
                 Berapa bagian rencana belanja tahunan yang sudah direalisasikan
                 sampai periode tertentu.
               </p>
-              <div className="formula">
+              <div className="formula" style={{ margin: "16px 0" }}>
                 <span>Realisasi sampai periode terpilih</span>
                 <span className="formula__line" />
                 <span>Pagu belanja tahunan</span>
                 <strong>× 100%</strong>
               </div>
-              <p className="formula-example">
+              <p className="formula-example" style={{ maxWidth: "65ch" }}>
                 Contoh ilustrasi: realisasi Rp60 miliar dari pagu Rp100 miliar
                 berarti serapan <strong>60%</strong>.
               </p>
@@ -95,18 +99,23 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           <section className="card">
             <div className="card__body">
               <span className="chip chip--ok">Pembagian belanja</span>
-              <h2 className="inquiry-title">Komposisi realisasi</h2>
-              <p className="muted" style={{ fontSize: "0.875rem" }}>
+              <h2 className="inquiry-title" style={{ marginTop: 10 }}>
+                Komposisi realisasi
+              </h2>
+              <p
+                className="muted"
+                style={{ fontSize: "0.875rem", maxWidth: "65ch", lineHeight: 1.6 }}
+              >
                 Berapa porsi suatu kategori dari seluruh belanja yang sudah
                 direalisasikan.
               </p>
-              <div className="formula">
+              <div className="formula" style={{ margin: "16px 0" }}>
                 <span>Realisasi suatu kategori</span>
                 <span className="formula__line" />
                 <span>Total realisasi belanja</span>
                 <strong>× 100%</strong>
               </div>
-              <p className="formula-example">
+              <p className="formula-example" style={{ maxWidth: "65ch" }}>
                 Contoh ilustrasi: belanja modal Rp15 miliar dari total realisasi
                 Rp60 miliar berarti porsi modal <strong>25%</strong>.
               </p>
@@ -116,24 +125,29 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
 
         <section className="card">
           <div className="card__body">
-            <span className="chip chip--warn">Penanda kritis (DSS)</span>
-            <h2 className="inquiry-title">
+            <span className="chip chip--warn">
+              Penanda Kritis
+            </span>
+            <h2 className="inquiry-title" style={{ marginTop: 10 }}>
               Penumpukan belanja modal akhir tahun
             </h2>
-            <div className="formula">
+            <div className="formula" style={{ margin: "18px 0" }}>
               <span>Realisasi modal s.d. Des − realisasi modal s.d. Okt</span>
               <span className="formula__line" />
               <span>Total realisasi modal setahun (s.d. Des)</span>
               <strong>× 100%</strong>
             </div>
-            <p className="muted" style={{ fontSize: "0.875rem" }}>
+            <p
+              className="muted"
+              style={{ fontSize: "0.875rem", maxWidth: "68ch", lineHeight: 1.6 }}
+            >
               Hasil perhitungan dibulatkan ke dua desimal sebelum dibandingkan
               dengan ambang batas <strong>{YEAR_END_THRESHOLD}%</strong>.
             </p>
 
-            <div className="prose" style={{ marginTop: 20 }}>
+            <div className="prose" style={{ marginTop: 24, maxWidth: "68ch" }}>
               <h3>Mengapa ambang {YEAR_END_THRESHOLD}% dipilih?</h3>
-              <p>
+              <p style={{ lineHeight: 1.65 }}>
                 Jika belanja modal terdistribusi proporsional sepanjang 12
                 bulan, pengeluaran dua bulan terakhir (November–Desember)
                 sewajarnya hanya menyerap sekitar <strong>16,67%</strong> (2/12)
@@ -146,7 +160,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                 Mengapa penanda ini penting jika sebagian besar daerah
                 terindikasi?
               </h3>
-              <p>
+              <p style={{ lineHeight: 1.65 }}>
                 Dalam data APBD sepuluh daerah Sumatera Utara yang dianalisis,
                 sebanyak <strong>14 dari 20 tahun anggaran (70%)</strong>{" "}
                 melampaui ambang {YEAR_END_THRESHOLD}%, bahkan Kabupaten Deli
@@ -155,14 +169,15 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                 tunggal, melainkan <em>pola struktural sistemik</em> ("belanja
                 kejar tayang") dalam tata kelola anggaran daerah.
               </p>
-              <p>
-                Status penanda: <em>perlu ditanyakan (ditandai)</em>,{" "}
-                <em>di bawah ambang (wajar)</em>, <em>belum tersedia</em>, atau{" "}
-                <em>tidak konsisten</em> bila realisasi kumulatif tercatat
-                menurun. Penanda berfungsi sebagai{" "}
-                <strong>pemicu pertanyaan publik</strong> — misalnya memastikan
-                serah terima fisik proyek dan kualitas hasil konstruksi — bukan
-                vonis hukum atau bukti pelanggaran.
+              <p style={{ lineHeight: 1.65 }}>
+                Sebagai <strong>Sistem Pendukung Keputusan & Advokasi Warga</strong>, penanda ini
+                bukan vonis hukum sepihak atau bukti pelanggaran pidana. Status penanda —{" "}
+                <em>perlu ditanyakan (ditandai)</em>, <em>di bawah ambang (wajar)</em>,{" "}
+                <em>belum tersedia</em>, atau <em>tidak konsisten</em> — berfungsi sebagai{" "}
+                <strong>pemicu advokasi dan pertanyaan publik berbasis data</strong>. Instrumen ini
+                memperkuat warga, akademisi, jurnalis, dan anggota dewan untuk menuntut pembuktian
+                serah terima fisik pekerjaan, menguji mutu konstruksi di lapangan, serta memastikan
+                hak publik atas anggaran terpenuhi.
               </p>
             </div>
           </div>
@@ -178,35 +193,35 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
             <dl className="defs">
               <div>
                 <dt>Pagu belanja</dt>
-                <dd>
+                <dd style={{ maxWidth: "65ch", lineHeight: 1.6 }}>
                   Rencana atau batas anggaran belanja satu tahun sesuai data
                   APBD murni atau perubahan pada sumber.
                 </dd>
               </div>
               <div>
                 <dt>Realisasi belanja</dt>
-                <dd>
+                <dd style={{ maxWidth: "65ch", lineHeight: 1.6 }}>
                   Belanja yang dilaporkan telah direalisasikan, diakumulasi
                   sampai bulan pelaporan terpilih.
                 </dd>
               </div>
               <div>
                 <dt>Belanja pegawai</dt>
-                <dd>
+                <dd style={{ maxWidth: "65ch", lineHeight: 1.6 }}>
                   Belanja untuk pegawai, termasuk tenaga pelayanan publik.
                   Kategori ini tidak berarti seluruhnya biaya administrasi.
                 </dd>
               </div>
               <div>
                 <dt>Belanja barang dan jasa</dt>
-                <dd>
+                <dd style={{ maxWidth: "65ch", lineHeight: 1.6 }}>
                   Pengeluaran barang dan jasa untuk kegiatan serta operasional
                   pemerintah dan pelayanan.
                 </dd>
               </div>
               <div>
                 <dt>Belanja modal</dt>
-                <dd>
+                <dd style={{ maxWidth: "65ch", lineHeight: 1.6 }}>
                   Kategori pengeluaran untuk perolehan aset sesuai klasifikasi
                   sumber. Nilainya belum membuktikan kondisi atau mutu fisik
                   aset.
@@ -214,7 +229,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
               </div>
               <div>
                 <dt>Belanja lainnya</dt>
-                <dd>
+                <dd style={{ maxWidth: "65ch", lineHeight: 1.6 }}>
                   Kelompok lain yang disajikan DJPK, termasuk hibah, bantuan
                   sosial, transfer, atau belanja lain sesuai akun sumber.
                 </dd>
@@ -229,7 +244,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
               <h2 className="card__title">
                 Rujukan regulasi dan batas penafsiran hukum
               </h2>
-              <p className="card__sub">
+              <p className="card__sub" style={{ maxWidth: "68ch" }}>
                 Rujukan hukum nasional disajikan untuk membantu memahami konteks
                 kebijakan anggaran daerah, bukan untuk memvonis pelanggaran.
               </p>
@@ -237,12 +252,17 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </div>
           <div className="card__body">
             <dl className="defs defs--single">
-              <div>
-                <dt>
+              <div
+                style={{
+                  paddingBottom: 24,
+                  borderBottom: "1px solid var(--line)",
+                }}
+              >
+                <dt style={{ fontSize: "0.9375rem" }}>
                   UU No. 1/2022 (HKPD) Pasal 146 ayat (1) — belanja pegawai
                 </dt>
-                <dd>
-                  <blockquote>
+                <dd style={{ maxWidth: "70ch", lineHeight: 1.65 }}>
+                  <blockquote style={{ maxWidth: "68ch" }}>
                     “Daerah wajib mengalokasikan belanja pegawai di luar
                     tunjangan guru yang dialokasikan melalui TKD paling tinggi
                     30% (tiga puluh persen) dari total belanja APBD.”
@@ -258,12 +278,12 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                   kepatuhan hukum mandatori.
                 </dd>
               </div>
-              <div>
-                <dt>
+              <div style={{ paddingTop: 24 }}>
+                <dt style={{ fontSize: "0.9375rem" }}>
                   UU No. 1/2022 (HKPD) Pasal 147 ayat (1) — infrastruktur publik
                 </dt>
-                <dd>
-                  <blockquote>
+                <dd style={{ maxWidth: "70ch", lineHeight: 1.65 }}>
+                  <blockquote style={{ maxWidth: "68ch" }}>
                     “Daerah wajib mengalokasikan belanja infrastruktur pelayanan
                     publik paling rendah 40% (empat puluh persen) dari total
                     belanja APBD di luar belanja bagi hasil dan/atau transfer
@@ -285,112 +305,351 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </div>
         </section>
 
+        {/* Siklus APBD & Kanal Pengawasan Warga — Flattened Sections with Hairline Dividers */}
         <section className="card">
           <div className="card__head">
             <div>
               <span className="chip chip--ok">
                 <GraduationCap size={12} /> Edukasi literasi anggaran
               </span>
-              <h2 className="inquiry-title">
+              <h2 className="inquiry-title" style={{ marginTop: 8 }}>
                 Siklus APBD dan titik kritis pengawasan warga
               </h2>
-              <p className="card__sub">
+              <p className="card__sub" style={{ maxWidth: "68ch" }}>
                 Kapan masyarakat dapat terlibat, dan bagaimana menyalurkan
                 aspirasi secara berdaya?
               </p>
             </div>
           </div>
           <div className="card__body">
-            <div className="cycle">
-              <div className="cycle__card">
-                <span className="chip chip--square chip--sunk">
+            {/* Flattened Phase Flow */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
+                gap: 20,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  padding: "14px 0",
+                }}
+              >
+                <span
+                  className="chip chip--square chip--sunk"
+                  style={{ alignSelf: "flex-start" }}
+                >
                   Fase 1 · Jan–Mei
                 </span>
-                <h3>Perencanaan (Musrenbang)</h3>
-                <p>
+                <h3
+                  style={{
+                    fontSize: "0.9375rem",
+                    margin: "4px 0 2px",
+                    fontWeight: 600,
+                  }}
+                >
+                  Perencanaan (Musrenbang)
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-2)",
+                    lineHeight: 1.6,
+                    maxWidth: "60ch",
+                    margin: 0,
+                  }}
+                >
                   Musyawarah perencanaan dari tingkat desa, kecamatan, hingga
                   forum SKPD dan RKPD. Warga berhak mengusulkan pembangunan
                   prioritas di wilayahnya.
                 </p>
               </div>
-              <div className="cycle__card">
-                <span className="chip chip--square chip--sunk">
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  padding: "14px 0",
+                }}
+              >
+                <span
+                  className="chip chip--square chip--sunk"
+                  style={{ alignSelf: "flex-start" }}
+                >
                   Fase 2 · Jun–Nov
                 </span>
-                <h3>Penganggaran dan pembahasan DPRD</h3>
-                <p>
+                <h3
+                  style={{
+                    fontSize: "0.9375rem",
+                    margin: "4px 0 2px",
+                    fontWeight: 600,
+                  }}
+                >
+                  Penganggaran & Pembahasan DPRD
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-2)",
+                    lineHeight: 1.6,
+                    maxWidth: "60ch",
+                    margin: 0,
+                  }}
+                >
                   Pemerintah menyusun KUA-PPAS dan Nota Keuangan RAPBD untuk
                   dibahas bersama DPRD. Pantau komisi terkait agar usulan warga
                   tidak tergeser belanja seremonial.
                 </p>
               </div>
-              <div className="cycle__card cycle__card--focus">
-                <span className="chip chip--square chip--warn">
-                  Fase 3 · Jan–Des · fokus GovSight
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  padding: "16px 18px",
+                  background: "var(--accent-tint)",
+                  borderLeft: "3px solid var(--accent)",
+                  borderRadius: "var(--r-sm)",
+                }}
+              >
+                <span
+                  className="chip chip--square chip--warn"
+                  style={{ alignSelf: "flex-start" }}
+                >
+                  Fase 3 · Jan–Des · Fokus GovSight
                 </span>
-                <h3>Pelaksanaan dan penyerapan</h3>
-                <p>
+                <h3
+                  style={{
+                    fontSize: "0.9375rem",
+                    margin: "4px 0 2px",
+                    fontWeight: 600,
+                    color: "var(--accent)",
+                  }}
+                >
+                  Pelaksanaan & Penyerapan
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-2)",
+                    lineHeight: 1.6,
+                    maxWidth: "60ch",
+                    margin: 0,
+                  }}
+                >
                   Realisasi DPA oleh dinas-dinas teknis. Pantau apakah pencairan
                   belanja modal berjalan tertib atau menumpuk tajam di pengujung
                   tahun.
                 </p>
               </div>
-              <div className="cycle__card">
-                <span className="chip chip--square chip--sunk">
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  padding: "14px 0",
+                }}
+              >
+                <span
+                  className="chip chip--square chip--sunk"
+                  style={{ alignSelf: "flex-start" }}
+                >
                   Fase 4 · Jan–Jun (T+1)
                 </span>
-                <h3>Audit dan pertanggungjawaban</h3>
-                <p>
+                <h3
+                  style={{
+                    fontSize: "0.9375rem",
+                    margin: "4px 0 2px",
+                    fontWeight: 600,
+                  }}
+                >
+                  Audit & Pertanggungjawaban
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-2)",
+                    lineHeight: 1.6,
+                    maxWidth: "60ch",
+                    margin: 0,
+                  }}
+                >
                   Pemeriksaan LKPD oleh BPK RI dan evaluasi LKPJ di DPRD. Warga
                   dapat menguji kesesuaian fisik aset di lapangan.
                 </p>
               </div>
             </div>
 
-            <div style={{ marginTop: 24 }}>
+            {/* Hairline Divider with Generous Whitespace */}
+            <div className="divider" style={{ margin: "32px 0 28px" }} />
+
+            {/* Tiga Kanal Resmi Partisipasi & Pengaduan Warga */}
+            <div>
               <h3
                 style={{
-                  fontSize: "0.9375rem",
+                  fontSize: "1rem",
+                  fontWeight: 600,
                   display: "flex",
                   alignItems: "center",
                   gap: 8,
+                  marginBottom: 16,
                 }}
               >
-                <Landmark size={16} /> Tiga kanal resmi partisipasi dan
-                pengaduan warga
+                <Landmark size={17} style={{ color: "var(--accent)" }} /> Tiga
+                kanal resmi partisipasi dan pengaduan warga
               </h3>
-              <div className="channels">
-                <div className="channel">
-                  <span className="channel__num">1</span>
-                  <div>
-                    <strong>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 16,
+                    padding: "18px 0",
+                    borderBottom: "1px solid var(--line)",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: "50%",
+                      background: "var(--accent-tint)",
+                      color: "var(--accent)",
+                      fontWeight: 700,
+                      fontSize: "0.875rem",
+                      display: "grid",
+                      placeItems: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    1
+                  </span>
+                  <div style={{ maxWidth: "68ch" }}>
+                    <strong
+                      style={{
+                        fontSize: "0.9375rem",
+                        display: "block",
+                        color: "var(--ink)",
+                        marginBottom: 4,
+                      }}
+                    >
                       Pejabat Pengelola Informasi dan Dokumentasi (PPID)
                     </strong>
-                    <p>
+                    <p
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--ink-2)",
+                        lineHeight: 1.6,
+                        margin: 0,
+                      }}
+                    >
                       Berdasarkan <strong>UU No. 14/2008 (KIP)</strong>, setiap
                       warga berhak mengajukan permohonan salinan DPA, RKA, dan
                       Berita Acara Serah Terima pekerjaan konstruksi ke pemda.
                     </p>
                   </div>
                 </div>
-                <div className="channel">
-                  <span className="channel__num">2</span>
-                  <div>
-                    <strong>SP4N-LAPOR! (lapor.go.id)</strong>
-                    <p>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 16,
+                    padding: "18px 0",
+                    borderBottom: "1px solid var(--line)",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: "50%",
+                      background: "var(--accent-tint)",
+                      color: "var(--accent)",
+                      fontWeight: 700,
+                      fontSize: "0.875rem",
+                      display: "grid",
+                      placeItems: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    2
+                  </span>
+                  <div style={{ maxWidth: "68ch" }}>
+                    <strong
+                      style={{
+                        fontSize: "0.9375rem",
+                        display: "block",
+                        color: "var(--ink)",
+                        marginBottom: 4,
+                      }}
+                    >
+                      SP4N-LAPOR! (lapor.go.id)
+                    </strong>
+                    <p
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--ink-2)",
+                        lineHeight: 1.6,
+                        margin: 0,
+                      }}
+                    >
                       Layanan pengaduan nasional resmi yang terhubung ke
                       Ombudsman RI dan Kementerian PAN-RB. Gunakan data tanggal
                       dan nominal dari GovSight ID sebagai bukti awal pelaporan.
                     </p>
                   </div>
                 </div>
-                <div className="channel">
-                  <span className="channel__num">3</span>
-                  <div>
-                    <strong>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 16,
+                    padding: "18px 0",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: "50%",
+                      background: "var(--accent-tint)",
+                      color: "var(--accent)",
+                      fontWeight: 700,
+                      fontSize: "0.875rem",
+                      display: "grid",
+                      placeItems: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    3
+                  </span>
+                  <div style={{ maxWidth: "68ch" }}>
+                    <strong
+                      style={{
+                        fontSize: "0.9375rem",
+                        display: "block",
+                        color: "var(--ink)",
+                        marginBottom: 4,
+                      }}
+                    >
                       Forum reses dan Rapat Dengar Pendapat (RDP) DPRD
                     </strong>
-                    <p>
+                    <p
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--ink-2)",
+                        lineHeight: 1.6,
+                        margin: 0,
+                      }}
+                    >
                       Manfaatkan <em>lembar telaah kritis</em> di profil daerah
                       untuk mengajukan pertanyaan spesifik langsung kepada
                       anggota dewan daerah pemilihmu.
@@ -406,7 +665,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           <div className="card__head">
             <div>
               <h2 className="card__title">Sumber yang bisa kamu periksa</h2>
-              <p className="card__sub">
+              <p className="card__sub" style={{ maxWidth: "68ch" }}>
                 Unduh data olahan atau buka berkas asli untuk periode terpilih.
               </p>
             </div>
@@ -471,6 +730,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                   display: "flex",
                   alignItems: "center",
                   gap: 7,
+                  maxWidth: "68ch",
                 }}
               >
                 <Database size={14} /> Berkas asli disimpan untuk penelusuran.
@@ -484,57 +744,70 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </div>
         </section>
 
-        <div className="grid-2">
-          <section className="card">
-            <div className="card__body limits">
+        {/* Flattened Limits and Update Cadence Section with Hairline Separation */}
+        <section className="card">
+          <div
+            className="card__body"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+              gap: 24,
+            }}
+          >
+            <div className="limits" style={{ maxWidth: "65ch" }}>
               <span className="limits__mark">
                 <FileText size={19} />
               </span>
               <h2 className="card__title">
                 Apa yang belum dijelaskan data ini?
               </h2>
-              <ul>
-                <li>Mutu jalan, sekolah, atau fasilitas publik.</li>
-                <li>Tingkat kepuasan dan manfaat yang dirasakan warga.</li>
+              <ul style={{ margin: "14px 0", paddingLeft: 20 }}>
+                <li style={{ marginBottom: 6 }}>
+                  Mutu jalan, sekolah, atau fasilitas publik.
+                </li>
+                <li style={{ marginBottom: 6 }}>
+                  Tingkat kepuasan dan manfaat yang dirasakan warga.
+                </li>
                 <li>
                   Efisiensi, dugaan korupsi, atau kinerja keseluruhan pemda.
                 </li>
               </ul>
-              <p className="muted" style={{ fontSize: "0.875rem" }}>
+              <p
+                className="muted"
+                style={{ fontSize: "0.875rem", lineHeight: 1.6 }}
+              >
                 Untuk menjawabnya, diperlukan data hasil layanan, konteks
-                wilayah, dan pemeriksaan lebih lanjut.
+                wilayah, dan pemeriksaan lebih lanjut di lapangan.
               </p>
             </div>
-          </section>
 
-          <section className="card">
-            <div className="card__body limits">
+            <div className="limits" style={{ maxWidth: "65ch" }}>
               <span className="limits__mark">
                 <RefreshCw size={19} />
               </span>
               <h2 className="card__title">Bagaimana data diperbarui?</h2>
               <p
                 className="muted"
-                style={{ fontSize: "0.875rem", marginTop: 12 }}
+                style={{ fontSize: "0.875rem", marginTop: 12, lineHeight: 1.6 }}
               >
                 Versi awal ini memakai salinan data yang diperiksa pada{" "}
                 <strong>{dateLabel(dataset.generatedAt)}</strong>. Pembaruan
-                mengikuti publikasi DJPK.
+                mengikuti publikasi berkala DJPK Kementerian Keuangan.
               </p>
               <p
                 className="muted"
-                style={{ fontSize: "0.875rem", marginTop: 12 }}
+                style={{ fontSize: "0.875rem", marginTop: 10, lineHeight: 1.6 }}
               >
                 Tanggal penerimaan SIKD berasal dari keterangan portal saat
                 pemeriksaan, bukan tanggal terbit tiap angka. Tanggal
                 pemeriksaan menunjukkan kapan kami mengakses sumber.
               </p>
-              <span className="checked-line">
+              <span className="checked-line" style={{ marginTop: 14 }}>
                 <Check size={14} /> Bukan pembaruan langsung secara real-time.
               </span>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
 
         <InfoNote>
           Perbandingan memakai bulan pelaporan yang sama. Data yang kosong tidak

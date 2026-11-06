@@ -83,7 +83,7 @@ export function InquiryToolkit({
     });
 
     textLines.push(
-      `Dicetak/disalin melalui GovSight ID (Sistem Pendukung Keputusan Warga & Advokasi Kebijakan Publik).`,
+      `Dicetak/disalin melalui GovSight ID (Panduan Advokasi & Lembar Pertanyaan Publik APBD).`,
     );
 
     navigator.clipboard.writeText(textLines.join("\n")).then(() => {
@@ -124,11 +124,23 @@ export function InquiryToolkit({
     <section className="card" id="lembar-advokasi">
       <div className="card__head">
         <div className="section-head__text">
-          <span className="chip chip--warn">Decision Support System</span>
-          <h2 className="inquiry-title">
-            Panduan advokasi & lembar pertanyaan publik
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+            <span
+              className="chip chip--info"
+              style={{
+                fontWeight: 600,
+                color: "var(--info-ink)",
+                backgroundColor: "var(--info-bg)",
+                borderColor: "var(--info-line)",
+              }}
+            >
+              Bahan Telaah RDP & Musrenbang
+            </span>
+          </div>
+          <h2 className="inquiry-title" style={{ margin: "0 0 6px 0" }}>
+            Panduan Advokasi & Lembar Pertanyaan Publik
           </h2>
-          <p className="card__sub">
+          <p className="card__sub" style={{ margin: 0, color: "var(--ink-2)" }}>
             Daftar telaah otomatis berbasis data APBD untuk bahan Rapat Dengar
             Pendapat DPRD, liputan jurnalis, atau audiensi warga.
           </p>
@@ -139,27 +151,54 @@ export function InquiryToolkit({
             className="btn btn--secondary"
             onClick={shareToWhatsApp}
             aria-label="Bagikan ringkasan telaah ke WhatsApp"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              fontWeight: 500,
+              color: "var(--ink)",
+              borderColor: "var(--line-2)",
+            }}
           >
-            <MessageCircle size={15} />
+            <MessageCircle size={15} style={{ color: "var(--ok-solid)", flexShrink: 0 }} />
             <span>WhatsApp</span>
           </button>
           <button
             type="button"
-            className="btn btn--secondary"
+            className={`btn ${copied ? "btn--primary" : "btn--secondary"}`}
             onClick={copyQuestions}
             aria-label="Salin naskah pertanyaan ke clipboard"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              fontWeight: 500,
+              borderColor: copied ? "var(--ink)" : "var(--line-2)",
+            }}
           >
-            {copied ? <Check size={15} /> : <Copy size={15} />}
-            <span>{copied ? "Naskah tersalin" : "Salin naskah"}</span>
+            {copied ? (
+              <Check size={15} style={{ flexShrink: 0 }} />
+            ) : (
+              <Copy size={15} style={{ flexShrink: 0 }} />
+            )}
+            <span>{copied ? "Naskah tersalin" : "Salin Naskah"}</span>
           </button>
           <button
             type="button"
             className="btn btn--secondary"
             onClick={handlePrint}
             aria-label="Cetak lembar telaah atau simpan sebagai PDF"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              fontWeight: 500,
+              color: "var(--ink)",
+              borderColor: "var(--line-2)",
+            }}
           >
-            <Printer size={15} />
-            <span>Cetak / PDF</span>
+            <Printer size={15} style={{ flexShrink: 0 }} />
+            <span>Cetak PDF</span>
           </button>
         </div>
       </div>
@@ -179,9 +218,37 @@ export function InquiryToolkit({
                       ? "inquiry-card--konteks"
                       : ""
                 }`}
+                style={{
+                  background: "var(--paper)",
+                  border: isAtensi
+                    ? "1px solid var(--warn-line)"
+                    : isKonteks
+                      ? "1px solid var(--info-line)"
+                      : "1px solid var(--line)",
+                  borderRadius: "var(--r)",
+                  display: "flex",
+                  flexDirection: "column",
+                  overflow: "hidden",
+                }}
               >
-                <div className="inquiry-card__head">
-                  <div className="inquiry-card__meta">
+                <div
+                  className="inquiry-card__head"
+                  style={{
+                    padding: "14px 16px 12px",
+                    background: "transparent",
+                    borderBottom: "1px solid var(--line)",
+                  }}
+                >
+                  <div
+                    className="inquiry-card__meta"
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                      gap: "7px",
+                      marginBottom: "8px",
+                    }}
+                  >
                     <span
                       className={`chip chip--square ${
                         isAtensi
@@ -190,38 +257,161 @@ export function InquiryToolkit({
                             ? "chip--info"
                             : "chip--ok"
                       }`}
+                      style={{
+                        fontWeight: 600,
+                        backgroundColor: isAtensi
+                          ? "var(--warn-bg)"
+                          : isKonteks
+                            ? "var(--info-bg)"
+                            : "var(--ok-bg)",
+                        borderColor: isAtensi
+                          ? "var(--warn-line)"
+                          : isKonteks
+                            ? "var(--info-line)"
+                            : "var(--ok-line)",
+                        color: isAtensi
+                          ? "var(--warn-ink)"
+                          : isKonteks
+                            ? "var(--info-ink)"
+                            : "var(--ok-ink)",
+                      }}
                     >
                       {isAtensi ? (
-                        <TriangleAlert size={11} />
+                        <TriangleAlert size={11} style={{ flexShrink: 0 }} />
                       ) : isKonteks ? (
-                        <Info size={11} />
+                        <Info size={11} style={{ flexShrink: 0 }} />
                       ) : (
-                        <CheckCircle2 size={11} />
+                        <CheckCircle2 size={11} style={{ flexShrink: 0 }} />
                       )}
                       {item.badgeLabel}
                     </span>
-                    <span className="chip chip--square chip--ghost">
+                    <span
+                      className="chip chip--square chip--ghost"
+                      style={{
+                        color: "var(--ink-2)",
+                        borderColor: "var(--line-2)",
+                        fontWeight: 500,
+                      }}
+                    >
                       {item.period}
                     </span>
                   </div>
-                  <h3>{item.title}</h3>
+                  <h3
+                    style={{
+                      fontSize: "0.9375rem",
+                      fontWeight: 600,
+                      color: "var(--ink)",
+                      margin: 0,
+                      letterSpacing: "-0.015em",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {item.title}
+                  </h3>
                 </div>
 
-                <div className="inquiry-card__observation">
-                  <span>Temuan data</span>
-                  <p>{item.observation}</p>
+                <div
+                  className="inquiry-card__observation"
+                  style={{
+                    padding: "12px 16px",
+                    background: "transparent",
+                    borderBottom: "1px solid var(--line)",
+                  }}
+                >
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "0.6875rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      color: "var(--ink-2)",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    Temuan data
+                  </span>
+                  <p
+                    style={{
+                      fontSize: "0.8125rem",
+                      color: "var(--ink)",
+                      lineHeight: 1.6,
+                      margin: 0,
+                    }}
+                  >
+                    {item.observation}
+                  </p>
                 </div>
 
-                <div className="inquiry-card__questions">
-                  <div>
-                    <FileQuestion size={13} />
-                    Rekomendasi pertanyaan untuk pengawasan
+                <div
+                  className="inquiry-card__questions"
+                  style={{
+                    padding: "14px 16px 16px",
+                    flex: 1,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      fontSize: "0.6875rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.04em",
+                      textTransform: "uppercase",
+                      color: "var(--ink-2)",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    <FileQuestion size={13} style={{ color: "var(--ink-2)", flexShrink: 0 }} />
+                    <span>Rekomendasi pertanyaan untuk pengawasan</span>
                   </div>
-                  <div className="qlist">
+                  <div
+                    className="qlist"
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px",
+                    }}
+                  >
                     {item.questions.map((q, idx) => (
-                      <div key={idx} className="qitem">
-                        <span>{idx + 1}</span>
-                        <p>{q}</p>
+                      <div
+                        key={idx}
+                        className="qitem"
+                        style={{
+                          display: "flex",
+                          gap: "10px",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            flexShrink: 0,
+                            display: "grid",
+                            placeItems: "center",
+                            borderRadius: "5px",
+                            background: "var(--sunk)",
+                            border: "1px solid var(--line-2)",
+                            color: "var(--ink)",
+                            fontSize: "0.6875rem",
+                            fontWeight: 600,
+                            fontVariantNumeric: "tabular-nums",
+                          }}
+                        >
+                          {idx + 1}
+                        </span>
+                        <p
+                          style={{
+                            fontSize: "0.8125rem",
+                            color: "var(--ink)",
+                            lineHeight: 1.55,
+                            margin: 0,
+                          }}
+                        >
+                          {q}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -233,32 +423,42 @@ export function InquiryToolkit({
       </div>
 
       <div className="card__foot">
-        <p className="eyebrow">Alur advokasi warga berdaya</p>
-        <div className="steps" style={{ marginTop: 14 }}>
+        <h3
+          style={{
+            fontSize: "0.8125rem",
+            fontWeight: 600,
+            color: "var(--ink)",
+            letterSpacing: "-0.01em",
+            margin: "0 0 12px 0",
+          }}
+        >
+          Alur Advokasi Warga Berdaya
+        </h3>
+        <div className="steps">
           <div className="step">
-            <span className="step__num">1</span>
+            <span className="step__num" style={{ fontWeight: 600, color: "var(--ink)" }}>1</span>
             <div>
-              <strong>Pelajari data</strong>
-              <p>
+              <strong style={{ color: "var(--ink)" }}>Pelajari data</strong>
+              <p style={{ color: "var(--ink-2)" }}>
                 Periksa kembali angka realisasi dan tautan sumber resmi di
                 bawah.
               </p>
             </div>
           </div>
           <div className="step">
-            <span className="step__num">2</span>
+            <span className="step__num" style={{ fontWeight: 600, color: "var(--ink)" }}>2</span>
             <div>
-              <strong>Bawa ke forum resmi</strong>
-              <p>
+              <strong style={{ color: "var(--ink)" }}>Bawa ke forum resmi</strong>
+              <p style={{ color: "var(--ink-2)" }}>
                 Gunakan pertanyaan di atas saat Musrenbang atau RDP komisi DPRD.
               </p>
             </div>
           </div>
           <div className="step">
-            <span className="step__num">3</span>
+            <span className="step__num" style={{ fontWeight: 600, color: "var(--ink)" }}>3</span>
             <div>
-              <strong>Ajukan KIP atau SP4N-LAPOR!</strong>
-              <p>
+              <strong style={{ color: "var(--ink)" }}>Ajukan KIP atau SP4N-LAPOR!</strong>
+              <p style={{ color: "var(--ink-2)" }}>
                 Minta rincian proyek melalui PPID bila data rinci belum terbuka.
               </p>
             </div>

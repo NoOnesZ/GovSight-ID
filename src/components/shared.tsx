@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   ArrowDownToLine,
   ArrowUpRight,
+  Calendar,
   Check,
   ChevronDown,
   Compass,
@@ -136,15 +137,39 @@ export function ShareButton() {
   }
   return (
     <>
-      <button className="btn btn--secondary" onClick={share}>
-        {copied ? <Check size={15} /> : <Link2 size={15} />}
-        {copied ? "Tautan disalin" : "Bagikan"}
+      <button
+        className="btn btn--secondary"
+        onClick={share}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
+          fontWeight: 500,
+          borderColor: "var(--line-2)",
+          color: "var(--ink)",
+        }}
+      >
+        {copied ? (
+          <Check size={15} style={{ color: "var(--ok-solid)", flexShrink: 0 }} />
+        ) : (
+          <Link2 size={15} style={{ flexShrink: 0 }} />
+        )}
+        <span>{copied ? "Tautan disalin" : "Bagikan"}</span>
       </button>
       <span className="sr-only" role="status">
         {copied ? "Tautan halaman berhasil disalin" : ""}
       </span>
       {error && (
-        <span className="chip chip--warn" role="status">
+        <span
+          className="chip chip--warn"
+          role="status"
+          style={{
+            fontWeight: 600,
+            color: "var(--warn-ink)",
+            borderColor: "var(--warn-line)",
+            backgroundColor: "var(--warn-bg)",
+          }}
+        >
           Salin alamat halaman dari browser
         </span>
       )}
@@ -163,8 +188,18 @@ export function DownloadButton({
 }) {
   if (!codes.length)
     return (
-      <button className="btn btn--secondary" disabled>
-        <ArrowDownToLine size={15} />
+      <button
+        className="btn btn--secondary"
+        disabled
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
+          fontWeight: 500,
+          borderColor: "var(--line-2)",
+        }}
+      >
+        <ArrowDownToLine size={15} style={{ flexShrink: 0 }} />
         <span>Unduh CSV</span>
       </button>
     );
@@ -173,8 +208,16 @@ export function DownloadButton({
       className="btn btn--secondary"
       href={`/api/ekspor?daerah=${codes.join(",")}&tahun=${year}&bulan=${month}`}
       download
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "6px",
+        fontWeight: 500,
+        borderColor: "var(--line-2)",
+        color: "var(--ink)",
+      }}
     >
-      <ArrowDownToLine size={15} />
+      <ArrowDownToLine size={15} style={{ flexShrink: 0 }} />
       <span>Unduh CSV</span>
     </a>
   );
@@ -188,16 +231,40 @@ export function SourceNote({
 }) {
   return (
     <div className="source-line">
-      <span className="live-dot" />
-      <strong>Data {periodLabel(snapshot.year, snapshot.month)}</strong>
-      <span className="source-line__sep">·</span>
-      <span>
-        Keterangan penerimaan SIKD pada portal:{" "}
-        {snapshot.source.publishedAt
-          ? dateLabel(snapshot.source.publishedAt)
-          : "belum dicantumkan"}
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
+          color: "var(--ink)",
+          fontWeight: 600,
+          flexShrink: 0,
+        }}
+      >
+        <Calendar size={14} style={{ color: "var(--accent)", flexShrink: 0 }} aria-hidden="true" />
+        <span>Data Resmi {periodLabel(snapshot.year, snapshot.month)}</span>
       </span>
-      <a href={snapshot.source.portalUrl} target="_blank" rel="noreferrer">
+      <span className="source-line__sep">·</span>
+      <span style={{ color: "var(--ink-2)" }}>
+        Keterangan penerimaan SIKD pada portal:{" "}
+        <span style={{ color: "var(--ink)", fontWeight: 500 }}>
+          {snapshot.source.publishedAt
+            ? dateLabel(snapshot.source.publishedAt)
+            : "belum dicantumkan"}
+        </span>
+      </span>
+      <a
+        href={snapshot.source.portalUrl}
+        target="_blank"
+        rel="noreferrer"
+        style={{
+          color: "var(--accent)",
+          fontWeight: 600,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "4px",
+        }}
+      >
         DJPK Kemenkeu <ArrowUpRight size={12} />
       </a>
     </div>
@@ -213,8 +280,20 @@ export function InfoNote({
 }) {
   return (
     <div className={tone === "default" ? "note" : `note note--${tone}`}>
-      <Info size={15} />
-      <p>{children}</p>
+      <Info
+        size={15}
+        style={{
+          color:
+            tone === "default"
+              ? "var(--ink-2)"
+              : undefined,
+          flexShrink: 0,
+        }}
+        aria-hidden="true"
+      />
+      <div style={{ color: tone === "default" ? "var(--ink)" : undefined }}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -282,11 +361,11 @@ export function EmptyState({
   return (
     <div className="empty">
       <span className="empty__mark">
-        <Compass size={22} />
+        <Compass size={22} style={{ color: "var(--ink-3)" }} />
       </span>
-      <h3>{title}</h3>
-      <p>{children ?? "Pilih daerah atau periode lain untuk melanjutkan."}</p>
-      <Link className="btn btn--secondary" href="/">
+      <h3 style={{ color: "var(--ink)" }}>{title}</h3>
+      <p style={{ color: "var(--ink-2)" }}>{children ?? "Pilih daerah atau periode lain untuk melanjutkan."}</p>
+      <Link className="btn btn--secondary" href="/" style={{ borderColor: "var(--line-2)", color: "var(--ink)" }}>
         Kembali ke jelajah
       </Link>
     </div>
@@ -314,8 +393,10 @@ export function SectionHeading({
   return (
     <div className="section-head">
       <div className="section-head__text">
-        <h2>{title}</h2>
-        {subtitle && <p>{subtitle}</p>}
+        <h2 style={{ color: "var(--ink)", letterSpacing: "-0.015em" }}>{title}</h2>
+        {subtitle && (
+          <p style={{ color: "var(--ink-2)", margin: "4px 0 0 0" }}>{subtitle}</p>
+        )}
       </div>
       {children && <div className="section-head__actions">{children}</div>}
     </div>
@@ -329,8 +410,16 @@ export function ExternalSource({ snapshot }: { snapshot: Snapshot }) {
       href={snapshot.source.portalUrl}
       target="_blank"
       rel="noreferrer"
+      style={{
+        color: "var(--accent)",
+        fontWeight: 500,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "4px",
+      }}
     >
-      Buka sumber asli <ExternalLink size={13} />
+      <span>Buka sumber asli</span>
+      <ExternalLink size={13} style={{ flexShrink: 0 }} />
     </a>
   );
 }

@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Plus, Scale } from "lucide-react";
+import {
+  Building2,
+  Check,
+  Landmark,
+  Plus,
+  RotateCcw,
+  Sparkles,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import type { Dataset } from "@/lib/types";
 import { months, regions } from "@/lib/regions";
@@ -34,20 +42,25 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
   const [chartMode, setChartMode] = useState<"nominal" | "serapan">("nominal");
   const { year, month, params, update, period, invalidPeriod } = useFilters();
   if (invalidPeriod) return <UnavailablePeriod />;
+
   const completeYear = Math.max(
     ...dataset.snapshots.filter((s) => s.month === 12).map((s) => s.year),
   );
+
   const requested = params.get("daerah");
   const codes =
     requested === null
       ? ["0215", "0214"]
-      : [
-          ...new Set(
-            requested
-              .split(",")
-              .filter((code) => regions.some((region) => region.code === code)),
-          ),
-        ].slice(0, 3);
+      : requested === "kosong" || requested === ""
+        ? []
+        : [
+            ...new Set(
+              requested
+                .split(",")
+                .filter((code) => regions.some((region) => region.code === code)),
+            ),
+          ].slice(0, 3);
+
   const snapshots = codes
     .map((code) =>
       dataset.snapshots.find(
@@ -56,24 +69,55 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
       ),
     )
     .filter((row) => row !== undefined);
+
   const mixed =
     new Set(
       codes.map((code) => regions.find((region) => region.code === code)?.type),
     ).size > 1;
+
   function toggle(code: string) {
-    update({
-      daerah: codes.includes(code)
-        ? codes.filter((value) => value !== code).join(",") || "kosong"
-        : [...codes, code].slice(0, 3).join(","),
-    });
+    if (codes.includes(code)) {
+      const remaining = codes.filter((value) => value !== code);
+      update({ daerah: remaining.length > 0 ? remaining.join(",") : "kosong" });
+    } else {
+      update({ daerah: [...codes, code].slice(0, 3).join(",") });
+    }
   }
+
+  function applyPreset(presetCodes: string[]) {
+    update({ daerah: presetCodes.join(",") });
+  }
+
+  function clearAll() {
+    update({ daerah: "kosong" });
+  }
+
+  const mebidangroCodes = ["0215", "0214", "0203"];
+  const isMebidangro =
+    codes.length === 3 && mebidangroCodes.every((c) => codes.includes(c));
+  const isDefault =
+    codes.length === 2 &&
+    codes.includes("0215") &&
+    codes.includes("0214");
+
+  const kotaRegions = regions.filter((r) => r.type === "kota");
+  const kabRegions = regions.filter((r) => r.type === "kabupaten");
+
+  const sampleCategories =
+    dataset.snapshots[0]?.categories ?? [
+      { code: "pegawai", label: "Belanja pegawai", budget: 0, realized: 0 },
+      { code: "barang-jasa", label: "Belanja barang dan jasa", budget: 0, realized: 0 },
+      { code: "modal", label: "Belanja modal", budget: 0, realized: 0 },
+      { code: "lainnya", label: "Belanja lainnya", budget: 0, realized: 0 },
+    ];
+
+  // At least 2 columns are maintained so unselecting preserves a placeholder slot
+  const displaySlotsCount = Math.max(2, codes.length);
+
   return (
     <>
       <div className="page-head">
         <div className="page-head__text">
-          <p className="eyebrow">
-            <Scale size={13} /> Lihat dalam konteks
-          </p>
           <h1>Bandingkan daerah.</h1>
           <p>Angka berdampingan, periode yang sama, gambaran lebih jelas.</p>
         </div>
@@ -91,41 +135,340 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
             <div>
               <h2 className="card__title">Pilih daerah pembanding</h2>
               <p className="card__sub">
-                Pilih dua hingga tiga daerah, lalu periksa angkanya
-                berdampingan.
+                Pilih dua hingga tiga daerah, lalu periksa angkanya berdampingan.
               </p>
             </div>
             <div className="section-head__actions">
               <PeriodControls year={year} month={month} onChange={update} />
             </div>
           </div>
+
           <div className="card__body">
-            <div className="picker">
-              {regions.map((region) => {
-                const selected = codes.includes(region.code);
-                return (
-                  <button
-                    key={region.code}
-                    onClick={() => toggle(region.code)}
-                    disabled={!selected && codes.length >= 3}
-                    aria-pressed={selected}
-                    className={
-                      selected ? "region-option is-selected" : "region-option"
-                    }
+            {/* Quick 1-click Preset Bar */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                gap: 8,
+                paddingBottom: 16,
+                marginBottom: 16,
+                borderBottom: "1px solid var(--line)",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  color: "var(--ink-3)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                Preset Cepat:
+              </span>
+              <button
+                type="button"
+                aria-label="Preset Kawasan Mebidangro (3 Daerah)"
+                onClick={() => applyPreset(mebidangroCodes)}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "5px 12px",
+                  borderRadius: "var(--r-pill)",
+                  border: isMebidangro
+                    ? "1px solid var(--accent)"
+                    : "1px solid var(--line-2)",
+                  background: isMebidangro
+                    ? "var(--accent-tint)"
+                    : "var(--paper)",
+                  color: isMebidangro ? "var(--accent)" : "var(--ink)",
+                  fontSize: "0.8125rem",
+                  fontWeight: isMebidangro ? 600 : 500,
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                <Sparkles size={13} />
+                <span>Kawasan Mebidangro</span>
+                <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>
+                  (Medan, Binjai, Deli Serdang)
+                </span>
+                {isMebidangro && <Check size={12} />}
+              </button>
+
+              <button
+                type="button"
+                aria-label="Preset Standar Otonom"
+                onClick={() => applyPreset(["0215", "0214"])}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "5px 12px",
+                  borderRadius: "var(--r-pill)",
+                  border: isDefault
+                    ? "1px solid var(--accent)"
+                    : "1px solid var(--line)",
+                  background: isDefault ? "var(--accent-tint)" : "var(--paper)",
+                  color: isDefault ? "var(--accent)" : "var(--ink-2)",
+                  fontSize: "0.8125rem",
+                  fontWeight: isDefault ? 600 : 500,
+                  cursor: "pointer",
+                }}
+              >
+                Default (Medan & Binjai)
+                {isDefault && <Check size={12} />}
+              </button>
+
+              {codes.length > 0 && (
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 5,
+                    padding: "5px 10px",
+                    borderRadius: "var(--r-pill)",
+                    border: "1px solid transparent",
+                    background: "transparent",
+                    color: "var(--ink-3)",
+                    fontSize: "0.75rem",
+                    cursor: "pointer",
+                    marginLeft: "auto",
+                  }}
+                  title="Kosongkan semua pilihan"
+                >
+                  <RotateCcw size={12} />
+                  Reset pilihan
+                </button>
+              )}
+            </div>
+
+            {/* Administrative Groups: Kota vs Kabupaten */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {/* Group 1: Kota Otonom */}
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginBottom: 10,
+                  }}
+                >
+                  <Building2 size={14} style={{ color: "var(--ink-3)" }} />
+                  <span
+                    style={{
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: "var(--ink-2)",
+                    }}
                   >
-                    <span className="region-option__text">
-                      <strong>{region.shortName}</strong>
-                      <small>{kindLabel(region.type)}</small>
-                    </span>
-                    <span className="region-option__box">
-                      {selected ? <Check size={13} /> : <Plus size={13} />}
-                    </span>
-                  </button>
-                );
-              })}
+                    Wilayah Otonom Kota (5 Daerah)
+                  </span>
+                </div>
+                <div className="picker">
+                  {kotaRegions.map((region) => {
+                    const selected = codes.includes(region.code);
+                    return (
+                      <button
+                        key={region.code}
+                        onClick={() => toggle(region.code)}
+                        disabled={!selected && codes.length >= 3}
+                        aria-pressed={selected}
+                        className={
+                          selected
+                            ? "region-option is-selected"
+                            : "region-option"
+                        }
+                      >
+                        <span className="region-option__text">
+                          <strong>{region.shortName}</strong>
+                          <small>{kindLabel(region.type)}</small>
+                        </span>
+                        <span className="region-option__box">
+                          {selected ? <Check size={13} /> : <Plus size={13} />}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Hairline Divider */}
+              <div className="divider" />
+
+              {/* Group 2: Kabupaten */}
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginBottom: 10,
+                  }}
+                >
+                  <Landmark size={14} style={{ color: "var(--ink-3)" }} />
+                  <span
+                    style={{
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: "var(--ink-2)",
+                    }}
+                  >
+                    Wilayah Administratif Kabupaten (5 Daerah)
+                  </span>
+                </div>
+                <div className="picker">
+                  {kabRegions.map((region) => {
+                    const selected = codes.includes(region.code);
+                    return (
+                      <button
+                        key={region.code}
+                        onClick={() => toggle(region.code)}
+                        disabled={!selected && codes.length >= 3}
+                        aria-pressed={selected}
+                        className={
+                          selected
+                            ? "region-option is-selected"
+                            : "region-option"
+                        }
+                      >
+                        <span className="region-option__text">
+                          <strong>{region.shortName}</strong>
+                          <small>{kindLabel(region.type)}</small>
+                        </span>
+                        <span className="region-option__box">
+                          {selected ? <Check size={13} /> : <Plus size={13} />}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </section>
+
+        {/* Selected Slots Status Tray */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: 10,
+            padding: "12px 16px",
+            background: "var(--sunk)",
+            borderRadius: "var(--r)",
+            border: "1px solid var(--line)",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              color: "var(--ink-3)",
+              textTransform: "uppercase",
+              letterSpacing: "0.04em",
+            }}
+          >
+            Slot Pembanding ({codes.length}/3):
+          </span>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 8,
+              alignItems: "center",
+              flex: 1,
+            }}
+          >
+            {[0, 1, 2].map((idx) => {
+              const code = codes[idx];
+              const region = code
+                ? regions.find((r) => r.code === code)
+                : null;
+              if (region) {
+                return (
+                  <span
+                    key={region.code}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: "4px 8px 4px 12px",
+                      background: "var(--paper)",
+                      border: "1px solid var(--accent-line)",
+                      borderRadius: "var(--r-sm)",
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: "var(--ink)",
+                      boxShadow: "var(--shadow-xs)",
+                    }}
+                  >
+                    <span>{region.shortName}</span>
+                    <span
+                      style={{
+                        fontSize: "0.6875rem",
+                        color: "var(--ink-4)",
+                        fontWeight: 400,
+                      }}
+                    >
+                      ({kindLabel(region.type)})
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggle(region.code)}
+                      title={`Hapus ${region.shortName} dari perbandingan`}
+                      style={{
+                        display: "inline-grid",
+                        placeItems: "center",
+                        width: 18,
+                        height: 18,
+                        borderRadius: "50%",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        color: "var(--ink-3)",
+                        padding: 0,
+                        marginLeft: 2,
+                      }}
+                      aria-label={`Hapus slot ${idx + 1}`}
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                );
+              }
+              return (
+                <span
+                  key={`empty-slot-${idx}`}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "4px 10px",
+                    border: "1px dashed var(--line-3)",
+                    borderRadius: "var(--r-sm)",
+                    fontSize: "0.75rem",
+                    color: "var(--ink-4)",
+                    background: "transparent",
+                  }}
+                >
+                  <Plus size={11} />
+                  {idx === 0
+                    ? "Pilih daerah ke-1"
+                    : idx === 1
+                      ? "Pilih daerah pembanding ke-2"
+                      : "Slot ke-3 (opsional)"}
+                </span>
+              );
+            })}
+          </div>
+        </div>
 
         {mixed && (
           <InfoNote>
@@ -138,55 +481,186 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
         {codes.length < 2 ? (
           <EmptyState title="Tambahkan satu daerah lagi">
             Perbandingan membutuhkan sedikitnya dua daerah pada periode yang
-            sama.
+            sama. Silakan pilih minimal satu daerah lagi pada daftar pilihan di
+            atas.
           </EmptyState>
         ) : (
           <>
-            <section className="card">
-              <div className="table-wrap">
-                <table className="compare-table">
-                  <thead>
-                    <tr>
-                      <th>
-                        <span className="eyebrow">Periode pelaporan</span>
-                        <strong style={{ display: "block", marginTop: 4 }}>
-                          {months[month]} {year}
-                        </strong>
-                      </th>
-                      {snapshots.map((row) => (
+            {/* Comparison Table Section */}
+        <section className="card">
+          <div className="table-wrap">
+            <table className="compare-table">
+              <thead>
+                <tr>
+                  <th>
+                    <span
+                      style={{
+                        display: "block",
+                        fontSize: "0.6875rem",
+                        fontWeight: 600,
+                        letterSpacing: "0.05em",
+                        textTransform: "uppercase",
+                        color: "var(--ink-4)",
+                      }}
+                    >
+                      Periode pelaporan
+                    </span>
+                    <strong style={{ display: "block", marginTop: 4 }}>
+                      {months[month]} {year}
+                    </strong>
+                  </th>
+                  {Array.from({ length: displaySlotsCount }).map((_, idx) => {
+                    const code = codes[idx];
+                    const row = snapshots.find((s) => s.regionCode === code);
+                    const region = code
+                      ? regions.find((r) => r.code === code)
+                      : null;
+
+                    if (row && region) {
+                      return (
                         <th key={row.regionCode}>
-                          <Link href={`/daerah/${row.regionCode}?${period}`}>
-                            {
-                              regions.find(
-                                (region) => region.code === row.regionCode,
-                              )?.name
-                            }
-                          </Link>
-                          <span>Sumatera Utara</span>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "flex-start",
+                              gap: 6,
+                            }}
+                          >
+                            <div>
+                              <Link
+                                href={`/daerah/${row.regionCode}?${period}`}
+                              >
+                                {region.name}
+                              </Link>
+                              <span>
+                                Sumatera Utara · {kindLabel(region.type)}
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => toggle(row.regionCode)}
+                              title={`Keluarkan ${region.shortName} dari perbandingan`}
+                              style={{
+                                background: "transparent",
+                                border: "none",
+                                color: "var(--ink-4)",
+                                cursor: "pointer",
+                                padding: 2,
+                                borderRadius: 4,
+                                display: "inline-grid",
+                                placeItems: "center",
+                              }}
+                              aria-label={`Keluarkan kolom ${idx + 1}`}
+                            >
+                              <X size={13} />
+                            </button>
+                          </div>
                         </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="is-key">
-                      <th>
-                        Pagu belanja<small>Rencana satu tahun</small>
+                      );
+                    }
+
+                    return (
+                      <th
+                        key={`placeholder-head-${idx}`}
+                        style={{
+                          background: "var(--sunk)",
+                          border: "1px dashed var(--line-3)",
+                          textAlign: "center",
+                          verticalAlign: "middle",
+                          padding: "16px 14px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: 4,
+                          }}
+                        >
+                          <span
+                            style={{
+                              display: "inline-grid",
+                              placeItems: "center",
+                              width: 24,
+                              height: 24,
+                              borderRadius: "50%",
+                              background: "var(--paper)",
+                              border: "1px dashed var(--line-3)",
+                              color: "var(--ink-3)",
+                              marginBottom: 2,
+                            }}
+                          >
+                            <Plus size={12} />
+                          </span>
+                          <strong
+                            style={{
+                              fontSize: "0.8125rem",
+                              color: "var(--ink-2)",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Slot Pembanding Kosong
+                          </strong>
+                          <span
+                            style={{
+                              fontSize: "0.6875rem",
+                              color: "var(--ink-4)",
+                            }}
+                          >
+                            Pilih daerah di atas untuk mengisi slot ini
+                          </span>
+                        </div>
                       </th>
-                      {snapshots.map((row) => (
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="is-key">
+                  <th>
+                    Pagu belanja<small>Rencana satu tahun</small>
+                  </th>
+                  {Array.from({ length: displaySlotsCount }).map((_, idx) => {
+                    const code = codes[idx];
+                    const row = snapshots.find((s) => s.regionCode === code);
+                    if (row) {
+                      return (
                         <td
                           key={row.regionCode}
                           title={fullMoney(row.total.budget)}
                         >
                           {compactMoney(row.total.budget)}
                         </td>
-                      ))}
-                    </tr>
-                    <tr className="is-key">
-                      <th>
-                        Realisasi belanja
-                        <small>Akumulasi sampai periode terpilih</small>
-                      </th>
-                      {snapshots.map((row) => (
+                      );
+                    }
+                    return (
+                      <td
+                        key={`placeholder-budget-${idx}`}
+                        style={{
+                          background: "var(--canvas)",
+                          textAlign: "center",
+                          color: "var(--ink-4)",
+                          borderLeft: "1px dashed var(--line)",
+                          borderRight: "1px dashed var(--line)",
+                        }}
+                      >
+                        <span style={{ opacity: 0.4 }}>—</span>
+                      </td>
+                    );
+                  })}
+                </tr>
+                <tr className="is-key">
+                  <th>
+                    Realisasi belanja
+                    <small>Akumulasi sampai periode terpilih</small>
+                  </th>
+                  {Array.from({ length: displaySlotsCount }).map((_, idx) => {
+                    const code = codes[idx];
+                    const row = snapshots.find((s) => s.regionCode === code);
+                    if (row) {
+                      return (
                         <td
                           key={row.regionCode}
                           className="is-accent"
@@ -194,13 +668,33 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                         >
                           {compactMoney(row.total.realized)}
                         </td>
-                      ))}
-                    </tr>
-                    <tr>
-                      <th>
-                        Serapan anggaran<small>Realisasi dibagi pagu</small>
-                      </th>
-                      {snapshots.map((row) => (
+                      );
+                    }
+                    return (
+                      <td
+                        key={`placeholder-realized-${idx}`}
+                        style={{
+                          background: "var(--canvas)",
+                          textAlign: "center",
+                          color: "var(--ink-4)",
+                          borderLeft: "1px dashed var(--line)",
+                          borderRight: "1px dashed var(--line)",
+                        }}
+                      >
+                        <span style={{ opacity: 0.4 }}>—</span>
+                      </td>
+                    );
+                  })}
+                </tr>
+                <tr>
+                  <th>
+                    Serapan anggaran<small>Realisasi dibagi pagu</small>
+                  </th>
+                  {Array.from({ length: displaySlotsCount }).map((_, idx) => {
+                    const code = codes[idx];
+                    const row = snapshots.find((s) => s.regionCode === code);
+                    if (row) {
+                      return (
                         <td key={row.regionCode}>
                           <strong>
                             {percent(
@@ -208,30 +702,48 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                             )}
                           </strong>
                         </td>
-                      ))}
-                    </tr>
-                    <tr className="table__section">
-                      <th colSpan={snapshots.length + 1}>
-                        Komposisi realisasi belanja
-                        <span>
-                          Porsi dari total realisasi, bukan dari pagu.
-                        </span>
-                      </th>
-                    </tr>
-                    {snapshots[0]?.categories.map((line, index) => (
-                      <tr key={line.code}>
-                        <th>
-                          <span
-                            className={`dot dot--${line.code}`}
-                            style={{
-                              display: "inline-block",
-                              marginRight: 8,
-                              verticalAlign: "1px",
-                            }}
-                          />
-                          {line.label}
-                        </th>
-                        {snapshots.map((row) => (
+                      );
+                    }
+                    return (
+                      <td
+                        key={`placeholder-rate-${idx}`}
+                        style={{
+                          background: "var(--canvas)",
+                          textAlign: "center",
+                          color: "var(--ink-4)",
+                          borderLeft: "1px dashed var(--line)",
+                          borderRight: "1px dashed var(--line)",
+                        }}
+                      >
+                        <span style={{ opacity: 0.4 }}>—</span>
+                      </td>
+                    );
+                  })}
+                </tr>
+                <tr className="table__section">
+                  <th colSpan={displaySlotsCount + 1}>
+                    Komposisi realisasi belanja
+                    <span>Porsi dari total realisasi, bukan dari pagu.</span>
+                  </th>
+                </tr>
+                {sampleCategories.map((line, index) => (
+                  <tr key={line.code}>
+                    <th>
+                      <span
+                        className={`dot dot--${line.code}`}
+                        style={{
+                          display: "inline-block",
+                          marginRight: 8,
+                          verticalAlign: "1px",
+                        }}
+                      />
+                      {line.label}
+                    </th>
+                    {Array.from({ length: displaySlotsCount }).map((_, idx) => {
+                      const code = codes[idx];
+                      const row = snapshots.find((s) => s.regionCode === code);
+                      if (row && row.categories[index]) {
+                        return (
                           <td key={row.regionCode}>
                             <strong>
                               {percent(
@@ -247,50 +759,128 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                               {compactMoney(row.categories[index].realized)}
                             </small>
                           </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
+                        );
+                      }
+                      return (
+                        <td
+                          key={`placeholder-cat-${line.code}-${idx}`}
+                          style={{
+                            background: "var(--canvas)",
+                            textAlign: "center",
+                            color: "var(--ink-4)",
+                            borderLeft: "1px dashed var(--line)",
+                            borderRight: "1px dashed var(--line)",
+                          }}
+                        >
+                          <span style={{ opacity: 0.4 }}>—</span>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-            <section className="card">
-              <div className="card__head">
-                <div>
-                  <h2 className="card__title">
-                    {chartMode === "nominal"
-                      ? "Pagu dan realisasi, berdampingan"
-                      : "Tingkat serapan anggaran, berdampingan"}
-                  </h2>
-                  <p className="card__sub">
-                    {chartMode === "nominal"
-                      ? "Nilai nominal dalam triliun rupiah. Perhatikan perbedaan skala anggaran tiap daerah."
-                      : "Persentase realisasi terhadap pagu (0–100%), agar setiap daerah dibaca setara."}
-                  </p>
-                </div>
-                <div
-                  className="segmented"
-                  role="group"
-                  aria-label="Pilihan skala grafik"
-                >
-                  <button
-                    type="button"
-                    className={`segmented__item ${chartMode === "nominal" ? "is-active" : ""}`}
-                    onClick={() => setChartMode("nominal")}
-                  >
-                    Nominal (Rp)
-                  </button>
-                  <button
-                    type="button"
-                    className={`segmented__item ${chartMode === "serapan" ? "is-active" : ""}`}
-                    onClick={() => setChartMode("serapan")}
-                  >
-                    Serapan (%)
-                  </button>
-                </div>
-              </div>
-              <div className="card__body">
+        {/* Visual Charts Section */}
+        <section className="card">
+          <div className="card__head">
+            <div>
+              <h2 className="card__title">
+                {chartMode === "nominal"
+                  ? "Pagu dan realisasi, berdampingan"
+                  : "Tingkat serapan anggaran, berdampingan"}
+              </h2>
+              <p className="card__sub">
+                {chartMode === "nominal"
+                  ? "Nilai nominal dalam rupiah (triliun). Menampilkan perbandingan skala anggaran dan realisasi belanja tiap daerah."
+                  : "Persentase realisasi terhadap pagu (0–100%). Menampilkan laju penyerapan anggaran dengan skala yang setara."}
+              </p>
+            </div>
+            {/* Smart Toggle with High Contrast & Clear Labels */}
+            <div
+              className="segmented"
+              role="group"
+              aria-label="Pilihan skala grafik perbandingan"
+              style={{
+                background: "var(--sunk)",
+                border: "1px solid var(--line-2)",
+                padding: "3px",
+                borderRadius: "var(--r-sm)",
+              }}
+            >
+              <button
+                type="button"
+                className={`segmented__item ${chartMode === "nominal" ? "is-active" : ""}`}
+                onClick={() => setChartMode("nominal")}
+                aria-pressed={chartMode === "nominal"}
+                style={
+                  chartMode === "nominal"
+                    ? {
+                        background: "var(--ink)",
+                        color: "#ffffff",
+                        fontWeight: 600,
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.18)",
+                      }
+                    : {
+                        color: "var(--ink-2)",
+                        fontWeight: 500,
+                      }
+                }
+              >
+                Nominal Rp (Pagu & Realisasi)
+              </button>
+              <button
+                type="button"
+                className={`segmented__item ${chartMode === "serapan" ? "is-active" : ""}`}
+                onClick={() => setChartMode("serapan")}
+                aria-pressed={chartMode === "serapan"}
+                style={
+                  chartMode === "serapan"
+                    ? {
+                        background: "var(--ink)",
+                        color: "#ffffff",
+                        fontWeight: 600,
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.18)",
+                      }
+                    : {
+                        color: "var(--ink-2)",
+                        fontWeight: 500,
+                      }
+                }
+              >
+                % Serapan Anggaran
+              </button>
+            </div>
+          </div>
+          <div className="card__body">
+            {snapshots.length >= 2 ? (
+              chartMode === "nominal" ? (
+                <>
+                  <SpendingChart snapshots={snapshots} layout="horizontal" />
+                  <ChartLegend
+                    items={[
+                      { label: "Pagu belanja", color: chartColors.budget },
+                      { label: "Realisasi", color: chartColors.realized },
+                    ]}
+                  />
+                </>
+              ) : (
+                <>
+                  <ComparisonRateChart snapshots={snapshots} />
+                  <ChartLegend
+                    items={[
+                      {
+                        label: "Serapan terhadap pagu",
+                        color: chartColors.realized,
+                      },
+                    ]}
+                  />
+                </>
+              )
+            ) : snapshots.length === 1 ? (
+              <div>
                 {chartMode === "nominal" ? (
                   <>
                     <SpendingChart snapshots={snapshots} layout="horizontal" />
@@ -314,36 +904,101 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                     />
                   </>
                 )}
-              </div>
-            </section>
-
-            <section className="card">
-              <div className="card__head">
-                <div>
-                  <h2 className="card__title">
-                    Penanda akhir tahun berdampingan
-                  </h2>
-                  <p className="card__sub">
-                    Perbandingan lonjakan pencairan belanja modal fisik pada dua
-                    bulan penutup tahun anggaran.
-                  </p>
+                <div
+                  style={{
+                    marginTop: 14,
+                    padding: "10px 14px",
+                    background: "var(--sunk)",
+                    border: "1px dashed var(--line-2)",
+                    borderRadius: "var(--r-sm)",
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-3)",
+                    textAlign: "center",
+                  }}
+                >
+                  Menampilkan data 1 daerah. Tambahkan 1 daerah lagi pada
+                  pilihan di atas untuk membandingkan kurva visual berdampingan.
                 </div>
-                <span className="chip chip--sunk">
-                  Ambang {YEAR_END_THRESHOLD}%
-                </span>
               </div>
-              <div className="card__body">
-                <div className="table-wrap">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>Daerah</th>
-                        <th>Tahun</th>
-                        <th className="is-num">November–Desember</th>
-                        <th>Penanda</th>
-                      </tr>
-                    </thead>
-                    <tbody>
+            ) : (
+              <div
+                style={{
+                  padding: "48px 24px",
+                  textAlign: "center",
+                  background: "var(--canvas)",
+                  border: "1px dashed var(--line-2)",
+                  borderRadius: "var(--r)",
+                }}
+              >
+                <p
+                  style={{
+                    fontWeight: 600,
+                    color: "var(--ink-2)",
+                    margin: "0 0 6px",
+                  }}
+                >
+                  Grafik perbandingan belum aktif
+                </p>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-3)",
+                    margin: 0,
+                  }}
+                >
+                  Silakan pilih minimal dua daerah di atas untuk memvisualisasikan
+                  grafik komparasi anggaran.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Year-End Modal Flag Section */}
+        <section className="card">
+          <div className="card__head">
+            <div>
+              <h2 className="card__title">
+                Penanda akhir tahun berdampingan
+              </h2>
+              <p className="card__sub">
+                Perbandingan lonjakan pencairan belanja modal fisik pada dua
+                bulan penutup tahun anggaran.
+              </p>
+            </div>
+            <span className="chip chip--sunk">
+              Ambang {YEAR_END_THRESHOLD}%
+            </span>
+          </div>
+          <div className="card__body">
+            <div className="table-wrap">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Daerah</th>
+                    <th>Tahun</th>
+                    <th className="is-num">November–Desember</th>
+                    <th>Penanda</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {codes.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        style={{
+                          textAlign: "center",
+                          color: "var(--ink-4)",
+                          padding: "24px 16px",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        Belum ada daerah dipilih. Pilih hingga 3 daerah pada
+                        daftar di atas.
+                      </td>
+                    </tr>
+                  ) : (
+                    <>
                       {codes.map((code) => {
                         const availableYears = dataset.snapshots
                           .filter(
@@ -403,30 +1058,49 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                           </tr>
                         );
                       })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div className="card__foot">
-                <InfoNote>
-                  Ambang {YEAR_END_THRESHOLD}% merupakan pilihan metodologi,
-                  bukan batas hukum atau bukti pelanggaran. Perbedaan jadwal
-                  proyek dapat memengaruhi hasil. Buka profil untuk pertanyaan
-                  dan sumber Oktober serta Desember.
-                </InfoNote>
-              </div>
-            </section>
-
-            {snapshots[0] && <SourceNote snapshot={snapshots[0]} />}
-
+                      {codes.length === 1 && (
+                        <tr style={{ background: "var(--canvas)" }}>
+                          <td
+                            colSpan={4}
+                            style={{
+                              padding: "12px 16px",
+                              textAlign: "center",
+                              color: "var(--ink-3)",
+                              fontSize: "0.8125rem",
+                              borderTop: "1px dashed var(--line-2)",
+                            }}
+                          >
+                            + Tambahkan 1 daerah lagi pada pemilih di atas untuk
+                            membandingkan penanda akhir tahun secara berdampingan.
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="card__foot">
             <InfoNote>
-              Persentase serapan atau komposisi yang lebih tinggi tidak otomatis
-              berarti layanan lebih baik. Pertimbangkan kebutuhan warga,
-              kewenangan daerah, dan data hasil layanan.
+              Ambang {YEAR_END_THRESHOLD}% merupakan pilihan metodologi,
+              bukan batas hukum atau bukti pelanggaran. Perbedaan jadwal
+              proyek dapat memengaruhi hasil. Buka profil untuk pertanyaan
+              dan sumber Oktober serta Desember.
             </InfoNote>
-          </>
-        )}
-      </div>
-    </>
+          </div>
+        </section>
+
+        {snapshots[0] && <SourceNote snapshot={snapshots[0]} />}
+
+        <InfoNote>
+          Persentase serapan atau komposisi yang lebih tinggi tidak otomatis
+          berarti layanan lebih baik. Pertimbangkan kebutuhan warga,
+          kewenangan daerah, dan data hasil layanan.
+        </InfoNote>
+      </>
+    )}
+  </div>
+</>
   );
 }
