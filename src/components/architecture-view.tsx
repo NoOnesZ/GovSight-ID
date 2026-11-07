@@ -1355,28 +1355,43 @@ export function ArchitectureView({ dataset: _dataset }: { dataset: Dataset }) {
         <div
           style={{
             display: "flex",
-            alignItems: "center",
+            alignItems: "stretch",
             gap: 10,
             flexWrap: "wrap",
+            width: "100%",
           }}
         >
           <a
             href="/docs/ARSITEKTUR-SKALABILITAS.md"
             download="ARSITEKTUR-SKALABILITAS.md"
             className="btn btn--primary"
-            style={{ fontSize: "0.8125rem" }}
+            style={{
+              fontSize: "0.8125rem",
+              whiteSpace: "normal",
+              textAlign: "center",
+              justifyContent: "center",
+              maxWidth: "100%",
+            }}
           >
-            <Download size={14} /> Unduh Cetak Biru Lengkap (.MD)
+            <Download size={14} style={{ flexShrink: 0 }} />
+            <span>Unduh Cetak Biru Lengkap (.MD)</span>
           </a>
           <a
             href="/docs/ARSITEKTUR-SKALABILITAS.md"
             target="_blank"
             rel="noreferrer"
             className="btn btn--secondary"
-            style={{ fontSize: "0.8125rem" }}
+            style={{
+              fontSize: "0.8125rem",
+              whiteSpace: "normal",
+              textAlign: "center",
+              justifyContent: "center",
+              maxWidth: "100%",
+            }}
           >
-            <FileText size={14} /> Baca Dokumen Lengkap di Tab Baru{" "}
-            <ArrowUpRight size={13} />
+            <FileText size={14} style={{ flexShrink: 0 }} />
+            <span>Baca Dokumen Lengkap di Tab Baru</span>
+            <ArrowUpRight size={13} style={{ flexShrink: 0 }} />
           </a>
         </div>
         <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
