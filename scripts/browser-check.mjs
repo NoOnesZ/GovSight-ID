@@ -52,7 +52,49 @@ try {
   }
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(base);
+  await page.locator(".region-table tbody tr").first().waitFor();
+  assert.equal(await page.locator(".region-table tbody tr").count(), 10);
+
+  // Pagination verification
+  const paginationInfo = await page.locator(".pagination__info").textContent();
+  assert.ok(
+    paginationInfo?.includes("Menampilkan 1–10 dari 33 daerah") ||
+      paginationInfo?.includes("Menampilkan 1-10 dari 33 daerah"),
+    `Expected pagination info to contain "Menampilkan 1–10 dari 33 daerah", got: "${paginationInfo}"`,
+  );
+
+  await page
+    .locator('.pagination__size .segmented__btn:has-text("Semua")')
+    .click();
+  await page.waitForFunction(
+    () => document.querySelectorAll(".region-table tbody tr").length === 33,
+  );
   assert.equal(await page.locator(".region-table tbody tr").count(), 33);
+
+  await page.locator('.pagination__size .segmented__btn:has-text("10")').click();
+  await page.waitForFunction(
+    () => document.querySelectorAll(".region-table tbody tr").length === 10,
+  );
+  assert.equal(await page.locator(".region-table tbody tr").count(), 10);
+  console.log("PASS pagination initial 10, expand to Semua (33), back to 10");
+
+  // Capture preview screenshots of Unified Filter Panel and Pagination Bar
+  const filterPanel = page.locator(".filter-panel");
+  if ((await filterPanel.count()) > 0) {
+    await filterPanel.screenshot({
+      path: "test-results/previews/unified-filter-panel.png",
+    });
+    console.log("PASS captured unified-filter-panel.png");
+  }
+
+  const paginationBar = page.locator(".pagination, .pagination-bar");
+  if ((await paginationBar.count()) > 0) {
+    await paginationBar.first().screenshot({
+      path: "test-results/previews/pagination-bar.png",
+    });
+    console.log("PASS captured pagination-bar.png");
+  }
+
   await page.getByRole("textbox", { name: "Cari daerah" }).fill("Binjai");
   await page.waitForFunction(
     () => document.querySelectorAll(".region-table tbody tr").length === 1,

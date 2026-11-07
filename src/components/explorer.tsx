@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Decimal from "decimal.js";
 import {
@@ -16,6 +16,8 @@ import {
   Building2,
   CalendarRange,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   CircleHelp,
   Globe,
   Landmark,
@@ -69,6 +71,12 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
   const rawSort = params.get("urut");
   const sort =
     rawSort === "realisasi" || rawSort === "penumpukan" ? rawSort : "nama";
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState<10 | 25 | "all">(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query, kind, fokus, zona, sort]);
   const latestCompleteYear = Math.max(
     ...dataset.snapshots.filter((s) => s.month === 12).map((s) => s.year),
   );
@@ -196,6 +204,31 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 "id",
               ),
     );
+
+  const effectivePageSize = pageSize === "all" ? visible.length : pageSize;
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      visible.length /
+        (typeof pageSize === "number" ? pageSize : visible.length || 1),
+    ),
+  );
+  const paginatedVisible = useMemo(() => {
+    if (pageSize === "all") return visible;
+    const start = (currentPage - 1) * pageSize;
+    return visible.slice(start, start + pageSize);
+  }, [visible, currentPage, pageSize]);
+
+  const startDisplay =
+    visible.length === 0
+      ? 0
+      : pageSize === "all"
+        ? 1
+        : (currentPage - 1) * pageSize + 1;
+  const endDisplay =
+    pageSize === "all"
+      ? visible.length
+      : Math.min(currentPage * pageSize, visible.length);
 
   // Metrik kolektif seluruh daerah terpantau pada periode aktif
   const totalCollectiveBudget = sumAmounts(
@@ -875,140 +908,179 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 />
               </label>
               <div className="toolbar__group toolbar__group--end">
+                <label
+                  className="field field--compact"
+                  style={{ margin: 0, flexShrink: 0 }}
+                >
+                  <span className="sr-only">Urutkan daerah</span>
+                  <select
+                    aria-label="Urutkan daerah"
+                    value={sort}
+                    onChange={(event) =>
+                      update({
+                        urut:
+                          event.target.value === "nama"
+                            ? null
+                            : event.target.value,
+                      })
+                    }
+                  >
+                    <option value="nama">Urut: nama daerah</option>
+                    <option value="realisasi">Urut: realisasi terbesar</option>
+                    <option value="penumpukan">Urut: penumpukan akhir tahun</option>
+                  </select>
+                  <ChevronDown size={14} className="field__caret" />
+                </label>
                 <PeriodControls year={year} month={month} onChange={update} />
               </div>
             </div>
 
-            <div className="filter-strip">
-              <div
-                className="segmented"
-                role="group"
-                aria-label="Filter cepat daerah"
-              >
-                <button
-                  type="button"
-                  className={`segmented__item ${fokus === "semua" && kind === "semua" ? "is-active" : ""}`}
-                  onClick={() => update({ jenis: null, fokus: null })}
-                >
-                  Semua <span className="count">{snapshots.length}</span>
-                </button>
-                <button
-                  type="button"
-                  className={`segmented__item ${fokus !== "penanda" && kind === "prioritas" ? "is-active" : ""}`}
-                  onClick={() => update({ jenis: "prioritas", fokus: null })}
-                  title="10 Daerah pantauan utama dengan verifikasi kriptografis SHA-256"
-                >
-                  <ShieldCheck size={13} /> 10 Prioritas SHA-256{" "}
-                  <span className="count">{prioritasCount}</span>
-                </button>
-                <button
-                  type="button"
-                  className={`segmented__item ${fokus !== "penanda" && kind === "kota" ? "is-active" : ""}`}
-                  onClick={() => update({ jenis: "kota", fokus: null })}
-                >
-                  <Building2 size={13} /> 8 Kota{" "}
-                  <span className="count">{kotaCount}</span>
-                </button>
-                <button
-                  type="button"
-                  className={`segmented__item ${fokus !== "penanda" && kind === "kabupaten" ? "is-active" : ""}`}
-                  onClick={() => update({ jenis: "kabupaten", fokus: null })}
-                >
-                  <Landmark size={13} /> 25 Kabupaten{" "}
-                  <span className="count">{kabCount}</span>
-                </button>
-                <button
-                  type="button"
-                  className={`segmented__item ${fokus === "penanda" ? "is-active is-warn" : ""}`}
-                  onClick={() =>
-                    update({ fokus: fokus === "penanda" ? null : "penanda" })
-                  }
-                >
-                  <TriangleAlert size={13} /> Ditandai{" "}
-                  <span className="count">{flaggedCount}</span>
-                </button>
-              </div>
-              <label className="field">
-                <span className="sr-only">Urutkan daerah</span>
-                <select
-                  aria-label="Urutkan daerah"
-                  value={sort}
-                  onChange={(event) =>
-                    update({
-                      urut:
-                        event.target.value === "nama" ? null : event.target.value,
-                    })
-                  }
-                >
-                  <option value="nama">Urut: nama daerah</option>
-                  <option value="realisasi">Urut: realisasi terbesar</option>
-                  <option value="penumpukan">Urut: penumpukan akhir tahun</option>
-                </select>
-                <ChevronDown size={14} className="field__caret" />
-              </label>
-            </div>
-
-            {/* Filter Zona Wilayah Sumut */}
+            {/* Unified Filter Panel */}
             <div
-              className="zone-filter-strip"
-              role="group"
-              aria-label="Filter zona wilayah strategis Sumatera Utara"
+              className="filter-panel"
+              role="region"
+              aria-label="Filter Daerah Terpantau"
             >
-              <span className="zone-filter-label">
-                <MapPin size={13} /> Filter Zona:
-              </span>
-              <button
-                type="button"
-                className={`zone-chip ${zona === "semua" ? "is-active" : ""}`}
-                onClick={() => update({ zona: null })}
-              >
-                Semua Zona <span className="count">({snapshots.length})</span>
-              </button>
-              <button
-                type="button"
-                className={`zone-chip ${zona === "mebidangro" ? "is-active" : ""}`}
-                onClick={() =>
-                  update({ zona: zona === "mebidangro" ? null : "mebidangro" })
-                }
-              >
-                Kawasan Mebidangro <span className="count">({mebidangroCount})</span>
-              </button>
-              <button
-                type="button"
-                className={`zone-chip ${zona === "tapanuli" ? "is-active" : ""}`}
-                onClick={() =>
-                  update({ zona: zona === "tapanuli" ? null : "tapanuli" })
-                }
-              >
-                Kawasan Tapanuli <span className="count">({tapanuliCount})</span>
-              </button>
-              <button
-                type="button"
-                className={`zone-chip ${zona === "pantai-timur" ? "is-active" : ""}`}
-                onClick={() =>
-                  update({ zona: zona === "pantai-timur" ? null : "pantai-timur" })
-                }
-              >
-                Pantai Timur <span className="count">({pantaiTimurCount})</span>
-              </button>
-              <button
-                type="button"
-                className={`zone-chip ${zona === "dataran-tinggi" ? "is-active" : ""}`}
-                onClick={() =>
-                  update({
-                    zona: zona === "dataran-tinggi" ? null : "dataran-tinggi",
-                  })
-                }
-              >
-                Dataran Tinggi <span className="count">({dataranTinggiCount})</span>
-              </button>
-              <button
-                type="button"
-                className={`zone-chip ${zona === "nias" ? "is-active" : ""}`}
-                onClick={() => update({ zona: zona === "nias" ? null : "nias" })}
-              >
-                Kepulauan Nias <span className="count">({niasCount})</span>
-              </button>
+              {/* Group 1: Jenis Administratif */}
+              <div className="filter-group">
+                <span className="filter-group__label">
+                  <Building2 size={13} /> Jenis:
+                </span>
+                <div
+                  className="filter-pills"
+                  role="group"
+                  aria-label="Filter jenis daerah"
+                >
+                  <button
+                    type="button"
+                    className={`filter-pill ${fokus === "semua" && kind === "semua" ? "is-active" : ""}`}
+                    onClick={() => update({ jenis: null, fokus: null })}
+                  >
+                    Semua <span className="count">{snapshots.length}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${fokus !== "penanda" && kind === "prioritas" ? "is-active" : ""}`}
+                    onClick={() => update({ jenis: "prioritas", fokus: null })}
+                    title="10 Daerah pantauan utama dengan verifikasi kriptografis SHA-256"
+                  >
+                    <ShieldCheck size={12} /> 10 Prioritas{" "}
+                    <span className="count">{prioritasCount}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${fokus !== "penanda" && kind === "kota" ? "is-active" : ""}`}
+                    onClick={() => update({ jenis: "kota", fokus: null })}
+                  >
+                    <Building2 size={12} /> 8 Kota{" "}
+                    <span className="count">{kotaCount}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${fokus !== "penanda" && kind === "kabupaten" ? "is-active" : ""}`}
+                    onClick={() => update({ jenis: "kabupaten", fokus: null })}
+                  >
+                    <Landmark size={12} /> 25 Kabupaten{" "}
+                    <span className="count">{kabCount}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${fokus === "penanda" ? "is-active is-warn" : ""}`}
+                    onClick={() =>
+                      update({ fokus: fokus === "penanda" ? null : "penanda" })
+                    }
+                  >
+                    <TriangleAlert size={12} /> Ditandai{" "}
+                    <span className="count">{flaggedCount}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Hairline divider */}
+              <div className="filter-panel__divider" />
+
+              {/* Group 2: Zona Geografis */}
+              <div className="filter-group">
+                <span className="filter-group__label">
+                  <MapPin size={13} /> Zona:
+                </span>
+                <div
+                  className="filter-pills"
+                  role="group"
+                  aria-label="Filter zona wilayah"
+                >
+                  <button
+                    type="button"
+                    className={`filter-pill ${zona === "semua" ? "is-active" : ""}`}
+                    onClick={() => update({ zona: null })}
+                  >
+                    Semua Zona{" "}
+                    <span className="count">{snapshots.length}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${zona === "mebidangro" ? "is-active" : ""}`}
+                    onClick={() =>
+                      update({
+                        zona: zona === "mebidangro" ? null : "mebidangro",
+                      })
+                    }
+                  >
+                    Mebidangro{" "}
+                    <span className="count">{mebidangroCount}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${zona === "tapanuli" ? "is-active" : ""}`}
+                    onClick={() =>
+                      update({
+                        zona: zona === "tapanuli" ? null : "tapanuli",
+                      })
+                    }
+                  >
+                    Tapanuli{" "}
+                    <span className="count">{tapanuliCount}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${zona === "pantai-timur" ? "is-active" : ""}`}
+                    onClick={() =>
+                      update({
+                        zona:
+                          zona === "pantai-timur" ? null : "pantai-timur",
+                      })
+                    }
+                  >
+                    Pantai Timur{" "}
+                    <span className="count">{pantaiTimurCount}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${zona === "dataran-tinggi" ? "is-active" : ""}`}
+                    onClick={() =>
+                      update({
+                        zona:
+                          zona === "dataran-tinggi"
+                            ? null
+                            : "dataran-tinggi",
+                      })
+                    }
+                  >
+                    Dataran Tinggi{" "}
+                    <span className="count">{dataranTinggiCount}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${zona === "nias" ? "is-active" : ""}`}
+                    onClick={() =>
+                      update({ zona: zona === "nias" ? null : "nias" })
+                    }
+                  >
+                    Kepulauan Nias{" "}
+                    <span className="count">{niasCount}</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
         {visible.length ? (
@@ -1163,6 +1235,13 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                   <p className="card__sub">
                     Pagu APBD, realisasi belanja, dan indikator penanda belanja
                     modal fisik akhir tahun {latestCompleteYear}.
+                    {visible.length > 10 && pageSize !== "all" && (
+                      <span className="muted">
+                        {" "}
+                        · Halaman {currentPage} dari {totalPages} (menampilkan{" "}
+                        {startDisplay}–{endDisplay})
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>
@@ -1188,7 +1267,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {visible.map((snapshot) => {
+                    {paginatedVisible.map((snapshot) => {
                       const region = regions.find(
                         (item) => item.code === snapshot.regionCode,
                       )!;
@@ -1311,7 +1390,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
               </div>
 
               <div className="region-cards">
-                {visible.map((snapshot) => {
+                {paginatedVisible.map((snapshot) => {
                   const region = regions.find(
                     (item) => item.code === snapshot.regionCode,
                   )!;
@@ -1397,6 +1476,114 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
               </div>
 
               <div className="card__foot">
+                {visible.length > 10 && (
+                  <div
+                    className="pagination"
+                    role="navigation"
+                    aria-label="Navigasi halaman daftar daerah"
+                  >
+                    <div className="pagination__info">
+                      Menampilkan {startDisplay}–{endDisplay} dari {visible.length} daerah
+                    </div>
+                    <div className="pagination__controls">
+                      <button
+                        type="button"
+                        className="pagination__btn"
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage <= 1}
+                        aria-label="Halaman sebelumnya"
+                      >
+                        <ChevronLeft size={14} /> Sebelumnya
+                      </button>
+                      <div
+                        className="pagination__page-numbers"
+                        role="group"
+                        aria-label="Nomor halaman"
+                      >
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                          (pageNum) => (
+                            <button
+                              key={pageNum}
+                              type="button"
+                              className={`pagination__btn ${currentPage === pageNum ? "is-active" : ""}`}
+                              onClick={() => setCurrentPage(pageNum)}
+                              aria-current={
+                                currentPage === pageNum ? "page" : undefined
+                              }
+                            >
+                              {pageNum}
+                            </button>
+                          ),
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        className="pagination__btn"
+                        onClick={() =>
+                          setCurrentPage((p) => Math.min(totalPages, p + 1))
+                        }
+                        disabled={currentPage >= totalPages}
+                        aria-label="Halaman selanjutnya"
+                      >
+                        Berikutnya <ChevronRight size={14} />
+                      </button>
+                    </div>
+                    <div
+                      className="pagination__size"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "0.8125rem",
+                          color: "var(--ink-3)",
+                          fontWeight: 500,
+                        }}
+                      >
+                        Baris:
+                      </span>
+                      <div
+                        className="segmented"
+                        role="group"
+                        aria-label="Jumlah daerah per halaman"
+                      >
+                        <button
+                          type="button"
+                          className={`segmented__btn ${pageSize === 10 ? "is-active" : ""}`}
+                          onClick={() => {
+                            setPageSize(10);
+                            setCurrentPage(1);
+                          }}
+                        >
+                          10
+                        </button>
+                        <button
+                          type="button"
+                          className={`segmented__btn ${pageSize === 25 ? "is-active" : ""}`}
+                          onClick={() => {
+                            setPageSize(25);
+                            setCurrentPage(1);
+                          }}
+                        >
+                          25
+                        </button>
+                        <button
+                          type="button"
+                          className={`segmented__btn ${pageSize === "all" ? "is-active" : ""}`}
+                          onClick={() => {
+                            setPageSize("all");
+                            setCurrentPage(1);
+                          }}
+                        >
+                          Semua
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <InfoNote>
                   Serapan menunjukkan bagian pagu yang sudah dibelanjakan, bukan
                   penilaian mutu layanan.

@@ -1081,15 +1081,34 @@ a.chip:active,
 .count {
   display: inline-grid;
   place-items: center;
-  min-width: 22px;
-  height: 22px;
+  min-width: 20px;
+  height: 20px;
   padding: 0 6px;
   border-radius: var(--r-pill);
   background: var(--sunk-2);
   color: var(--ink-2);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
+  line-height: 1;
   font-variant-numeric: tabular-nums lining-nums;
+  transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+}
+
+/* Badge count pada state aktif (pills, chips, dark buttons) menggunakan semi-transparent white */
+.is-active .count,
+[aria-selected="true"] .count,
+[aria-pressed="true"] .count,
+.filter-pill.is-active .count,
+.zone-chip.is-active .count {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+/* Kontras badge pada segmented control aktif berlatar paper/putih */
+.segmented__item.is-active .count,
+.segmented__btn.is-active .count {
+  background: var(--sunk);
+  color: var(--ink);
 }
 
 .dot {
@@ -1978,6 +1997,194 @@ a.chip:active,
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 12px;
+}
+
+/* ==========================================================================
+   Table Pagination Controls
+   "Minimalis Modern Tenang" - Bersih, terstruktur, presisi tabular
+   ========================================================================== */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  padding: 14px 18px;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+}
+
+.pagination--flush {
+  border-top: none;
+  padding: 12px 0;
+  background: transparent;
+}
+
+.pagination--sunk {
+  background: var(--sunk);
+  border-top: 1px solid var(--line-2);
+  border-radius: 0 0 var(--r) var(--r);
+}
+
+.pagination__info {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+
+.pagination__info strong,
+.pagination__info b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.pagination__controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.pagination__page-numbers {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pagination__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums lining-nums;
+  cursor: pointer;
+  user-select: none;
+  line-height: 1;
+  white-space: nowrap;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.pagination__btn svg {
+  flex-shrink: 0;
+}
+
+.pagination__btn:hover:not(:disabled):not(.is-disabled) {
+  background: var(--canvas);
+  color: var(--ink);
+  border-color: var(--line-2);
+  transform: translateY(-1px);
+}
+
+.pagination__btn:active:not(:disabled):not(.is-disabled) {
+  transform: translateY(0);
+}
+
+.pagination__btn:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-tint);
+}
+
+/* Active page button: subtle shadow and dark ink highlight */
+.pagination__btn.is-active,
+.pagination__btn[aria-current="page"] {
+  background: var(--ink);
+  color: #ffffff;
+  border-color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
+  transform: none;
+}
+
+.pagination__btn.is-active:hover,
+.pagination__btn[aria-current="page"]:hover {
+  background: #11100e;
+  border-color: #11100e;
+  color: #ffffff;
+}
+
+/* Disabled states for Previous/Next buttons */
+.pagination__btn:disabled,
+.pagination__btn.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+  border-color: var(--line);
+  color: var(--ink-4);
+  background: var(--paper);
+  transform: none;
+  box-shadow: none;
+}
+
+.pagination__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 32px;
+  color: var(--ink-4);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  user-select: none;
+}
+
+/* Page Size Picker */
+.page-size-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.page-size-picker select {
+  height: 32px;
+  padding: 0 28px 0 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2354504a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.page-size-picker select:hover {
+  border-color: var(--line-3);
+}
+
+.page-size-picker select:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-tint);
 }
 
 /* ==========================================================================
@@ -5042,36 +5249,103 @@ a.chip:active,
   margin: 0;
 }
 
-/* Zone Filter Strip */
+/* ==========================================================================
+   Unified Filter Panel & Filter Strip
+   "Minimalis Modern Tenang" - Sederhana, presisi, tanpa dekorasi berlebih
+   ========================================================================== */
+
+.filter-panel,
 .zone-filter-strip {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-  padding: 10px 14px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px;
   background: var(--sunk);
   border: 1px solid var(--line-2);
   border-radius: var(--r-sm);
   margin-top: 10px;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
 }
 
+.filter-panel--card {
+  background: var(--paper);
+  border-color: var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-xs);
+  padding: 14px 18px;
+}
+
+.filter-panel--inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  min-width: 0;
+}
+
+.filter-group--divider {
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+
+.filter-group--between {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.filter-panel__divider {
+  height: 1px;
+  background: var(--line);
+  margin: 2px 0;
+  width: 100%;
+}
+
+.filter-group__label,
 .zone-filter-label {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--ink-3);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-right: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  user-select: none;
 }
 
+.filter-group__label svg,
+.zone-filter-label svg {
+  color: var(--ink-4);
+  flex-shrink: 0;
+}
+
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  min-width: 0;
+}
+
+.filter-pill,
 .zone-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding: 4px 10px;
+  min-height: 28px;
   border-radius: var(--r-pill);
   border: 1px solid var(--line);
   background: var(--paper);
@@ -5079,25 +5353,91 @@ a.chip:active,
   font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  user-select: none;
   font-family: inherit;
+  line-height: 1;
+  white-space: nowrap;
+  transition: all var(--duration-fast) var(--ease-out);
 }
 
+.filter-pill:hover,
 .zone-chip:hover {
   border-color: var(--ink-3);
   color: var(--ink);
+  transform: translateY(-1px);
 }
 
+.filter-pill:active,
+.zone-chip:active {
+  transform: translateY(0);
+}
+
+.filter-pill:focus-visible,
+.zone-chip:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-tint);
+}
+
+.filter-pill.is-active,
 .zone-chip.is-active {
   background: var(--ink);
-  color: var(--paper);
+  color: #ffffff;
   border-color: var(--ink);
   font-weight: 600;
+  box-shadow: var(--shadow-xs);
+  transform: none;
 }
 
+.filter-pill.is-active:hover,
+.zone-chip.is-active:hover {
+  background: #11100e;
+  border-color: #11100e;
+  color: #ffffff;
+}
+
+.filter-pill.is-active.is-warn {
+  background: var(--warn-solid, #b45309);
+  border-color: var(--warn-solid, #b45309);
+  color: #ffffff;
+}
+
+.filter-pill.is-active.is-warn:hover {
+  background: #92400e;
+  border-color: #92400e;
+  color: #ffffff;
+}
+
+/* Badge count di dalam filter-pill dan zone-chip */
+.filter-pill .count,
 .zone-chip .count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: var(--r-pill);
+  background: var(--sunk-2);
+  color: var(--ink-2);
   font-size: 0.6875rem;
-  opacity: 0.75;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: 1;
+  opacity: 1;
+  transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+}
+
+.filter-pill:hover:not(.is-active) .count,
+.zone-chip:hover:not(.is-active) .count {
+  background: var(--line);
+  color: var(--ink);
+}
+
+.filter-pill.is-active .count,
+.zone-chip.is-active .count {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  opacity: 1;
 }
 
 /* Multi-Tier Architecture Banners */
@@ -5334,6 +5674,64 @@ a.chip:active,
   .tier-banner__stat-val {
     font-size: 1.05rem;
   }
+
+  /* Table Pagination Mobile */
+  .pagination {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  .pagination__info {
+    justify-content: center;
+    font-size: 0.75rem;
+  }
+
+  .pagination__controls {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .pagination__page-numbers {
+    gap: 3px;
+  }
+
+  .pagination__btn {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 8px;
+    font-size: 0.75rem;
+  }
+
+  .page-size-picker {
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Filter Panel Mobile */
+  .filter-panel,
+  .zone-filter-strip {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .filter-pills {
+    width: 100%;
+  }
+
+  .filter-pill,
+  .zone-chip {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
 }
 
 @media (max-width: 380px) {
@@ -5343,7 +5741,13 @@ a.chip:active,
   .tier-banner__stats {
     grid-template-columns: 1fr;
   }
-  .zone-filter-strip {
+  .zone-filter-strip,
+  .filter-panel {
     padding: 8px 10px;
+  }
+  .pagination__controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
   }
 }
