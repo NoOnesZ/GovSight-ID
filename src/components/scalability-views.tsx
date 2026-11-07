@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
+  ArrowDown,
   ArrowRight,
   ArrowUpRight,
   BarChart3,
@@ -13,17 +14,24 @@ import {
   Clock,
   Compass,
   Database,
+  FileText,
   Globe,
+  HardDrive,
+  Info,
+  Key,
   Landmark,
   Layers,
   MapPin,
   Scale,
   Search,
+  Server,
   ShieldCheck,
+  Smartphone,
   Sparkles,
   TrendingUp,
   TriangleAlert,
   Wallet,
+  Zap,
 } from "lucide-react";
 import {
   sumateraProvinces,
@@ -34,6 +42,459 @@ import {
 } from "@/lib/scalability-data";
 import { compactMoney, fullMoney, percent } from "@/lib/format";
 import { InfoNote } from "./shared";
+
+// ============================================================================
+// BLUEPRINT ARSITEKTUR 3 TIER (Sumut 33 -> Sumatra 154 -> Nasional 552)
+// ============================================================================
+
+export function ScalabilityBlueprint3Tier({
+  activeTier,
+}: {
+  activeTier?: 1 | 2 | 3;
+}) {
+  return (
+    <section
+      className="card"
+      style={{
+        padding: "22px 24px",
+        borderRadius: "var(--r)",
+        border: "1px solid var(--line)",
+        background: "var(--paper)",
+        marginBottom: "var(--gap)",
+      }}
+      aria-labelledby="scalability-blueprint-heading"
+    >
+      {/* Header Blueprint */}
+      <div style={{ marginBottom: "18px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            flexWrap: "wrap",
+            marginBottom: "8px",
+          }}
+        >
+          <span className="chip chip--accent chip--square">
+            <Layers size={13} /> Blueprint Arsitektur Skalabilitas
+          </span>
+          <span className="chip chip--sunk chip--square">
+            Sumut 33 → Sumatera 154 → Nasional 552 Pemda
+          </span>
+          <span className="chip chip--ok chip--square">
+            <ShieldCheck size={13} /> Integritas SHA-256
+          </span>
+        </div>
+        <h2
+          id="scalability-blueprint-heading"
+          style={{
+            fontSize: "1.25rem",
+            fontWeight: 700,
+            letterSpacing: "-0.02em",
+            color: "var(--ink)",
+            margin: "0 0 6px",
+            lineHeight: 1.35,
+          }}
+        >
+          Cetak Biru Rekayasa Skalabilitas GovSight ID
+        </h2>
+        <p
+          style={{
+            fontSize: "0.875rem",
+            color: "var(--ink-2)",
+            lineHeight: 1.55,
+            margin: 0,
+            maxWidth: "840px",
+          }}
+        >
+          Transisi teknis dari sistem baseline 33 daerah di Sumatera Utara menuju pemrosesan ingestion modular 154 kabupaten/kota regional Sumatera dan konsolidasi 552 pemda se-Indonesia. Dirancang dengan presisi rupiah mutlak dan efisiensi payload perangkat seluler warga.
+        </p>
+      </div>
+
+      {/* 3 Tier Cards: Flattened, Calm Visual Hierarchy */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+          gap: "14px",
+          marginBottom: "20px",
+        }}
+      >
+        {/* Tier 1: Sumatera Utara */}
+        <div
+          style={{
+            padding: "16px 18px",
+            background: activeTier === 1 ? "var(--canvas)" : "var(--paper)",
+            border: activeTier === 1 ? "2px solid var(--accent)" : "1px solid var(--line)",
+            borderRadius: "var(--r)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+            <div>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em",
+                  color: "var(--ink-3)",
+                  display: "block",
+                }}
+              >
+                Tier 1 · Baseline
+              </span>
+              <strong style={{ fontSize: "1rem", color: "var(--ink)", display: "block", marginTop: "2px" }}>
+                Sumatera Utara
+              </strong>
+            </div>
+            <span className="chip chip--ok chip--square" style={{ fontSize: "0.6875rem" }}>
+              <CheckCircle2 size={11} /> 100% Aktif
+            </span>
+          </div>
+
+          <div style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5 }}>
+            <span style={{ display: "block", color: "var(--ink)", fontWeight: 600 }}>
+              33 Pemda (8 Kota · 25 Kabupaten)
+            </span>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", display: "block" }}>
+              Pagu APBD: Rp 63,2 Triliun · 350+ Snapshot
+            </span>
+          </div>
+
+          <div
+            style={{
+              paddingTop: "10px",
+              borderTop: "1px solid var(--line-2)",
+              fontSize: "0.75rem",
+              color: "var(--ink-2)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Arsitektur:</strong> In-Memory JSON Chunk (&lt;450 KB)
+            </div>
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Integritas:</strong> SHA-256 Checksum per Berkas XML/CSV
+            </div>
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Evaluasi:</strong> Risiko Lonjakan Akhir Tahun &amp; Mandat Modal
+            </div>
+          </div>
+        </div>
+
+        {/* Tier 2: Regional Pulau Sumatera */}
+        <div
+          style={{
+            padding: "16px 18px",
+            background: activeTier === 2 ? "var(--canvas)" : "var(--paper)",
+            border: activeTier === 2 ? "2px solid var(--accent)" : "1px solid var(--line)",
+            borderRadius: "var(--r)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+            <div>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em",
+                  color: "var(--ink-3)",
+                  display: "block",
+                }}
+              >
+                Tier 2 · Regional
+              </span>
+              <strong style={{ fontSize: "1rem", color: "var(--ink)", display: "block", marginTop: "2px" }}>
+                Pulau Sumatera
+              </strong>
+            </div>
+            <span className="chip chip--info chip--square" style={{ fontSize: "0.6875rem" }}>
+              <Clock size={11} /> 33 Live · 121 Staged
+            </span>
+          </div>
+
+          <div style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5 }}>
+            <span style={{ display: "block", color: "var(--ink)", fontWeight: 600 }}>
+              154 Pemda (10 Provinsi Se-Sumatera)
+            </span>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", display: "block" }}>
+              Pagu Agregat: Rp 296,8 Triliun · ~5.544 Snapshot
+            </span>
+          </div>
+
+          <div
+            style={{
+              paddingTop: "10px",
+              borderTop: "1px solid var(--line-2)",
+              fontSize: "0.75rem",
+              color: "var(--ink-2)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Arsitektur:</strong> Partition Chunks per Provinsi (&lt;180 KB)
+            </div>
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Integritas:</strong> Worker Pool Rate-Limited (5 req/s)
+            </div>
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Evaluasi:</strong> Disparitas Fiskal Wilayah &amp; Serapan Modal
+            </div>
+          </div>
+        </div>
+
+        {/* Tier 3: Skalabilitas Nasional */}
+        <div
+          style={{
+            padding: "16px 18px",
+            background: activeTier === 3 ? "var(--canvas)" : "var(--paper)",
+            border: activeTier === 3 ? "2px solid var(--accent)" : "1px solid var(--line)",
+            borderRadius: "var(--r)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+            <div>
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em",
+                  color: "var(--ink-3)",
+                  display: "block",
+                }}
+              >
+                Tier 3 · Nasional
+              </span>
+              <strong style={{ fontSize: "1rem", color: "var(--ink)", display: "block", marginTop: "2px" }}>
+                Seluruh Indonesia
+              </strong>
+            </div>
+            <span className="chip chip--square" style={{ fontSize: "0.6875rem", background: "var(--canvas)", border: "1px solid var(--line)" }}>
+              <Globe size={11} /> 552 Pemda Otonom
+            </span>
+          </div>
+
+          <div style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5 }}>
+            <span style={{ display: "block", color: "var(--ink)", fontWeight: 600 }}>
+              514 Kab/Kota + 38 Provinsi (6 Gugus)
+            </span>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", display: "block" }}>
+              Pagu Nasional: Rp 1,15 Kuadriliun · ~59.000 Snapshot
+            </span>
+          </div>
+
+          <div
+            style={{
+              paddingTop: "10px",
+              borderTop: "1px solid var(--line-2)",
+              fontSize: "0.75rem",
+              color: "var(--ink-2)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Arsitektur:</strong> Neon Serverless PostgreSQL + Meta-Index (&lt;50 KB)
+            </div>
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Integritas:</strong> Rantai Audit Publik Terbuka &amp; CDN Edge (&lt;80ms)
+            </div>
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Evaluasi:</strong> Mandat Pasal 146 &amp; 147 UU HKPD No. 1/2022
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Diagram Representasi Alur Data (Data Flow Pipeline) */}
+      <div
+        style={{
+          padding: "16px",
+          background: "var(--canvas)",
+          borderRadius: "var(--r)",
+          border: "1px solid var(--line)",
+          overflow: "hidden",
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
+        <div style={{ marginBottom: "12px" }}>
+          <span
+            style={{
+              fontSize: "0.6875rem",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.04em",
+              color: "var(--ink-3)",
+              display: "block",
+            }}
+          >
+            Alur Pemrosesan Data Kriptografis (End-to-End Pipeline)
+          </span>
+          <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", margin: "2px 0 0" }}>
+            Transisi data dari pengambilan arsip primer pemerintah hingga presentasi analitis tanpa galat pembulatan.
+          </p>
+        </div>
+
+        {/* Responsive Pipeline Steps: Wraps cleanly on mobile without horizontal scroll */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))",
+            gap: "10px",
+            width: "100%",
+          }}
+        >
+          {/* Step 1 */}
+          <div
+            style={{
+              padding: "12px",
+              background: "var(--paper)",
+              border: "1px solid var(--line)",
+              borderRadius: "var(--r-sm)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span className="chip chip--square" style={{ fontSize: "0.6875rem", padding: "1px 6px" }}>
+                01. Sumber
+              </span>
+              <Server size={13} style={{ color: "var(--ink-3)" }} />
+            </div>
+            <strong style={{ fontSize: "0.8125rem", color: "var(--ink)", marginTop: "2px" }}>
+              SIKD DJPK Kemenkeu
+            </strong>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", lineHeight: 1.4 }}>
+              Ekstraksi berkas XML &amp; CSV resmi secara bertahap via Token Bucket.
+            </span>
+          </div>
+
+          {/* Step 2 */}
+          <div
+            style={{
+              padding: "12px",
+              background: "var(--paper)",
+              border: "1px solid var(--line)",
+              borderRadius: "var(--r-sm)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span className="chip chip--ok chip--square" style={{ fontSize: "0.6875rem", padding: "1px 6px" }}>
+                02. Integrity
+              </span>
+              <Key size={13} style={{ color: "var(--ok)" }} />
+            </div>
+            <strong style={{ fontSize: "0.8125rem", color: "var(--ink)", marginTop: "2px" }}>
+              Vault SHA-256
+            </strong>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", lineHeight: 1.4 }}>
+              Komputasi sidik jari digital sebelum berkas mentah disimpan permanen.
+            </span>
+          </div>
+
+          {/* Step 3 */}
+          <div
+            style={{
+              padding: "12px",
+              background: "var(--paper)",
+              border: "1px solid var(--line)",
+              borderRadius: "var(--r-sm)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span className="chip chip--accent chip--square" style={{ fontSize: "0.6875rem", padding: "1px 6px" }}>
+                03. Precision
+              </span>
+              <Scale size={13} style={{ color: "var(--accent)" }} />
+            </div>
+            <strong style={{ fontSize: "0.8125rem", color: "var(--ink)", marginTop: "2px" }}>
+              Decimal.js Engine
+            </strong>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", lineHeight: 1.4 }}>
+              Aritmetika presisi 20 digit tanpa risiko galat pembulatan floating-point.
+            </span>
+          </div>
+
+          {/* Step 4 */}
+          <div
+            style={{
+              padding: "12px",
+              background: "var(--paper)",
+              border: "1px solid var(--line)",
+              borderRadius: "var(--r-sm)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span className="chip chip--square" style={{ fontSize: "0.6875rem", padding: "1px 6px" }}>
+                04. Partition
+              </span>
+              <Database size={13} style={{ color: "var(--ink-3)" }} />
+            </div>
+            <strong style={{ fontSize: "0.8125rem", color: "var(--ink)", marginTop: "2px" }}>
+              Modular 3 Tier
+            </strong>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", lineHeight: 1.4 }}>
+              Partisi regional (Sumut 33 → 154 → 552) dan Meta-Index ringan (&lt;50 KB).
+            </span>
+          </div>
+
+          {/* Step 5 */}
+          <div
+            style={{
+              padding: "12px",
+              background: "var(--paper)",
+              border: "1px solid var(--line)",
+              borderRadius: "var(--r-sm)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span className="chip chip--square" style={{ fontSize: "0.6875rem", padding: "1px 6px" }}>
+                05. Delivery
+              </span>
+              <Smartphone size={13} style={{ color: "var(--ink-3)" }} />
+            </div>
+            <strong style={{ fontSize: "0.8125rem", color: "var(--ink)", marginTop: "2px" }}>
+              Edge Caching &amp; Advokasi
+            </strong>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", lineHeight: 1.4 }}>
+              Respons cepat (&lt;80ms) di ponsel warga plus integrasi SP4N-LAPOR!.
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 // ============================================================================
 // TIER 2: Regional Pulau Sumatera (10 Provinsi · 154 Daerah)
@@ -91,56 +552,95 @@ export function RegionalSumateraMatrix() {
 
   return (
     <div className="stack" style={{ marginTop: "var(--gap)" }}>
-      {/* Banner Arsitektur Modular Sumatera */}
-      <section className="tier-banner tier-banner--info" aria-labelledby="banner-sumatera-heading">
-        <div className="tier-banner__badges">
+      {/* 3-Tier Blueprint Component at top */}
+      <ScalabilityBlueprint3Tier activeTier={2} />
+
+      {/* Banner Arsitektur Modular Sumatera (Flattened & Calm) */}
+      <section
+        className="card"
+        style={{
+          padding: "20px 22px",
+          border: "1px solid var(--line)",
+          borderRadius: "var(--r)",
+          background: "var(--paper)",
+          borderLeft: "4px solid var(--accent)",
+        }}
+        aria-labelledby="banner-sumatera-heading"
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
           <span className="chip chip--accent chip--square">
             <Layers size={13} /> Arsitektur Skalabilitas Tier 2
           </span>
           <span className="chip chip--info chip--square">
-            <span className="dot dot--info" /> Preview Regional
+            Preview Regional Sumatera
           </span>
           <span className="chip chip--sunk chip--square">
             10 Provinsi Terpetakan
           </span>
         </div>
-        <h2 id="banner-sumatera-heading" className="tier-banner__title">
+        <h2 id="banner-sumatera-heading" style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 8px", color: "var(--ink)", lineHeight: 1.3 }}>
           Cakupan Regional Sumatera: 154 Kabupaten/Kota dalam proses ingestion modular per provinsi
         </h2>
-        <p className="tier-banner__lead">
-          GovSight ID memperluas pemantauan belanja publik melintasi batas Sumatera Utara menuju 10 provinsi di seluruh Pulau Sumatera.
-          Sistem ingestion modular memproses 154 APBD kabupaten/kota dengan standarisasi skema SIKD Kementerian Keuangan dan validasi integritas data SHA-256.
+        <p style={{ fontSize: "0.875rem", color: "var(--ink-2)", lineHeight: 1.55, margin: "0 0 16px", maxWidth: "820px" }}>
+          GovSight ID memperluas jangkauan pemantauan belanja publik dari Sumatera Utara menuju 10 provinsi di seluruh Pulau Sumatera.
+          Sistem ingestion modular memproses 154 APBD kabupaten/kota dengan standardisasi skema SIKD Kementerian Keuangan dan verifikasi integritas data SHA-256.
         </p>
 
-        <div className="tier-banner__stats">
-          <div className="tier-banner__stat">
-            <span className="tier-banner__stat-label">Cakupan Wilayah</span>
-            <strong className="tier-banner__stat-val">10 Provinsi</strong>
-            <span className="tier-banner__stat-sub">154 Daerah ({totalKota} Kota · {totalKab} Kab)</span>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
+            gap: "12px",
+            paddingTop: "14px",
+            borderTop: "1px solid var(--line-2)",
+          }}
+        >
+          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+              Cakupan Wilayah
+            </span>
+            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ink)", display: "block", margin: "2px 0 1px" }}>
+              10 Provinsi
+            </strong>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
+              154 Daerah ({totalKota} Kota · {totalKab} Kab)
+            </span>
           </div>
 
-          <div className="tier-banner__stat">
-            <span className="tier-banner__stat-label">Total Agregat APBD</span>
-            <strong className="tier-banner__stat-val" title={fullMoney(totalPagu.toString())}>
+          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+              Total Agregat APBD
+            </span>
+            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ink)", display: "block", margin: "2px 0 1px" }} title={fullMoney(totalPagu.toString())}>
               {compactMoney(totalPagu.toString())}
             </strong>
-            <span className="tier-banner__stat-sub">Akumulasi pagu se-Sumatera</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
+              Akumulasi pagu se-Sumatera
+            </span>
           </div>
 
-          <div className="tier-banner__stat">
-            <span className="tier-banner__stat-label">Rata-rata Serapan Modal</span>
-            <strong className="tier-banner__stat-val" style={{ color: "var(--ok)" }}>
+          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+              Rata-rata Serapan Modal
+            </span>
+            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ok)", display: "block", margin: "2px 0 1px" }}>
               {percent(avgSerapanModal)}
             </strong>
-            <span className="tier-banner__stat-sub">Target UU HKPD: ≥40%</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
+              Target UU HKPD: ≥40%
+            </span>
           </div>
 
-          <div className="tier-banner__stat">
-            <span className="tier-banner__stat-label">Status Ingestion</span>
-            <strong className="tier-banner__stat-val" style={{ color: "var(--accent)" }}>
+          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+              Status Ingestion
+            </span>
+            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--accent)", display: "block", margin: "2px 0 1px" }}>
               33 Live · 121 Staged
             </strong>
-            <span className="tier-banner__stat-sub">Sumut aktif penuh, 9 provinsi staging</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
+              Sumut aktif penuh, 9 provinsi staging
+            </span>
           </div>
         </div>
       </section>
@@ -220,8 +720,8 @@ export function RegionalSumateraMatrix() {
             </div>
           </div>
 
-          {/* Desktop Table View */}
-          <div className="table-wrap">
+          {/* Desktop Table View with smooth touch scrolling */}
+          <div className="table-wrap" style={{ WebkitOverflowScrolling: "touch" }}>
             <table className="region-table">
               <thead>
                 <tr>
@@ -234,7 +734,7 @@ export function RegionalSumateraMatrix() {
                 </tr>
               </thead>
               <tbody>
-                {filteredProvinces.map((p, idx) => (
+                {filteredProvinces.map((p) => (
                   <tr key={p.code}>
                     <td>
                       <div className="region-cell">
@@ -317,10 +817,10 @@ export function RegionalSumateraMatrix() {
             </table>
           </div>
 
-          {/* Mobile Cards for Provinces */}
+          {/* Mobile Cards for Provinces (Flattened) */}
           <div className="region-cards">
             {filteredProvinces.map((p) => (
-              <div key={p.code} className="provinsi-card">
+              <div key={p.code} className="provinsi-card" style={{ border: "1px solid var(--line)", borderRadius: "var(--r)", background: "var(--paper)", padding: "14px 16px" }}>
                 <div className="provinsi-card__head">
                   <div>
                     <h4 className="provinsi-card__name">{p.name}</h4>
@@ -373,7 +873,7 @@ export function RegionalSumateraMatrix() {
         </div>
       </div>
 
-      {/* 3 Regional Insights Cards */}
+      {/* 3 Regional Insights Cards (Calm Visual Hierarchy, Non-Gimmick) */}
       <div
         style={{
           display: "grid",
@@ -384,8 +884,8 @@ export function RegionalSumateraMatrix() {
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square chip--accent" style={{ marginBottom: 6 }}>
-                Fiskal Raksasa
+              <span className="chip chip--square" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+                Analisis Agregat
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
                 Konsentrasi Anggaran Terbesar
@@ -393,9 +893,9 @@ export function RegionalSumateraMatrix() {
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5, margin: 0 }}>
+            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
               <strong>Sumatera Utara ({compactMoney("63240000000000")})</strong> dan{" "}
-              <strong>Sumatera Selatan ({compactMoney("44280000000000")})</strong> mengelola lebih dari 36% dari seluruh total APBD di Pulau Sumatera. Pengawasan publik di kedua provinsi ini memiliki dampak sistemik terhadap perekonomian regional.
+              <strong>Sumatera Selatan ({compactMoney("44280000000000")})</strong> mengelola lebih dari 36% dari seluruh total APBD di Pulau Sumatera. Pengawasan publik di kedua provinsi ini memiliki dampak sistemik terhadap stabilitas perekonomian regional.
             </p>
           </div>
         </div>
@@ -403,8 +903,8 @@ export function RegionalSumateraMatrix() {
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square chip--ok" style={{ marginBottom: 6 }}>
-                Efisiensi Modal
+              <span className="chip chip--square" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+                Kinerja Realisasi
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
                 Serapan Belanja Modal Tertinggi
@@ -412,7 +912,7 @@ export function RegionalSumateraMatrix() {
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5, margin: 0 }}>
+            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
               <strong>Kepulauan Riau (21,1%)</strong> dan{" "}
               <strong>Bangka Belitung (20,3%)</strong> mencatatkan proporsi realisasi modal fisik terbaik. Sebaliknya, Bengkulu (16,4%) dan Aceh (16,8%) membutuhkan akselerasi lelang proyek dini demi mencegah kejar tayang akhir tahun.
             </p>
@@ -422,17 +922,17 @@ export function RegionalSumateraMatrix() {
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square chip--info" style={{ marginBottom: 6 }}>
-                Integritas Modular
+              <span className="chip chip--ok chip--square" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+                Audit Integritas
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
-                Pipeline Ingestion Otomatis
+                Standarisasi Checksum SHA-256
               </h3>
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5, margin: 0 }}>
-              Setiap berkas XML/CSV dari 154 daerah melewati checksum SHA-256 yang identik dengan standar Sumatera Utara, menjamin seluruh angka belanja publik dapat diaudit ulang secara independen oleh masyarakat sipil.
+            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
+              Setiap berkas XML/CSV dari 154 daerah melewati validasi checksum SHA-256 yang identik dengan standar Sumatera Utara, menjamin seluruh angka belanja publik dapat diaudit ulang secara independen oleh masyarakat sipil.
             </p>
           </div>
         </div>
@@ -450,61 +950,100 @@ export function NationalRoadmapView() {
 
   return (
     <div className="stack" style={{ marginTop: "var(--gap)" }}>
-      {/* Header Banner Nasional */}
-      <section className="tier-banner tier-banner--purple" aria-labelledby="banner-nasional-heading">
-        <div className="tier-banner__badges">
-          <span className="chip chip--square" style={{ background: "#7C3AED", color: "#FFF" }}>
+      {/* 3-Tier Blueprint Component at top */}
+      <ScalabilityBlueprint3Tier activeTier={3} />
+
+      {/* Header Banner Nasional (Flattened & Calm, No Gimmick) */}
+      <section
+        className="card"
+        style={{
+          padding: "20px 22px",
+          border: "1px solid var(--line)",
+          borderRadius: "var(--r)",
+          background: "var(--paper)",
+          borderLeft: "4px solid var(--accent)",
+        }}
+        aria-labelledby="banner-nasional-heading"
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
+          <span className="chip chip--square">
             <Globe size={13} /> Arsitektur Skalabilitas Tier 3
           </span>
           <span className="chip chip--accent chip--square">
-            <span className="dot dot--modal" /> Roadmap Nasional
+            Roadmap Nasional
           </span>
           <span className="chip chip--sunk chip--square">
             38 Provinsi · 514 Daerah
           </span>
         </div>
-        <h2 id="banner-nasional-heading" className="tier-banner__title">
+        <h2 id="banner-nasional-heading" style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 8px", color: "var(--ink)", lineHeight: 1.3 }}>
           Roadmap Skalabilitas Nasional: 38 Provinsi · 514 Pemda Seluruh Indonesia
         </h2>
-        <p className="tier-banner__lead">
+        <p style={{ fontSize: "0.875rem", color: "var(--ink-2)", lineHeight: 1.55, margin: "0 0 16px", maxWidth: "820px" }}>
           Membuka transparansi Rp 1,15 Kuadriliun belanja publik daerah di seluruh Indonesia — dari Sabang sampai Merauke.
           GovSight ID dirancang dengan arsitektur desentralistik untuk memetakan kepatuhan belanja modal terhadap amanat Undang-Undang HKPD No. 1/2022 di seluruh 6 gugus kepulauan Nusantara.
         </p>
 
-        <div className="tier-banner__stats">
-          <div className="tier-banner__stat">
-            <span className="tier-banner__stat-label">Cakupan Nasional</span>
-            <strong className="tier-banner__stat-val">514 Pemda</strong>
-            <span className="tier-banner__stat-sub">38 Provinsi ({summary.totalKota} Kota · {summary.totalKabupaten} Kab)</span>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
+            gap: "12px",
+            paddingTop: "14px",
+            borderTop: "1px solid var(--line-2)",
+          }}
+        >
+          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+              Cakupan Nasional
+            </span>
+            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ink)", display: "block", margin: "2px 0 1px" }}>
+              514 Pemda
+            </strong>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
+              38 Provinsi ({summary.totalKota} Kota · {summary.totalKabupaten} Kab)
+            </span>
           </div>
 
-          <div className="tier-banner__stat">
-            <span className="tier-banner__stat-label">Konsolidasi APBD Nasional</span>
-            <strong className="tier-banner__stat-val" title={fullMoney(summary.totalAggregateBudget.toString())}>
+          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+              Konsolidasi APBD Nasional
+            </span>
+            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ink)", display: "block", margin: "2px 0 1px" }} title={fullMoney(summary.totalAggregateBudget.toString())}>
               Rp 1,15 Kuadriliun
             </strong>
-            <span className="tier-banner__stat-sub">Pagu belanja publik se-Indonesia</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
+              Pagu belanja publik se-Indonesia
+            </span>
           </div>
 
-          <div className="tier-banner__stat">
-            <span className="tier-banner__stat-label">Gugus Kepulauan</span>
-            <strong className="tier-banner__stat-val" style={{ color: "#7C3AED" }}>
+          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+              Gugus Kepulauan
+            </span>
+            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ink)", display: "block", margin: "2px 0 1px" }}>
               6 Gugus
             </strong>
-            <span className="tier-banner__stat-sub">Sumatera, Jawa, Kalimantan, Sulawesi, Nusra, Papua</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
+              Sumatera, Jawa, Kalimantan, Sulawesi, Nusra, Papua
+            </span>
           </div>
 
-          <div className="tier-banner__stat">
-            <span className="tier-banner__stat-label">Potensi Akselerasi Modal</span>
-            <strong className="tier-banner__stat-val" style={{ color: "var(--ok)" }}>
+          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+              Potensi Akselerasi Modal
+            </span>
+            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ok)", display: "block", margin: "2px 0 1px" }}>
               &gt;Rp 120 Triliun
             </strong>
-            <span className="tier-banner__stat-sub">Pencegahan pola kejar tayang</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
+              Pencegahan pola kejar tayang
+            </span>
           </div>
         </div>
       </section>
 
-      {/* 6 Gugus Kepulauan Roadmap Matrix */}
+      {/* 6 Gugus Kepulauan Roadmap Matrix (Flattened Cards) */}
       <div className="card">
         <div className="card__head">
           <div>
@@ -521,7 +1060,7 @@ export function NationalRoadmapView() {
         <div className="card__body">
           <div className="island-group-grid">
             {nationalIslandsGroups.map((gugus) => (
-              <div key={gugus.id} className="island-card">
+              <div key={gugus.id} className="island-card" style={{ border: "1px solid var(--line)", borderRadius: "var(--r)", background: "var(--paper)" }}>
                 <div className="island-card__head">
                   <div>
                     <h4 className="island-card__title">{gugus.name}</h4>
@@ -583,7 +1122,7 @@ export function NationalRoadmapView() {
         </div>
       </div>
 
-      {/* UU HKPD Compliance Analysis Section */}
+      {/* UU HKPD Compliance Analysis Section (Flattened Containers) */}
       <div className="card" style={{ borderLeft: "4px solid var(--warn-solid)" }}>
         <div className="card__head">
           <div>
@@ -605,7 +1144,7 @@ export function NationalRoadmapView() {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
-              gap: 20,
+              gap: 16,
             }}
           >
             {/* Belanja Modal: Mandat >= 40% */}
@@ -621,7 +1160,7 @@ export function NationalRoadmapView() {
                 <strong style={{ fontSize: "0.9375rem" }}>Belanja Modal Infrastruktur Publik</strong>
                 <span className="chip chip--warn chip--square">Kesenjangan -21,8%</span>
               </div>
-              <p style={{ fontSize: "0.8125rem", color: "var(--ink-3)", margin: "0 0 12px" }}>
+              <p style={{ fontSize: "0.8125rem", color: "var(--ink-3)", margin: "0 0 12px", lineHeight: 1.5 }}>
                 Pasal 147 UU HKPD mewajibkan alokasi belanja modal infrastruktur pelayanan publik minimal <strong>40%</strong> dari total APBD.
               </p>
 
@@ -652,7 +1191,7 @@ export function NationalRoadmapView() {
                 <strong style={{ fontSize: "0.9375rem" }}>Batas Maksimal Belanja Pegawai</strong>
                 <span className="chip chip--warn chip--square">Melebihi Batas +4,6%</span>
               </div>
-              <p style={{ fontSize: "0.8125rem", color: "var(--ink-3)", margin: "0 0 12px" }}>
+              <p style={{ fontSize: "0.8125rem", color: "var(--ink-3)", margin: "0 0 12px", lineHeight: 1.5 }}>
                 Pasal 146 UU HKPD membatasi belanja aparatur/pegawai maksimal <strong>30%</strong> demi menjaga ruang belanja langsung bagi warga.
               </p>
 
@@ -673,7 +1212,7 @@ export function NationalRoadmapView() {
         </div>
       </div>
 
-      {/* Proyeksi Dampak Pengawasan Publik */}
+      {/* Proyeksi Dampak Pengawasan Publik (Calm Civic Tech Tone) */}
       <div
         style={{
           display: "grid",
@@ -684,16 +1223,16 @@ export function NationalRoadmapView() {
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square chip--warn" style={{ marginBottom: 6 }}>
-                Dampak 1
+              <span className="chip chip--square" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+                Pengawasan Proyek
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
-                Pencegahan Kejar Tayang Rp 126,8T
+                Mitigasi Risiko Pelaksanaan Proyek Akhir Tahun
               </h3>
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5, margin: 0 }}>
+            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
               Dengan mendeteksi lonjakan belanja modal &gt;40% di akhir tahun anggaran, pengawasan publik dapat menyelamatkan kualitas fisik proyek infrastruktur senilai Rp 126,8 Triliun secara nasional dari risiko pekerjaan terburu-buru di musim hujan.
             </p>
           </div>
@@ -702,17 +1241,17 @@ export function NationalRoadmapView() {
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square chip--ok" style={{ marginBottom: 6 }}>
-                Dampak 2
+              <span className="chip chip--square" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+                Efisiensi Anggaran
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
-                Efisiensi Aparatur Rp 52,7T
+                Optimalisasi Alokasi Belanja Pegawai Sesuai Mandat HKPD
               </h3>
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5, margin: 0 }}>
-              Penurunan bertahap porsi belanja pegawai menuju ambang 30% berpotensi membebaskan ruang fiskal hingga Rp 52,7 Triliun per tahun untuk dialihkan langsung ke subsidi kesehatan warga, beasiswa, dan pengentasan kemiskinan ekstrem.
+            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
+              Penurunan bertahap porsi belanja pegawai menuju ambang batas 30% berpotensi membebaskan ruang fiskal hingga Rp 52,7 Triliun per tahun untuk dialihkan langsung ke subsidi kesehatan warga, beasiswa pendidikan, dan program pengentasan kemiskinan ekstrem.
             </p>
           </div>
         </div>
@@ -720,17 +1259,17 @@ export function NationalRoadmapView() {
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square chip--accent" style={{ marginBottom: 6 }}>
-                Dampak 3
+              <span className="chip chip--square chip--ok" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+                Integritas Terbuka
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
-                Audit Terbuka 514 Pemda
+                Standardisasi Audit Kriptografis 552 Pemda
               </h3>
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5, margin: 0 }}>
-              Standar kriptografi SHA-256 membekali jurnalis, mahasiswa, dan komunitas warga dengan data primer yang sah secara metodologis, memutus asimetri informasi antara penyelenggara anggaran dan pembayar pajak.
+            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
+              Standar kriptografi SHA-256 membekali jurnalis, akademisi, dan organisasi masyarakat sipil dengan data primer yang sah secara metodologis, memutus asimetri informasi antara penyelenggara anggaran dan pembayar pajak.
             </p>
           </div>
         </div>

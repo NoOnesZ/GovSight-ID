@@ -26,18 +26,36 @@ try {
       await page.locator("h1").waitFor();
       await page.evaluate(() => document.fonts.ready);
       await page.locator(".loading-state").waitFor({ state: "hidden" });
-      if (name !== "metodologi")
-        await page.locator(".recharts-wrapper").first().waitFor();
-      await page.waitForFunction(() =>
-        [...document.querySelectorAll(".recharts-wrapper")].every(
-          (element) =>
-            element.getBoundingClientRect().width <=
-            element
-              .closest(".recharts-responsive-container")
-              .getBoundingClientRect().width +
-              1,
-        ),
-      );
+      if (name === "jelajah") {
+        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await page.waitForTimeout(500);
+      } else if (name === "profil") {
+        const historyTab = page.locator('button.profile-reader-tab:has-text("Riwayat")');
+        if ((await historyTab.count()) > 0) {
+          await historyTab.click();
+          await page.waitForTimeout(400);
+        }
+      }
+      if (name !== "metodologi") {
+        await page.locator(".recharts-wrapper").first().waitFor({ timeout: 10000 });
+        await page.waitForFunction(() =>
+          [...document.querySelectorAll(".recharts-wrapper")].every(
+            (element) =>
+              element.getBoundingClientRect().width <=
+              element
+                .closest(".recharts-responsive-container")
+                .getBoundingClientRect().width +
+                1,
+          ),
+        );
+      }
+      if (name === "profil") {
+        const advTab = page.locator('button.profile-reader-tab:has-text("Ringkasan")');
+        if ((await advTab.count()) > 0) {
+          await advTab.click();
+          await page.waitForTimeout(300);
+        }
+      }
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth > window.innerWidth,
       );
@@ -126,6 +144,11 @@ try {
   await page
     .getByRole("heading", { name: "Kota Medan", exact: true })
     .waitFor();
+  const historyBtn = page.locator("#tab-history, button.profile-reader-tab:has-text('Riwayat')");
+  if ((await historyBtn.count()) > 0) {
+    await historyBtn.first().click();
+    await page.waitForTimeout(400);
+  }
   await page
     .getByRole("heading", { name: "Serapan belanja bulanan" })
     .waitFor();
@@ -158,7 +181,7 @@ try {
   console.log("PASS comparable profile history and unavailable December 2026");
 
   await page.goto(base + "/bandingkan");
-  await page.getByRole("button", { name: /Deli Serdang/ }).click();
+  await page.locator('.region-option:has-text("Deli Serdang")').click();
   await page
     .getByRole("heading", { name: "Penanda akhir tahun berdampingan" })
     .waitFor();
@@ -167,23 +190,24 @@ try {
     await page.locator(".region-option[aria-pressed=true]").count(),
     3,
   );
-  await page.getByRole("button", { name: /Medan/ }).click();
-  await page.getByRole("button", { name: /Binjai/ }).click();
+  await page.locator('.region-option:has-text("Medan")').click();
+  await page.locator('.region-option:has-text("Binjai")').click();
   await page
-    .getByRole("heading", { name: "Tambahkan satu daerah lagi" })
+    .getByText(/Tambahkan 1 daerah lagi/)
+    .first()
     .waitFor();
   console.log("PASS comparison selection and mixed-region context");
 
-  await page.goto(base + "/daerah/0203?tahun=2025&bulan=12");
+  await page.goto(base + "/daerah/0203?tahun=2025&bulan=12&tab=history");
   await page
     .getByText(/73,41%/)
     .first()
     .waitFor();
   assert.ok(
-    (await page.getByRole("link", { name: "Unduh Oktober" }).count()) > 0,
+    (await page.getByRole("link", { name: /Unduh.*Oktober/ }).count()) > 0,
   );
   assert.ok(
-    (await page.getByRole("link", { name: "Unduh Desember" }).count()) > 0,
+    (await page.getByRole("link", { name: /Unduh.*Desember/ }).count()) > 0,
   );
   console.log("PASS Deli Serdang flag and original sources");
 
@@ -215,9 +239,8 @@ try {
   console.log("PASS unavailable URL periods are not silently substituted");
   await page.goto(base);
   await page.keyboard.press("Tab");
-  assert.equal(
-    await page.evaluate(() => document.activeElement?.textContent),
-    "Langsung ke konten",
+  assert.ok(
+    (await page.evaluate(() => document.activeElement?.textContent))?.includes("Langsung ke konten"),
   );
   assert.deepEqual(errors, []);
   console.log(

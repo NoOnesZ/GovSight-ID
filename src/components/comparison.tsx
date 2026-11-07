@@ -93,22 +93,18 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
   }
 
   const mebidangroCodes = ["0215", "0214", "0203"];
-  const tapanuliCodes = ["0207", "0208", "0209"];
-  const kotaUtamaCodes = ["0215", "0216", "0214"];
-  const niasCodes = ["0210", "0232", "0221"];
+  const dataranTinggiCodes = ["0204", "0202", "0211"];
+  const tapanuliRayaCodes = ["0208", "0207", "0209"];
+  const kotaUtamaCodes = ["0215", "0214", "0216"];
 
   const isMebidangro =
     codes.length === 3 && mebidangroCodes.every((c) => codes.includes(c));
-  const isTapanuli =
-    codes.length === 3 && tapanuliCodes.every((c) => codes.includes(c));
+  const isDataranTinggi =
+    codes.length === 3 && dataranTinggiCodes.every((c) => codes.includes(c));
+  const isTapanuliRaya =
+    codes.length === 3 && tapanuliRayaCodes.every((c) => codes.includes(c));
   const isKotaUtama =
     codes.length === 3 && kotaUtamaCodes.every((c) => codes.includes(c));
-  const isNias =
-    codes.length === 3 && niasCodes.every((c) => codes.includes(c));
-  const isDefault =
-    codes.length === 2 &&
-    codes.includes("0215") &&
-    codes.includes("0214");
 
   const kotaRegions = regions.filter((r) => r.type === "kota");
   const kabRegions = regions.filter((r) => r.type === "kabupaten");
@@ -175,12 +171,12 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                   letterSpacing: "0.04em",
                 }}
               >
-                Preset Cepat:
+                Preset Kawasan 1-Klik:
               </span>
-              {/* Preset 1: Kawasan Mebidangro */}
+              {/* Preset 1: Segitiga Mebidangro */}
               <button
                 type="button"
-                aria-label="Preset Kawasan Mebidangro (3 Daerah)"
+                aria-label="Preset Segitiga Mebidangro (Medan, Binjai, Deli Serdang)"
                 onClick={() => applyPreset(mebidangroCodes)}
                 style={{
                   display: "inline-flex",
@@ -204,18 +200,18 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                 }}
               >
                 <Sparkles size={13} />
-                <span>Kawasan Mebidangro</span>
+                <span>Segitiga Mebidangro</span>
                 <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>
                   (Medan, Binjai, Deli Serdang)
                 </span>
                 {isMebidangro && <Check size={12} />}
               </button>
 
-              {/* Preset 2: Kawasan Tapanuli */}
+              {/* Preset 2: Dataran Tinggi */}
               <button
                 type="button"
-                aria-label="Preset Kawasan Tapanuli (3 Daerah)"
-                onClick={() => applyPreset(tapanuliCodes)}
+                aria-label="Preset Dataran Tinggi (Karo, Dairi, Simalungun)"
+                onClick={() => applyPreset(dataranTinggiCodes)}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -224,31 +220,65 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                   gap: 6,
                   padding: "5px 12px",
                   borderRadius: "var(--r-pill)",
-                  border: isTapanuli
+                  border: isDataranTinggi
                     ? "1px solid var(--accent)"
                     : "1px solid var(--line-2)",
-                  background: isTapanuli
+                  background: isDataranTinggi
                     ? "var(--accent-tint)"
                     : "var(--paper)",
-                  color: isTapanuli ? "var(--accent)" : "var(--ink)",
+                  color: isDataranTinggi ? "var(--accent)" : "var(--ink)",
                   fontSize: "0.8125rem",
-                  fontWeight: isTapanuli ? 600 : 500,
+                  fontWeight: isDataranTinggi ? 600 : 500,
                   cursor: "pointer",
                   transition: "all 0.15s ease",
                 }}
               >
                 <Sparkles size={13} />
-                <span>Kawasan Tapanuli</span>
+                <span>Dataran Tinggi</span>
                 <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>
-                  (Tapteng, Taput, Tapsel)
+                  (Karo, Dairi, Simalungun)
                 </span>
-                {isTapanuli && <Check size={12} />}
+                {isDataranTinggi && <Check size={12} />}
               </button>
 
-              {/* Preset 3: Kota Otonom Utama */}
+              {/* Preset 3: Tapanuli Raya */}
               <button
                 type="button"
-                aria-label="Preset Kota Otonom Utama (3 Daerah)"
+                aria-label="Preset Tapanuli Raya (Taput, Tapteng, Tapsel)"
+                onClick={() => applyPreset(tapanuliRayaCodes)}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  maxWidth: "100%",
+                  gap: 6,
+                  padding: "5px 12px",
+                  borderRadius: "var(--r-pill)",
+                  border: isTapanuliRaya
+                    ? "1px solid var(--accent)"
+                    : "1px solid var(--line-2)",
+                  background: isTapanuliRaya
+                    ? "var(--accent-tint)"
+                    : "var(--paper)",
+                  color: isTapanuliRaya ? "var(--accent)" : "var(--ink)",
+                  fontSize: "0.8125rem",
+                  fontWeight: isTapanuliRaya ? 600 : 500,
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                <Sparkles size={13} />
+                <span>Tapanuli Raya</span>
+                <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>
+                  (Taput, Tapteng, Tapsel)
+                </span>
+                {isTapanuliRaya && <Check size={12} />}
+              </button>
+
+              {/* Preset 4: Kota Otonom Utama */}
+              <button
+                type="button"
+                aria-label="Preset Kota Otonom Utama (Medan, Binjai, Pematang Siantar)"
                 onClick={() => applyPreset(kotaUtamaCodes)}
                 style={{
                   display: "inline-flex",
@@ -274,68 +304,9 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                 <Building2 size={13} />
                 <span>Kota Otonom Utama</span>
                 <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>
-                  (Medan, Pematang Siantar, Binjai)
+                  (Medan, Binjai, P. Siantar)
                 </span>
                 {isKotaUtama && <Check size={12} />}
-              </button>
-
-              {/* Preset 4: Kepulauan Nias */}
-              <button
-                type="button"
-                aria-label="Preset Kepulauan Nias (3 Daerah)"
-                onClick={() => applyPreset(niasCodes)}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  maxWidth: "100%",
-                  gap: 6,
-                  padding: "5px 12px",
-                  borderRadius: "var(--r-pill)",
-                  border: isNias
-                    ? "1px solid var(--accent)"
-                    : "1px solid var(--line-2)",
-                  background: isNias
-                    ? "var(--accent-tint)"
-                    : "var(--paper)",
-                  color: isNias ? "var(--accent)" : "var(--ink)",
-                  fontSize: "0.8125rem",
-                  fontWeight: isNias ? 600 : 500,
-                  cursor: "pointer",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                <Sparkles size={13} />
-                <span>Kepulauan Nias</span>
-                <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>
-                  (Nias, Nias Selatan, Gunungsitoli)
-                </span>
-                {isNias && <Check size={12} />}
-              </button>
-
-              {/* Preset 5: Default Otonom */}
-              <button
-                type="button"
-                aria-label="Preset Standar Otonom"
-                onClick={() => applyPreset(["0215", "0214"])}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  padding: "5px 12px",
-                  borderRadius: "var(--r-pill)",
-                  border: isDefault
-                    ? "1px solid var(--accent)"
-                    : "1px solid var(--line)",
-                  background: isDefault ? "var(--accent-tint)" : "var(--paper)",
-                  color: isDefault ? "var(--accent)" : "var(--ink-2)",
-                  fontSize: "0.8125rem",
-                  fontWeight: isDefault ? 600 : 500,
-                  cursor: "pointer",
-                }}
-              >
-                Default (Medan & Binjai)
-                {isDefault && <Check size={12} />}
               </button>
 
               {codes.length > 0 && (
@@ -348,8 +319,8 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                     gap: 5,
                     padding: "5px 10px",
                     borderRadius: "var(--r-pill)",
-                    border: "1px solid transparent",
-                    background: "transparent",
+                    border: "1px solid var(--line)",
+                    background: "var(--canvas)",
                     color: "var(--ink-3)",
                     fontSize: "0.75rem",
                     cursor: "pointer",
@@ -364,26 +335,37 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
             </div>
 
             {/* Administrative Groups: Kota vs Kabupaten */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               {/* Group 1: Kota Otonom */}
               <div>
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 8,
+                    justifyContent: "space-between",
                     marginBottom: 10,
                   }}
                 >
-                  <Building2 size={14} style={{ color: "var(--ink-3)" }} />
-                  <span
-                    style={{
-                      fontSize: "0.8125rem",
-                      fontWeight: 600,
-                      color: "var(--ink-2)",
-                    }}
-                  >
-                    Wilayah Otonom Kota ({kotaRegions.length} Daerah)
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <Building2 size={15} style={{ color: "var(--accent)" }} />
+                    <span
+                      style={{
+                        fontSize: "0.875rem",
+                        fontWeight: 600,
+                        color: "var(--ink)",
+                      }}
+                    >
+                      Wilayah Kota Otonom
+                    </span>
+                    <span
+                      className="chip chip--sunk chip--square"
+                      style={{ fontSize: "0.6875rem" }}
+                    >
+                      {kotaRegions.length} Kota
+                    </span>
+                  </div>
+                  <span style={{ fontSize: "0.75rem", color: "var(--ink-4)" }}>
+                    Pemerintahan kota otonom tingkat II
                   </span>
                 </div>
                 <div className="picker">
@@ -423,19 +405,30 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 8,
+                    justifyContent: "space-between",
                     marginBottom: 10,
                   }}
                 >
-                  <Landmark size={14} style={{ color: "var(--ink-3)" }} />
-                  <span
-                    style={{
-                      fontSize: "0.8125rem",
-                      fontWeight: 600,
-                      color: "var(--ink-2)",
-                    }}
-                  >
-                    Wilayah Administratif Kabupaten ({kabRegions.length} Daerah)
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <Landmark size={15} style={{ color: "var(--accent)" }} />
+                    <span
+                      style={{
+                        fontSize: "0.875rem",
+                        fontWeight: 600,
+                        color: "var(--ink)",
+                      }}
+                    >
+                      Wilayah Kabupaten Administratif
+                    </span>
+                    <span
+                      className="chip chip--sunk chip--square"
+                      style={{ fontSize: "0.6875rem" }}
+                    >
+                      {kabRegions.length} Kabupaten
+                    </span>
+                  </div>
+                  <span style={{ fontSize: "0.75rem", color: "var(--ink-4)" }}>
+                    Pemerintahan kabupaten tingkat II
                   </span>
                 </div>
                 <div className="picker">
@@ -594,14 +587,33 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
           </InfoNote>
         )}
 
-        {codes.length < 2 ? (
-          <EmptyState title="Tambahkan satu daerah lagi">
-            Perbandingan membutuhkan sedikitnya dua daerah pada periode yang
-            sama. Silakan pilih minimal satu daerah lagi pada daftar pilihan di
-            atas.
+        {codes.length === 0 ? (
+          <EmptyState title="Pilih daerah untuk dibandingkan">
+            Pilih dua hingga tiga daerah dari daftar pilihan di atas atau gunakan
+            salah satu preset kawasan untuk memulai perbandingan anggaran.
           </EmptyState>
         ) : (
           <>
+            {codes.length === 1 && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "10px 14px",
+                  background: "var(--accent-tint)",
+                  border: "1px dashed var(--accent-line)",
+                  borderRadius: "var(--r)",
+                  fontSize: "0.8125rem",
+                  color: "var(--ink)",
+                }}
+              >
+                <Plus size={15} style={{ color: "var(--accent)", flexShrink: 0 }} />
+                <span>
+                  Menampilkan data <strong>{regions.find((r) => r.code === codes[0])?.name}</strong>. Silakan pilih <strong>1 daerah lagi</strong> pada daftar di atas untuk mengisi slot pembanding kedua.
+                </span>
+              </div>
+            )}
             {/* Comparison Table Section */}
         <section className="card">
           <div className="table-wrap">
@@ -701,7 +713,7 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                           border: "1px dashed var(--line-3)",
                           textAlign: "center",
                           verticalAlign: "middle",
-                          padding: "16px 14px",
+                          padding: "18px 14px",
                         }}
                       >
                         <div
@@ -709,28 +721,27 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            gap: 4,
+                            gap: 6,
                           }}
                         >
                           <span
                             style={{
                               display: "inline-grid",
                               placeItems: "center",
-                              width: 24,
-                              height: 24,
+                              width: 26,
+                              height: 26,
                               borderRadius: "50%",
                               background: "var(--paper)",
-                              border: "1px dashed var(--line-3)",
-                              color: "var(--ink-3)",
-                              marginBottom: 2,
+                              border: "1px dashed var(--accent-line)",
+                              color: "var(--accent)",
                             }}
                           >
-                            <Plus size={12} />
+                            <Plus size={13} />
                           </span>
                           <strong
                             style={{
                               fontSize: "0.8125rem",
-                              color: "var(--ink-2)",
+                              color: "var(--ink)",
                               fontWeight: 600,
                             }}
                           >
@@ -738,11 +749,13 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                           </strong>
                           <span
                             style={{
-                              fontSize: "0.6875rem",
-                              color: "var(--ink-4)",
+                              fontSize: "0.75rem",
+                              color: "var(--ink-3)",
+                              maxWidth: "20ch",
+                              lineHeight: 1.4,
                             }}
                           >
-                            Pilih daerah di atas untuk mengisi slot ini
+                            Pilih 1 daerah lagi pada daftar di atas
                           </span>
                         </div>
                       </th>

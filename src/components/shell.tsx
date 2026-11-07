@@ -118,8 +118,17 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="app">
-      <a className="skip-link" href="#main">
-        Langsung ke konten
+      <a
+        className="skip-link"
+        href="#main"
+        onClick={() => {
+          const main = document.getElementById("main");
+          if (main) {
+            main.focus();
+          }
+        }}
+      >
+        Langsung ke konten utama
       </a>
 
       <aside className="rail">
@@ -209,40 +218,49 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 textDecoration: "none",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 6,
+                color: "var(--ink)",
+                fontWeight: 500,
               }}
               title="Cakupan Multi-Tier: Tier 1 (Sumut 33 Daerah) · Tier 2 (Sumatera 154 Daerah) · Tier 3 (Nasional 514 Daerah)"
             >
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  background: "var(--ok)",
-                  display: "inline-block",
-                }}
-              />
-              <span>Tier 1 · Sumut ({regions.length})</span>
+              <span>Tier 1: Sumut ({regions.length})</span>
             </Link>
           </div>
         </header>
 
-        <main id="main" className="content">
+        <main id="main" tabIndex={-1} className="content">
           {children}
         </main>
 
-        <footer className="site-foot">
-          <span className="site-foot__brand">
-            <Landmark size={14} /> GovSight ID 2026
-          </span>
-          <p>Inisiatif independen. Bukan situs resmi pemerintah.</p>
-          <a
-            href="https://djpk.kemenkeu.go.id/portal/data/apbd"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Sumber: DJPK Kemenkeu <ArrowUpRight size={12} />
-          </a>
+        <footer
+          className="site-foot"
+          role="contentinfo"
+          aria-label="Informasi situs dan sumber data"
+        >
+          <div className="site-foot__meta">
+            <span className="site-foot__brand">
+              <Landmark size={14} aria-hidden="true" />
+              <span>GovSight ID 2026</span>
+            </span>
+            <span className="source-line__sep" aria-hidden="true">·</span>
+            <span>Data APBD bersumber dari DJPK Kementerian Keuangan RI</span>
+            <span className="source-line__sep" aria-hidden="true">·</span>
+            <span>Inisiatif independen keterbukaan fiskal daerah</span>
+          </div>
+          <div className="site-foot__links">
+            <Link href="/metodologi" className="site-foot__link">
+              Metodologi &amp; Sumber
+            </Link>
+            <a
+              href="https://djpk.kemenkeu.go.id/portal/data/apbd"
+              target="_blank"
+              rel="noreferrer"
+              className="site-foot__link"
+            >
+              <span>Portal DJPK</span>
+              <ArrowUpRight size={12} aria-hidden="true" />
+            </a>
+          </div>
         </footer>
       </div>
     </div>

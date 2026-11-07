@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Decimal from "decimal.js";
 import {
@@ -30,7 +30,7 @@ import {
   TriangleAlert,
   Wallet,
 } from "lucide-react";
-import type { Dataset } from "@/lib/types";
+import type { Dataset, Snapshot } from "@/lib/types";
 import { regionListLabel, regions } from "@/lib/regions";
 import { runningYear } from "@/lib/periods";
 import {
@@ -55,6 +55,69 @@ import {
   kindLabel,
   useFilters,
 } from "./shared";
+
+function LazySpendingChart({
+  snapshots,
+  isScrollViewport,
+}: {
+  snapshots: Snapshot[];
+  isScrollViewport: boolean;
+}) {
+  const [shouldRender, setShouldRender] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (shouldRender) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setShouldRender(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setShouldRender(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" },
+    );
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => observer.disconnect();
+  }, [shouldRender]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={isScrollViewport ? "chart-scroll-viewport" : undefined}
+      style={{ minHeight: "260px" }}
+    >
+      {shouldRender ? (
+        <SpendingChart snapshots={snapshots} />
+      ) : (
+        <div
+          style={{
+            height: "260px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+            background: "var(--canvas)",
+            borderRadius: "var(--r)",
+            border: "1px dashed var(--line)",
+            color: "var(--ink-3)",
+            fontSize: "0.8125rem",
+          }}
+        >
+          <BarChart3 size={22} style={{ opacity: 0.4 }} />
+          <span>Grafik dimuat saat mendekati area pandang…</span>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function Explorer({ dataset }: { dataset: Dataset }) {
   const [urgencyExpanded, setUrgencyExpanded] = useState(true);
@@ -393,6 +456,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
             ditanyakan — dengan rumus yang terbuka dan sumber yang bisa kamu
             unduh.
           </p>
+          <p className="hero__byline">
+            Inisiatif Independen Pengawasan Anggaran Publik Sumatera Utara · Berbasis Data Resmi SIKD Kemenkeu
+          </p>
           <div className="hero__actions">
             <a className="btn btn--primary" href="#jelajah">
               Mulai jelajahi <ArrowDown size={15} />
@@ -407,12 +473,12 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
           <div className="spotlight">
             <div className="spotlight__head">
               <div>
-                <strong>Ringkasan Fiskal Kolektif</strong>
+                <strong>Denyut Fiskal Sumatera Utara</strong>
                 <span>
                   {regions.length} Pemda Terpantau · {periodLabel(year, month)}
                 </span>
               </div>
-              <span className="chip chip--ok">Konsolidasi Resmi</span>
+              <span className="chip chip--ok chip--square">Konsolidasi Resmi SIKD</span>
             </div>
 
             <div
@@ -525,10 +591,13 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                       style={{
                         fontSize: "0.75rem",
                         color: "var(--ink-3)",
-                        display: "block",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
                       }}
                     >
-                      Lonjakan Akhir Tahun Tertinggi ({latestCompleteYear})
+                      <TriangleAlert size={12} style={{ color: "var(--warn-ink)" }} />
+                      Sorotan Penanda Kritis ({latestCompleteYear})
                     </span>
                     <strong
                       style={{
@@ -547,8 +616,8 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                   </div>
                   <Link
                     className="icon-link"
-                    href={`/daerah/${highestYearEndCollective.region.code}?${period}`}
-                    aria-label={`Lihat profil ${highestYearEndCollective.region.name}`}
+                    href={`/daerah/${highestYearEndCollective.region.code}?${period}#lembar-advokasi`}
+                    aria-label={`Buka telaah kritis ${highestYearEndCollective.region.name}`}
                   >
                     <ArrowUpRight size={16} />
                   </Link>
@@ -623,14 +692,6 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
       >
         <div className="urgency-panel__head">
           <div className="urgency-panel__titles">
-            <div className="urgency-panel__badge-row">
-              <span className="chip chip--accent chip--square">
-                Latar Belakang & Tujuan GovSight ID
-              </span>
-              <span className="chip chip--sunk chip--square">
-                Fiskal 10 Daerah Sumut
-              </span>
-            </div>
             <h2
               id="urgensi-pengawasan-heading"
               className="urgency-panel__title"
@@ -684,18 +745,18 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 </span>
               </div>
               <div className="urgency-card__metric">
-                &gt;Rp 18 Triliun
+                &gt;Rp 70 Triliun
                 <span className="urgency-card__metric-sub">/tahun</span>
               </div>
               <h3 className="urgency-card__title">Skala Anggaran Raksasa</h3>
               <p className="urgency-card__text">
-                Akumulasi pagu 10 daerah pantauan di Sumut melampaui Rp 18
+                Akumulasi pagu 33 daerah pantauan di Sumut melampaui Rp 70
                 Triliun/tahun. Tanpa pengawasan publik yang aktif, alokasi
                 raksasa ini rentan tidak tepat sasaran.
               </p>
               <div className="urgency-card__foot">
                 <span className="dot dot--budget" />
-                <span>Konsolidasi 10 APBD daerah pantauan</span>
+                <span>Konsolidasi 33 APBD daerah se-Sumut</span>
               </div>
             </div>
 
@@ -764,7 +825,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 3 Fakta Kritis:
               </span>
               <span className="urgency-collapsed-bar__text">
-                Pagu agregat &gt;Rp 18T/tahun · Lonjakan modal akhir tahun &gt;30%
+                Pagu agregat &gt;Rp 70T/tahun se-Sumut · Lonjakan modal akhir tahun &gt;30%
                 · Audit mandat UU HKPD No. 1/2022 (Infrastruktur 40% & Pegawai
                 30%)
               </span>
@@ -788,11 +849,11 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
       >
         <div className="scope-switcher__head">
           <div className="scope-switcher__title-row">
-            <span className="chip chip--accent chip--square">
-              <Layers size={13} /> Multi-Tier Scalability Architecture
-            </span>
+            <h2 className="scope-switcher__heading">
+              <Layers size={15} /> Cakupan Pengawasan Wilayah
+            </h2>
             <span className="scope-switcher__hint">
-              Pilih tingkatan cakupan wilayah pengawasan:
+              Pilih tingkatan cakupan wilayah pengawasan APBD:
             </span>
           </div>
         </div>
@@ -1175,7 +1236,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                         className="card__title"
                         style={{ fontSize: "0.9375rem", margin: 0 }}
                       >
-                        Prioritas Pengawasan Publik
+                        Fokus Pengawasan Publik: Anomali Akhir Tahun
                       </h3>
                       <p className="card__sub" style={{ margin: "2px 0 0" }}>
                         Konsentrasi pencairan belanja modal fisik di akhir tahun
@@ -1183,7 +1244,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                       </p>
                     </div>
                   </div>
-                  <span className="chip chip--warn">Fokus Telaah Kritis</span>
+                  <span className="chip chip--warn">Catatan Telaah Kritis</span>
                 </div>
 
                 <div className="card__body" style={{ padding: "14px 18px" }}>
@@ -1406,15 +1467,15 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                       className="region-card"
                       href={`/daerah/${region.code}?${period}`}
                     >
-                      <span className="region-card__top">
-                        <span>
-                          <span className="region-cell__name">
+                      <div className="region-card__top">
+                        <div>
+                          <strong className="region-cell__name">
                             {region.shortName}
-                          </span>
+                          </strong>
                           <span className="region-cell__kind">
                             {kindLabel(region.type)}
                           </span>
-                          <span style={{ display: "block", marginTop: 4 }}>
+                          <div style={{ marginTop: 4 }}>
                             {region.statusAudit === "audit-penuh" ? (
                               <span
                                 className="chip chip--ok chip--square"
@@ -1436,40 +1497,40 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                                 <Sparkles size={11} /> Ekspansi Tahap 2
                               </span>
                             )}
-                          </span>
-                        </span>
+                          </div>
+                        </div>
                         <ArrowUpRight size={16} />
-                      </span>
-                      <span className="region-card__grid">
-                        <span className="region-card__item">
+                      </div>
+                      <div className="region-card__grid">
+                        <div className="region-card__item">
                           <span>Realisasi</span>
                           <strong>
                             {compactMoney(snapshot.total.realized)}
                           </strong>
-                        </span>
-                        <span className="region-card__item">
+                        </div>
+                        <div className="region-card__item">
                           <span>Pagu</span>
                           <strong>{compactMoney(snapshot.total.budget)}</strong>
-                        </span>
-                        <span className="region-card__item">
+                        </div>
+                        <div className="region-card__item">
                           <span>Serapan</span>
                           <strong className={over ? "is-over" : ""}>
                             {percent(rowRate)}
                           </strong>
-                        </span>
-                        <span className="region-card__item">
+                        </div>
+                        <div className="region-card__item">
                           <span>Penanda {latestCompleteYear}</span>
                           <strong>{formatFlagShare(flag.share)}</strong>
-                        </span>
-                      </span>
-                      <span className="region-card__flags">
+                        </div>
+                      </div>
+                      <div className="region-card__flags">
                         {over && (
                           <span className="chip chip--warn chip--square">
                             Realisasi &gt;100% pagu
                           </span>
                         )}
                         {persistenceChip(region.code)}
-                      </span>
+                      </div>
                     </Link>
                   );
                 })}
@@ -1716,15 +1777,12 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                   )}
                 </div>
                 <div className="card__body">
-                  <div
-                    className={
+                  <LazySpendingChart
+                    snapshots={displayedSpending}
+                    isScrollViewport={
                       chartDisplayMode === "all" && visible.length > 10
-                        ? "chart-scroll-viewport"
-                        : undefined
                     }
-                  >
-                    <SpendingChart snapshots={displayedSpending} />
-                  </div>
+                  />
                   <ChartLegend
                     items={[
                       { label: "Pagu belanja", color: chartColors.budget },

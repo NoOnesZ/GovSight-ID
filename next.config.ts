@@ -28,8 +28,25 @@ const securityHeaders = [
 ];
 
 const config: NextConfig = {
+  compress: true,
   poweredByHeader: false,
   devIndicators: false,
+  reactStrictMode: true,
+  productionBrowserSourceMaps: false,
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? { exclude: ["error", "warn"] }
+        : false,
+  },
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "recharts",
+      "decimal.js",
+      "fast-xml-parser",
+    ],
+  },
   async headers() {
     return [
       {

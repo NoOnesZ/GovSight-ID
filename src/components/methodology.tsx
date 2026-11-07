@@ -387,18 +387,10 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           aria-labelledby="arsitektur-sitemap-heading"
         >
           <div className="pipeline-header">
-            <div className="pipeline-header__badge-row">
-              <span className="chip chip--accent chip--square">
-                Arsitektur & Sitemap
-              </span>
-              <span className="chip chip--sunk chip--square">
-                Alur Data 4 Tahap
-              </span>
-            </div>
             <h2 id="arsitektur-sitemap-heading" className="pipeline-header__title">
               Peta Arsitektur, Alur Data & Sitemap GovSight ID
             </h2>
-            <p className="pipeline-header__desc">
+            <p className="pipeline-header__desc" style={{ maxWidth: "68ch" }}>
               Dari unduhan data mentah Kemenkeu hingga instrumen advokasi warga di lapangan.
               Klik salah satu tahapan di bawah untuk menelaah spesifikasi teknis dan alur integrasinya.
             </p>
@@ -523,6 +515,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                         color: "var(--ink-2)",
                         lineHeight: 1.6,
                         margin: "4px 0 0",
+                        maxWidth: "68ch",
                       }}
                     >
                       {current.technicalDetails.description}
@@ -593,21 +586,10 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           aria-labelledby="skalabilitas-nasional-heading"
         >
           <div className="pipeline-header">
-            <div className="pipeline-header__badge-row">
-              <span className="chip chip--accent chip--square">
-                Blueprint Skalabilitas
-              </span>
-              <span className="chip chip--sunk chip--square">
-                10 → 33 → 154 → 514 Daerah
-              </span>
-              <span className="chip chip--ok chip--square">
-                Arsitektur Produksi
-              </span>
-            </div>
             <h2 id="skalabilitas-nasional-heading" className="pipeline-header__title">
               Blueprint Skalabilitas Nasional (10 → 33 → 154 → 514 Daerah)
             </h2>
-            <p className="pipeline-header__desc">
+            <p className="pipeline-header__desc" style={{ maxWidth: "68ch" }}>
               Dari 10 pemda percontohan di Sumatera Utara menuju pengawasan 514 kabupaten/kota dan 38 provinsi se-Indonesia.
               Klik salah satu tahapan di bawah untuk mempelajari evolusi arsitektur penyimpanan, model komputasi, dan efisiensi seluler.
             </p>
@@ -708,7 +690,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                     color: "var(--ink-2)",
                     lineHeight: 1.6,
                     margin: "14px 0 16px",
-                    maxWidth: "80ch",
+                    maxWidth: "68ch",
                   }}
                 >
                   {currentPhase.rationale}
@@ -947,7 +929,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                 Mengapa Arsitektur Monolitik 25MB+ Ditolak untuk 514 Daerah?
               </strong>
             </div>
-            <p style={{ margin: 0, fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.6 }}>
+            <p style={{ margin: 0, fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.6, maxWidth: "68ch" }}>
               Pada skala 514 daerah dengan 36 bulan data historis, satu berkas JSON monolitik akan membengkak hingga lebih dari 25 MB.
               Di jaringan 4G pedesaan Indonesia dengan kecepatan rata-rata 2–3 Mbps, mengunduh 25 MB membutuhkan waktu lebih dari 100 detik
               serta memicu kehabisan memori (OOM browser crash) pada smartphone beranggaran rendah (RAM 2GB–3GB).
@@ -994,8 +976,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
         <div id="rumus-indikator" className="grid-2">
           <section className="card">
             <div className="card__body">
-              <span className="chip chip--sunk">Pelaksanaan anggaran</span>
-              <h2 className="inquiry-title" style={{ marginTop: 10 }}>
+              <h2 className="inquiry-title">
                 Serapan belanja
               </h2>
               <p
@@ -1020,8 +1001,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
 
           <section className="card">
             <div className="card__body">
-              <span className="chip chip--ok">Pembagian belanja</span>
-              <h2 className="inquiry-title" style={{ marginTop: 10 }}>
+              <h2 className="inquiry-title">
                 Komposisi realisasi
               </h2>
               <p
@@ -1047,10 +1027,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
 
         <section className="card">
           <div className="card__body">
-            <span className="chip chip--warn">
-              Penanda Kritis
-            </span>
-            <h2 className="inquiry-title" style={{ marginTop: 10 }}>
+            <h2 className="inquiry-title">
               Penumpukan belanja modal akhir tahun
             </h2>
             <div className="formula" style={{ margin: "18px 0" }}>
@@ -1091,15 +1068,14 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                 tunggal, melainkan <em>pola struktural sistemik</em> ("belanja
                 kejar tayang") dalam tata kelola anggaran daerah.
               </p>
-              <p style={{ lineHeight: 1.65 }}>
-                Sebagai <strong>Sistem Pendukung Keputusan & Advokasi Warga</strong>, penanda ini
-                bukan vonis hukum sepihak atau bukti pelanggaran pidana. Status penanda —{" "}
+              <p style={{ lineHeight: 1.65, maxWidth: "68ch" }}>
+                Sebagai <strong>instrumen telaah berbasis rujukan hukum dan audit resmi (UU No. 1/2022 HKPD)</strong>, penanda ini
+                bukan vonis sepihak atau penetapan kesalahan hukum. Status penanda —{" "}
                 <em>perlu ditanyakan (ditandai)</em>, <em>di bawah ambang (wajar)</em>,{" "}
                 <em>belum tersedia</em>, atau <em>tidak konsisten</em> — berfungsi sebagai{" "}
-                <strong>pemicu advokasi dan pertanyaan publik berbasis data</strong>. Instrumen ini
-                memperkuat warga, akademisi, jurnalis, dan anggota dewan untuk menuntut pembuktian
-                serah terima fisik pekerjaan, menguji mutu konstruksi di lapangan, serta memastikan
-                hak publik atas anggaran terpenuhi.
+                <strong>alat uji kepatuhan dan bahan advokasi publik berbasis data</strong>. Instrumen ini
+                memperkuat warga, jurnalis data, dan anggota dewan perwakilan rakyat daerah (DPRD) dalam menelaah realisasi fisik pekerjaan,
+                mengonfirmasi Berita Acara Serah Terima (BAST), serta menguji kewajaran penyerapan anggaran secara akuntabel.
               </p>
             </div>
           </div>
@@ -1227,14 +1203,11 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </div>
         </section>
 
-        {/* Siklus APBD & Kanal Pengawasan Warga — Flattened Sections with Hairline Dividers */}
+        {/* Siklus APBD — Flattened Clean Layout */}
         <section className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--ok">
-                <GraduationCap size={12} /> Edukasi literasi anggaran
-              </span>
-              <h2 className="inquiry-title" style={{ marginTop: 8 }}>
+              <h2 className="card__title">
                 Siklus APBD dan titik kritis pengawasan warga
               </h2>
               <p className="card__sub" style={{ maxWidth: "68ch" }}>
@@ -1244,7 +1217,6 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
             </div>
           </div>
           <div className="card__body">
-            {/* Flattened Phase Flow */}
             <div
               style={{
                 display: "grid",
@@ -1257,7 +1229,6 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                   display: "flex",
                   flexDirection: "column",
                   gap: 8,
-                  padding: "14px 0",
                 }}
               >
                 <span
@@ -1295,7 +1266,6 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                   display: "flex",
                   flexDirection: "column",
                   gap: 8,
-                  padding: "14px 0",
                 }}
               >
                 <span
@@ -1333,17 +1303,13 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                   display: "flex",
                   flexDirection: "column",
                   gap: 8,
-                  padding: "16px 18px",
-                  background: "var(--accent-tint)",
-                  borderLeft: "3px solid var(--accent)",
-                  borderRadius: "var(--r-sm)",
                 }}
               >
                 <span
-                  className="chip chip--square chip--warn"
+                  className="chip chip--square chip--accent"
                   style={{ alignSelf: "flex-start" }}
                 >
-                  Fase 3 · Jan–Des · Fokus GovSight
+                  Fase 3 · Jan–Des · Fokus GovSight ID
                 </span>
                 <h3
                   style={{
@@ -1375,7 +1341,6 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                   display: "flex",
                   flexDirection: "column",
                   gap: 8,
-                  padding: "14px 0",
                 }}
               >
                 <span
@@ -1407,176 +1372,175 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                 </p>
               </div>
             </div>
+          </div>
+        </section>
 
-            {/* Hairline Divider with Generous Whitespace */}
-            <div className="divider" style={{ margin: "32px 0 28px" }} />
-
-            {/* Tiga Kanal Resmi Partisipasi & Pengaduan Warga */}
-            <div id="kanal-aduan">
-              <h3
+        {/* Tiga Kanal Resmi Partisipasi & Pengaduan Warga — Flattened Clean Layout */}
+        <section id="kanal-aduan" className="card">
+          <div className="card__head">
+            <div>
+              <h2 className="card__title">
+                Tiga kanal resmi partisipasi dan pengaduan warga
+              </h2>
+              <p className="card__sub" style={{ maxWidth: "68ch" }}>
+                Rujukan regulasi resmi dan mekanisme pengaduan publik berbasis bukti data anggaran.
+              </p>
+            </div>
+          </div>
+          <div className="card__body">
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div
                 style={{
-                  fontSize: "1rem",
-                  fontWeight: 600,
                   display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  marginBottom: 16,
+                  alignItems: "flex-start",
+                  gap: 16,
+                  padding: "18px 0",
+                  borderBottom: "1px solid var(--line)",
                 }}
               >
-                <Landmark size={17} style={{ color: "var(--accent)" }} /> Tiga
-                kanal resmi partisipasi dan pengaduan warga
-              </h3>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <div
+                <span
                   style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 16,
-                    padding: "18px 0",
-                    borderBottom: "1px solid var(--line)",
+                    width: 28,
+                    height: 28,
+                    borderRadius: "50%",
+                    background: "var(--accent-tint)",
+                    color: "var(--accent)",
+                    fontWeight: 700,
+                    fontSize: "0.875rem",
+                    display: "grid",
+                    placeItems: "center",
+                    flexShrink: 0,
                   }}
                 >
-                  <span
+                  1
+                </span>
+                <div style={{ maxWidth: "68ch" }}>
+                  <strong
                     style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: "50%",
-                      background: "var(--accent-tint)",
-                      color: "var(--accent)",
-                      fontWeight: 700,
-                      fontSize: "0.875rem",
-                      display: "grid",
-                      placeItems: "center",
-                      flexShrink: 0,
+                      fontSize: "0.9375rem",
+                      display: "block",
+                      color: "var(--ink)",
+                      marginBottom: 4,
                     }}
                   >
-                    1
-                  </span>
-                  <div style={{ maxWidth: "68ch" }}>
-                    <strong
-                      style={{
-                        fontSize: "0.9375rem",
-                        display: "block",
-                        color: "var(--ink)",
-                        marginBottom: 4,
-                      }}
-                    >
-                      Pejabat Pengelola Informasi dan Dokumentasi (PPID)
-                    </strong>
-                    <p
-                      style={{
-                        fontSize: "0.8125rem",
-                        color: "var(--ink-2)",
-                        lineHeight: 1.6,
-                        margin: 0,
-                      }}
-                    >
-                      Berdasarkan <strong>UU No. 14/2008 (KIP)</strong>, setiap
-                      warga berhak mengajukan permohonan salinan DPA, RKA, dan
-                      Berita Acara Serah Terima pekerjaan konstruksi ke pemda.
-                    </p>
-                  </div>
+                    Pejabat Pengelola Informasi dan Dokumentasi (PPID)
+                  </strong>
+                  <p
+                    style={{
+                      fontSize: "0.8125rem",
+                      color: "var(--ink-2)",
+                      lineHeight: 1.6,
+                      margin: 0,
+                      maxWidth: "68ch",
+                    }}
+                  >
+                    Berdasarkan <strong>UU No. 14/2008 (KIP)</strong>, setiap
+                    warga berhak mengajukan permohonan salinan DPA, RKA, dan
+                    Berita Acara Serah Terima (BAST) pekerjaan konstruksi ke pemda.
+                  </p>
                 </div>
+              </div>
 
-                <div
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 16,
+                  padding: "18px 0",
+                  borderBottom: "1px solid var(--line)",
+                }}
+              >
+                <span
                   style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 16,
-                    padding: "18px 0",
-                    borderBottom: "1px solid var(--line)",
+                    width: 28,
+                    height: 28,
+                    borderRadius: "50%",
+                    background: "var(--accent-tint)",
+                    color: "var(--accent)",
+                    fontWeight: 700,
+                    fontSize: "0.875rem",
+                    display: "grid",
+                    placeItems: "center",
+                    flexShrink: 0,
                   }}
                 >
-                  <span
+                  2
+                </span>
+                <div style={{ maxWidth: "68ch" }}>
+                  <strong
                     style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: "50%",
-                      background: "var(--accent-tint)",
-                      color: "var(--accent)",
-                      fontWeight: 700,
-                      fontSize: "0.875rem",
-                      display: "grid",
-                      placeItems: "center",
-                      flexShrink: 0,
+                      fontSize: "0.9375rem",
+                      display: "block",
+                      color: "var(--ink)",
+                      marginBottom: 4,
                     }}
                   >
-                    2
-                  </span>
-                  <div style={{ maxWidth: "68ch" }}>
-                    <strong
-                      style={{
-                        fontSize: "0.9375rem",
-                        display: "block",
-                        color: "var(--ink)",
-                        marginBottom: 4,
-                      }}
-                    >
-                      SP4N-LAPOR! (lapor.go.id)
-                    </strong>
-                    <p
-                      style={{
-                        fontSize: "0.8125rem",
-                        color: "var(--ink-2)",
-                        lineHeight: 1.6,
-                        margin: 0,
-                      }}
-                    >
-                      Layanan pengaduan nasional resmi yang terhubung ke
-                      Ombudsman RI dan Kementerian PAN-RB. Gunakan data tanggal
-                      dan nominal dari GovSight ID sebagai bukti awal pelaporan.
-                    </p>
-                  </div>
+                    SP4N-LAPOR! (lapor.go.id)
+                  </strong>
+                  <p
+                    style={{
+                      fontSize: "0.8125rem",
+                      color: "var(--ink-2)",
+                      lineHeight: 1.6,
+                      margin: 0,
+                      maxWidth: "68ch",
+                    }}
+                  >
+                    Layanan pengaduan nasional resmi yang terhubung ke
+                    Ombudsman RI dan Kementerian PAN-RB. Gunakan data tanggal
+                    dan nominal dari GovSight ID sebagai bukti awal pelaporan.
+                  </p>
                 </div>
+              </div>
 
-                <div
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 16,
+                  padding: "18px 0",
+                }}
+              >
+                <span
                   style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 16,
-                    padding: "18px 0",
+                    width: 28,
+                    height: 28,
+                    borderRadius: "50%",
+                    background: "var(--accent-tint)",
+                    color: "var(--accent)",
+                    fontWeight: 700,
+                    fontSize: "0.875rem",
+                    display: "grid",
+                    placeItems: "center",
+                    flexShrink: 0,
                   }}
                 >
-                  <span
+                  3
+                </span>
+                <div style={{ maxWidth: "68ch" }}>
+                  <strong
                     style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: "50%",
-                      background: "var(--accent-tint)",
-                      color: "var(--accent)",
-                      fontWeight: 700,
-                      fontSize: "0.875rem",
-                      display: "grid",
-                      placeItems: "center",
-                      flexShrink: 0,
+                      fontSize: "0.9375rem",
+                      display: "block",
+                      color: "var(--ink)",
+                      marginBottom: 4,
                     }}
                   >
-                    3
-                  </span>
-                  <div style={{ maxWidth: "68ch" }}>
-                    <strong
-                      style={{
-                        fontSize: "0.9375rem",
-                        display: "block",
-                        color: "var(--ink)",
-                        marginBottom: 4,
-                      }}
-                    >
-                      Forum reses dan Rapat Dengar Pendapat (RDP) DPRD
-                    </strong>
-                    <p
-                      style={{
-                        fontSize: "0.8125rem",
-                        color: "var(--ink-2)",
-                        lineHeight: 1.6,
-                        margin: 0,
-                      }}
-                    >
-                      Manfaatkan <em>lembar telaah kritis</em> di profil daerah
-                      untuk mengajukan pertanyaan spesifik langsung kepada
-                      anggota dewan daerah pemilihmu.
-                    </p>
-                  </div>
+                    Forum reses dan Rapat Dengar Pendapat (RDP) DPRD
+                  </strong>
+                  <p
+                    style={{
+                      fontSize: "0.8125rem",
+                      color: "var(--ink-2)",
+                      lineHeight: 1.6,
+                      margin: 0,
+                      maxWidth: "68ch",
+                    }}
+                  >
+                    Manfaatkan <em>lembar telaah kritis</em> di profil daerah
+                    untuk mengajukan pertanyaan spesifik langsung kepada
+                    anggota dewan daerah pemilihmu.
+                  </p>
                 </div>
               </div>
             </div>

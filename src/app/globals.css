@@ -29,6 +29,7 @@
   --ink-2: #56534e;
   --ink-3: #54504a;
   --ink-4: #68645e;
+  --muted: var(--ink-3);
 
   --line: #e7e5e0;
   --line-2: #dad7d1;
@@ -46,15 +47,15 @@
   --d-barang: #7ca3cf;
   --d-modal: #1e7d6b;
   --d-lain: #c6c1b8;
-  --d-budget: #c9d6e5;
+  --d-budget: #5a89bf;
   --d-realized: #2e5c96;
   --d-grid: #ecebe7;
-  --d-axis: #8c8881;
+  --d-axis: #5c5852;
 
   /* --- Status --- */
   --warn-bg: #fcf6e9;
   --warn-line: #e9dfc3;
-  --warn-ink: #7a5411;
+  --warn-ink: #704908;
   --warn-solid: #b8832a;
 
   --ok-bg: #eef6f2;
@@ -79,14 +80,11 @@
   --r-xl: 18px;
   --r-pill: 999px;
 
-  --shadow-xs: 0 1px 2px rgba(28, 27, 25, 0.05);
-  --shadow-sm:
-    0 1px 2px rgba(28, 27, 25, 0.05), 0 1px 3px -1px rgba(28, 27, 25, 0.05);
-  --shadow-md:
-    0 2px 4px -2px rgba(28, 27, 25, 0.06),
-    0 8px 20px -10px rgba(28, 27, 25, 0.16);
-  --shadow-pop:
-    0 1px 2px rgba(28, 27, 25, 0.06), 0 18px 44px -16px rgba(20, 33, 51, 0.26);
+  /* Hairline & single-layer shadows (hemat GPU HP low-end) */
+  --shadow-xs: 0 1px 2px rgba(28, 27, 25, 0.04);
+  --shadow-sm: 0 1px 3px rgba(28, 27, 25, 0.06);
+  --shadow-md: 0 4px 12px rgba(28, 27, 25, 0.08);
+  --shadow-pop: 0 8px 24px rgba(20, 33, 51, 0.14);
 
   /* --- Huruf --- */
   --font-sans:
@@ -293,8 +291,11 @@ hr {
   transition: transform var(--duration-fast) var(--ease-out);
 }
 
-.skip-link:focus {
+.skip-link:focus,
+.skip-link:focus-visible {
   transform: translateY(0);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* Angka: selalu tabular & lining supaya kolom lurus sempurna dan tidak bergoyang */
@@ -316,24 +317,18 @@ hr {
 .region-card__num,
 .gauge__value {
   font-variant-numeric: tabular-nums lining-nums;
-  font-feature-settings: "tnum" 1, "lnum" 1;
+  font-feature-settings:
+    "tnum" 1,
+    "lnum" 1;
 }
 
+/* Kaidah Impeccable craft floor: Hilangkan kicker/eyebrow melayang di atas heading */
 .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  margin-bottom: 4px;
+  display: none !important;
 }
 
 .eyebrow svg {
-  color: var(--ink-3);
-  opacity: 0.85;
+  display: none !important;
 }
 
 .muted {
@@ -456,7 +451,9 @@ hr {
   min-height: 44px; /* Standar sentuh WCAG minimal 44x44px */
   border-radius: var(--r-sm);
   color: var(--ink-2);
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
 }
 
 .nav-item:hover {
@@ -566,12 +563,12 @@ hr {
   gap: 8px;
   padding: 0 10px;
   font-size: 0.75rem;
-  color: var(--ink-4);
+  color: var(--ink-3);
   line-height: 1.45;
 }
 
 .rail__foot svg {
-  color: var(--ink-4);
+  color: var(--ink-3);
 }
 
 /* --- Kolom utama --- */
@@ -595,8 +592,7 @@ hr {
   justify-content: space-between;
   gap: 14px;
   padding: 0 var(--gutter);
-  background: color-mix(in srgb, var(--canvas) 86%, transparent);
-  backdrop-filter: saturate(1.4) blur(10px);
+  background: var(--canvas);
   border-bottom: 1px solid var(--line);
 }
 
@@ -639,7 +635,10 @@ hr {
   border: 1px solid var(--line);
   background: var(--paper);
   color: var(--ink-2);
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
   cursor: pointer;
 }
 
@@ -667,29 +666,61 @@ hr {
 
 .site-foot {
   border-top: 1px solid var(--line);
-  padding: 22px var(--gutter);
+  padding: 20px var(--gutter);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 20px;
+  justify-content: space-between;
+  gap: 12px 24px;
   font-size: 0.75rem;
   color: var(--ink-3);
+  background: var(--canvas);
+}
+
+.site-foot__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
 }
 
 .site-foot__brand {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  font-weight: 500;
-  color: var(--ink-2);
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .site-foot__brand svg {
-  color: var(--ink-3);
+  color: var(--accent);
 }
 
 .site-foot p {
   margin-right: auto;
+}
+
+.site-foot__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 18px;
+}
+
+.site-foot__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink-2);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--duration-fast);
+}
+
+.site-foot__link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .site-foot a {
@@ -880,7 +911,10 @@ hr {
   white-space: nowrap;
   user-select: none;
   cursor: pointer;
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
 }
 
 .btn:disabled {
@@ -1014,7 +1048,10 @@ hr {
   font-weight: 500;
   white-space: nowrap;
   letter-spacing: -0.005em;
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
 }
 
 button.chip,
@@ -1040,7 +1077,9 @@ a.chip:active,
 
 .chip--sunk {
   background: var(--sunk);
-  border-color: transparent;
+  border-color: var(--line);
+  color: var(--ink);
+  font-weight: 500;
 }
 
 .chip--info {
@@ -1053,6 +1092,7 @@ a.chip:active,
   background: var(--warn-bg);
   border-color: var(--warn-line);
   color: var(--warn-ink);
+  font-weight: 600;
 }
 
 .chip--ok {
@@ -1081,17 +1121,19 @@ a.chip:active,
 .count {
   display: inline-grid;
   place-items: center;
-  min-width: 20px;
-  height: 20px;
+  min-width: 22px;
+  height: 22px;
   padding: 0 6px;
   border-radius: var(--r-pill);
   background: var(--sunk-2);
   color: var(--ink-2);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: 1;
   font-variant-numeric: tabular-nums lining-nums;
-  transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 }
 
 /* Badge count pada state aktif (pills, chips, dark buttons) menggunakan semi-transparent white */
@@ -1133,11 +1175,7 @@ a.chip:active,
 }
 
 .live-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex: none;
-  background: var(--ok-solid);
+  display: none;
 }
 
 /* ==========================================================================
@@ -1179,7 +1217,7 @@ a.chip:active,
 
 .card__sub {
   font-size: 0.8125rem;
-  color: var(--ink-3);
+  color: var(--ink-2);
   margin-top: 3px;
 }
 
@@ -1197,6 +1235,13 @@ a.chip:active,
   border-top: 1px solid var(--line);
   background: var(--canvas);
   border-radius: 0 0 var(--r-lg) var(--r-lg);
+}
+
+.card__foot .note {
+  border: none;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
 }
 
 .card--sunk {
@@ -1309,7 +1354,8 @@ a.chip:active,
   background: var(--paper);
   box-shadow: var(--shadow-xs);
   color: var(--ink-2);
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
   min-width: 0;
 }
 
@@ -1415,7 +1461,10 @@ a.chip:active,
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
 }
 
 .segmented__item:hover,
@@ -1696,6 +1745,9 @@ a.chip:active,
   min-width: 0;
   overflow-x: auto;
   overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 420px;
 }
 
 .table {
@@ -1721,7 +1773,7 @@ a.chip:active,
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--ink-2);
   padding: 10px 14px;
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
@@ -1800,6 +1852,8 @@ a.chip:active,
   width: 100%;
   min-width: 616px;
   font-size: 0.875rem;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 540px;
 }
 
 .region-table thead th {
@@ -1812,7 +1866,7 @@ a.chip:active,
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--ink-2);
   padding: 9px 12px;
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
@@ -2080,7 +2134,10 @@ a.chip:active,
   user-select: none;
   line-height: 1;
   white-space: nowrap;
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
 }
 
 .pagination__btn svg {
@@ -2175,7 +2232,9 @@ a.chip:active,
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2354504a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
-  transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .page-size-picker select:hover {
@@ -2195,10 +2254,12 @@ a.chip:active,
   width: 100%;
   min-width: 0;
   height: 272px;
+  min-height: 272px;
 }
 
 .chart--bars {
   height: 292px;
+  min-height: 292px;
 }
 
 .chart--tall {
@@ -2218,6 +2279,8 @@ a.chip:active,
   padding-right: 6px;
   scrollbar-width: thin;
   scrollbar-color: var(--line) transparent;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 380px;
 }
 
 .chart-scroll-viewport::-webkit-scrollbar {
@@ -2234,7 +2297,7 @@ a.chip:active,
 }
 
 .chart-scroll-viewport::-webkit-scrollbar-thumb:hover {
-  background: var(--ink-3, #8c8881);
+  background: var(--ink-3, #54504a);
 }
 
 .chart .recharts-cartesian-axis-tick text,
@@ -2425,6 +2488,18 @@ a.chip:active,
   font-size: 1.0625rem;
   line-height: 1.58;
   color: var(--ink-2);
+  max-width: 44ch;
+}
+
+.hero__byline {
+  margin-top: 14px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  border-left: 2px solid var(--accent);
+  padding-left: 10px;
   max-width: 44ch;
 }
 
@@ -2676,7 +2751,7 @@ a.chip:active,
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-/* Prioritas DSS */
+/* Prioritas Telaah Kritis APBD */
 
 .priority {
   display: flex;
@@ -2831,7 +2906,7 @@ a.chip:active,
 .footnote {
   margin-top: 28px;
   font-size: 0.75rem;
-  color: var(--ink-4);
+  color: var(--ink-3);
   line-height: 1.6;
   max-width: 88ch;
 }
@@ -2983,14 +3058,15 @@ a.chip:active,
   margin-top: 12px;
 }
 
-/* Simulasi kapasitas */
+/* Simulasi kapasitas (Clean & Flat, hairline divider) */
 
 .sim {
   margin: 20px 0 18px;
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  background: var(--paper);
-  overflow: hidden;
+  border: none;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  padding: 16px 0;
   box-shadow: none;
 }
 
@@ -3000,39 +3076,48 @@ a.chip:active,
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--line);
-  background: var(--sunk);
+  padding: 0 0 10px;
+  border-bottom: none;
+  background: transparent;
 }
 
 .sim__intro {
-  padding: 14px 18px 2px;
+  padding: 0 0 12px;
   font-size: 0.8125rem;
   color: var(--ink-2);
+  line-height: 1.55;
 }
 
 .sim__items {
   display: grid;
-  gap: 12px;
-  padding: 14px 18px 16px;
+  gap: 0;
+  padding: 0;
 }
 
 .sim__item {
-  display: grid;
-  gap: 4px;
-  padding: 14px 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--r-xs);
-  background: var(--paper);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
   box-shadow: none;
 }
 
+.sim__item:last-child {
+  border-bottom: none;
+}
+
 .sim__item strong {
-  font-size: 1.0625rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums lining-nums;
-  margin-top: 4px;
+  color: var(--ink);
+  white-space: nowrap;
 }
 
 .sim__item > span:not(.chip) {
@@ -3041,10 +3126,11 @@ a.chip:active,
 }
 
 .sim__item small {
-  font-size: 0.75rem;
+  display: block;
+  font-size: 0.8125rem;
   color: var(--ink-3);
-  line-height: 1.5;
-  margin-top: 4px;
+  line-height: 1.45;
+  margin-top: 2px;
 }
 
 .sim__item .chip {
@@ -3052,24 +3138,24 @@ a.chip:active,
 }
 
 .sim__foot {
-  padding: 0 18px 14px;
+  padding: 10px 0 0;
 }
 
 .sim__foot small {
   display: block;
   font-size: 0.75rem;
-  color: var(--ink-4);
-  line-height: 1.6;
+  color: var(--ink-3);
+  line-height: 1.55;
 }
 
-/* Konteks HKPD */
+/* Konteks HKPD (Flat, hairline divider, tanpa cardception) */
 
 .hkpd {
-  margin-top: 20px;
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  background: var(--paper);
-  overflow: hidden;
+  margin-top: 24px;
+  border: none;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  padding-top: 18px;
   box-shadow: none;
 }
 
@@ -3079,44 +3165,50 @@ a.chip:active,
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--line);
-  background: var(--sunk);
+  padding: 0 0 14px;
+  border-bottom: none;
+  background: transparent;
 }
 
 .hkpd__head h4 {
   font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .hkpd__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 14px;
-  padding: 16px 18px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 0;
 }
 
 .hkpd__item {
-  border: 1px solid var(--line);
-  border-radius: var(--r-xs);
-  background: var(--paper);
-  padding: 16px 18px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  padding: 0 0 8px;
   box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .hkpd__item strong {
   font-size: 0.875rem;
   font-weight: 600;
+  color: var(--ink);
 }
 
 .hkpd__item p {
   font-size: 0.8125rem;
   color: var(--ink-2);
   line-height: 1.6;
-  margin-top: 9px;
+  margin: 0;
 }
 
 .hkpd__item .chip {
-  margin-top: 7px;
+  margin-top: 4px;
 }
 
 /* Audit akhir tahun */
@@ -3125,6 +3217,8 @@ a.chip:active,
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 14px;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 380px;
 }
 
 .audit-card {
@@ -3205,8 +3299,8 @@ a.chip:active,
 
 .audit-card__threshold small {
   display: block;
-  font-size: 0.75rem;
-  color: var(--ink-4);
+  font-size: 0.8125rem;
+  color: var(--ink-3);
 }
 
 .audit-card__points {
@@ -3294,7 +3388,7 @@ a.chip:active,
   line-height: 1.6;
 }
 
-/* Lembar advokasi (DSS) */
+/* Lembar Pengawasan Publik & Advokasi APBD (Telaah Kritis DPRD & Warga) */
 
 .inquiry-title {
   font-family: var(--font-serif);
@@ -3304,26 +3398,33 @@ a.chip:active,
 }
 
 .inquiry-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
 }
 
 .inquiry-card {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--line);
-  border-radius: var(--r-sm);
-  background: var(--paper);
-  box-shadow: var(--shadow-xs);
+  border: none;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   overflow: hidden;
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.inquiry-card:last-child {
+  border-bottom: none;
 }
 
 .inquiry-card:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--line-3);
+  transform: none;
+  box-shadow: none;
+  background: var(--canvas);
 }
 
 .inquiry-card--atensi:hover {
@@ -3347,7 +3448,7 @@ a.chip:active,
   cursor: pointer;
   color: inherit;
   font: inherit;
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
 .inquiry-card__chevron {
@@ -3358,9 +3459,10 @@ a.chip:active,
   height: 28px;
   border-radius: var(--r-xs);
   color: var(--ink-3);
-  transition: transform var(--duration-fast) var(--ease-out),
-              background var(--duration-fast) var(--ease-out),
-              color var(--duration-fast) var(--ease-out);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
   flex-shrink: 0;
 }
 
@@ -3372,8 +3474,9 @@ a.chip:active,
 .inquiry-card__disclosure {
   display: grid;
   grid-template-rows: 1fr;
-  transition: grid-template-rows var(--duration-normal) var(--ease-out),
-              opacity var(--duration-fast) var(--ease-out);
+  transition:
+    grid-template-rows var(--duration-normal) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
   overflow: hidden;
 }
 
@@ -3381,8 +3484,9 @@ a.chip:active,
   min-height: 0;
   transform: translateY(0);
   opacity: 1;
-  transition: transform var(--duration-normal) var(--ease-out),
-              opacity var(--duration-fast) var(--ease-out);
+  transition:
+    transform var(--duration-normal) var(--ease-out),
+    opacity var(--duration-fast) var(--ease-out);
 }
 
 .inquiry-card.is-collapsed .inquiry-card__chevron {
@@ -3540,6 +3644,183 @@ a.chip:active,
   margin-top: 3px;
 }
 
+/* ==========================================================================
+   Segmented Reader Profil Daerah (Modern, Ramping, Ramah Jempol Mobile)
+   ========================================================================== */
+
+.segmented-nav,
+.profile-reader-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0 20px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.segmented-nav__bar,
+.profile-reader-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--sunk);
+  min-width: 0;
+}
+
+.segmented-tab,
+.profile-reader-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px; /* Standar sentuh WCAG minimal 44px */
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
+}
+
+.segmented-tab:hover,
+.profile-reader-tab:hover {
+  color: var(--ink);
+  background: rgba(28, 27, 25, 0.04);
+}
+
+.segmented-tab:active,
+.profile-reader-tab:active {
+  transform: scale(0.99);
+}
+
+.segmented-tab:focus-visible,
+.profile-reader-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.segmented-tab[data-active="true"],
+.segmented-tab.is-active,
+.segmented-tab[aria-selected="true"],
+.profile-reader-tab.is-active {
+  background: var(--paper);
+  color: var(--ink);
+  font-weight: 600;
+  border-color: var(--line-2);
+  box-shadow: var(--shadow-xs);
+}
+
+.segmented-tab__icon,
+.profile-reader-tab__icon {
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.segmented-tab[data-active="true"] .segmented-tab__icon,
+.segmented-tab.is-active .segmented-tab__icon,
+.profile-reader-tab.is-active .profile-reader-tab__icon {
+  opacity: 1;
+  color: var(--ink);
+}
+
+.segmented-tab__badge,
+.profile-reader-tab__badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--r-xs);
+  background: var(--sunk-2);
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: 1.2;
+  transition: background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
+}
+
+.segmented-tab[data-active="true"] .segmented-tab__badge,
+.segmented-tab.is-active .segmented-tab__badge,
+.profile-reader-tab.is-active .profile-reader-tab__badge {
+  background: var(--ink);
+  color: #fff;
+}
+
+.segmented-nav__meta,
+.profile-reader-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+.tab-panel {
+  display: block;
+  min-width: 0;
+  animation: tabFadeIn var(--duration-fast) var(--ease-out);
+}
+
+.tab-panel[hidden],
+.tab-panel[data-active="false"] {
+  display: none;
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .segmented-nav__bar,
+  .profile-reader-tabs {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 4px;
+  }
+
+  .segmented-nav__bar::-webkit-scrollbar,
+  .profile-reader-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .segmented-tab,
+  .profile-reader-tab {
+    flex: 1 0 auto;
+    min-width: 145px;
+    min-height: 44px;
+    padding: 8px 12px;
+    font-size: 0.8125rem;
+  }
+
+  .segmented-nav__meta,
+  .profile-reader-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+
 .profile-cta {
   display: flex;
   flex-wrap: wrap;
@@ -3596,7 +3877,10 @@ a.chip:active,
   background: var(--paper);
   text-align: left;
   min-height: 44px; /* Standar sentuh WCAG 44x44px */
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
   min-width: 0;
   cursor: pointer;
 }
@@ -4052,9 +4336,54 @@ a.chip:active,
   .filter-row,
   .next-cards,
   .profile-cta,
+  .toolbar,
+  .pagination,
+  .page-size-picker,
+  .segmented,
+  .segmented-nav,
+  .filter-strip,
+  .filter-panel,
+  .zone-filter-strip,
+  .scope-switcher,
+  .menu-button,
+  .btn {
+    display: none !important;
+  }
+
+  /* Tampilan grafik cetak monokrom untuk rapat DPRD */
   .chart,
   .recharts-responsive-container {
-    display: none !important;
+    display: block !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    height: 180pt !important;
+    max-height: 180pt !important;
+    border: 1px solid #d0ceca;
+    border-radius: 3pt;
+    margin: 8pt 0 10pt;
+    padding: 6pt;
+    background: #fff;
+  }
+
+  .chart svg,
+  .recharts-responsive-container svg {
+    max-width: 100% !important;
+  }
+
+  .chart .recharts-cartesian-axis-tick text {
+    fill: #222 !important;
+    font-size: 8pt !important;
+  }
+
+  .chart .recharts-cartesian-grid line {
+    stroke: #e0deda !important;
+  }
+
+  .chart-legend {
+    display: flex !important;
+    margin-top: 4pt;
+    font-size: 8pt;
+    color: #333 !important;
   }
 
   body {
@@ -4215,7 +4544,6 @@ a.chip:active,
   }
 }
 
-
 /* ==========================================================================
    Komponen Visual Urgensi & Latar Belakang Publik
    ========================================================================== */
@@ -4292,7 +4620,9 @@ a.chip:active,
   flex-direction: column;
   gap: 10px;
   position: relative;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
@@ -4487,7 +4817,7 @@ a.chip:active,
   flex-direction: column;
   gap: 10px;
   position: relative;
-  transition: all 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
   font-family: inherit;
   color: inherit;
   width: 100%;
@@ -4546,7 +4876,7 @@ a.chip:active,
 }
 
 .pipeline-node__phase {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -4573,7 +4903,7 @@ a.chip:active,
 }
 
 .pipeline-node__badge {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   padding: 2px 6px;
   border-radius: var(--r-xs);
   background: var(--paper);
@@ -4721,7 +5051,7 @@ a.chip:active,
   font-weight: 500;
   color: var(--ink);
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
@@ -4796,7 +5126,6 @@ a.chip:active,
     justify-content: center;
   }
 }
-
 
 /* ==========================================================================
    Responsif
@@ -5032,6 +5361,7 @@ a.chip:active,
 
   .chart {
     height: 240px;
+    min-height: 240px;
   }
 
   .chart--tall {
@@ -5170,6 +5500,17 @@ a.chip:active,
   flex-wrap: wrap;
 }
 
+.scope-switcher__heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
 .scope-switcher__hint {
   font-size: 0.8125rem;
   color: var(--ink-3);
@@ -5191,7 +5532,9 @@ a.chip:active,
   border-radius: var(--r-sm);
   text-align: left;
   cursor: pointer;
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   min-width: 0;
   position: relative;
   font-family: inherit;
@@ -5206,7 +5549,9 @@ a.chip:active,
 .scope-card.is-active {
   background: var(--paper);
   border-color: var(--accent);
-  box-shadow: 0 0 0 1.5px var(--accent), var(--shadow-sm);
+  box-shadow:
+    0 0 0 1.5px var(--accent),
+    var(--shadow-sm);
 }
 
 .scope-card__top {
@@ -5218,7 +5563,7 @@ a.chip:active,
 }
 
 .scope-card__tier {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -5357,7 +5702,10 @@ a.chip:active,
   font-family: inherit;
   line-height: 1;
   white-space: nowrap;
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
 }
 
 .filter-pill:hover,
@@ -5413,18 +5761,20 @@ a.chip:active,
 .zone-chip .count {
   display: inline-grid;
   place-items: center;
-  min-width: 19px;
-  height: 19px;
+  min-width: 20px;
+  height: 20px;
   padding: 0 5px;
   border-radius: var(--r-pill);
   background: var(--sunk-2);
   color: var(--ink-2);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums lining-nums;
   line-height: 1;
   opacity: 1;
-  transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 }
 
 .filter-pill:hover:not(.is-active) .count,
@@ -5456,7 +5806,7 @@ a.chip:active,
 }
 
 .tier-banner--purple {
-  border-left-color: #7C3AED;
+  border-left-color: #7c3aed;
 }
 
 .tier-banner__badges {
@@ -5500,7 +5850,7 @@ a.chip:active,
 }
 
 .tier-banner__stat-label {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -5571,7 +5921,7 @@ a.chip:active,
 }
 
 .provinsi-card__metric-item span {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   color: var(--ink-3);
   display: block;
 }
@@ -5629,7 +5979,7 @@ a.chip:active,
 }
 
 .island-card__stat span {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   color: var(--ink-3);
   display: block;
 }

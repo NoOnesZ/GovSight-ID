@@ -225,12 +225,13 @@ export function DownloadButton({
 
 export function SourceNote({
   snapshot,
+  compact = false,
 }: {
   snapshot: Snapshot;
   compact?: boolean;
 }) {
   return (
-    <div className="source-line">
+    <div className={`source-line ${compact ? "source-line--compact" : ""}`}>
       <span
         style={{
           display: "inline-flex",
@@ -244,14 +245,14 @@ export function SourceNote({
         <Calendar size={14} style={{ color: "var(--accent)", flexShrink: 0 }} aria-hidden="true" />
         <span>Data Resmi {periodLabel(snapshot.year, snapshot.month)}</span>
       </span>
-      <span className="source-line__sep">·</span>
-      <span style={{ color: "var(--ink-2)" }}>
-        Keterangan penerimaan SIKD pada portal:{" "}
-        <span style={{ color: "var(--ink)", fontWeight: 500 }}>
-          {snapshot.source.publishedAt
-            ? dateLabel(snapshot.source.publishedAt)
-            : "belum dicantumkan"}
-        </span>
+      <span className="source-line__sep" aria-hidden="true">·</span>
+      <span style={{ color: "var(--ink-2)", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+        <span>Pembaruan berkala SIKD Kemenkeu</span>
+        {snapshot.source.publishedAt && (
+          <span style={{ color: "var(--ink-3)" }}>
+            ({dateLabel(snapshot.source.publishedAt)})
+          </span>
+        )}
       </span>
       <a
         href={snapshot.source.portalUrl}
@@ -263,11 +264,48 @@ export function SourceNote({
           display: "inline-flex",
           alignItems: "center",
           gap: "4px",
+          marginLeft: "auto",
         }}
       >
-        DJPK Kemenkeu <ArrowUpRight size={12} />
+        <span>Portal DJPK</span>
+        <ArrowUpRight size={12} aria-hidden="true" />
       </a>
     </div>
+  );
+}
+
+export type ChipVariant = "default" | "sunk" | "warn" | "ok" | "alert" | "info";
+
+export interface ChipProps extends React.HTMLAttributes<HTMLSpanElement> {
+  variant?: ChipVariant;
+  square?: boolean;
+  interactive?: boolean;
+  children: React.ReactNode;
+}
+
+export function Chip({
+  variant = "default",
+  square = false,
+  interactive = false,
+  className = "",
+  children,
+  style,
+  ...props
+}: ChipProps) {
+  const classes = [
+    "chip",
+    variant !== "default" ? `chip--${variant}` : "",
+    square ? "chip--square" : "",
+    interactive ? "chip--interactive" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <span className={classes} style={style} {...props}>
+      {children}
+    </span>
   );
 }
 
