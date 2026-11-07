@@ -21,23 +21,31 @@ try {
       ["/daerah/0215", "profil"],
       ["/bandingkan", "bandingkan"],
       ["/metodologi", "metodologi"],
+      ["/arsitektur", "arsitektur"],
     ]) {
       await page.goto(base + route);
       await page.locator("h1").waitFor();
       await page.evaluate(() => document.fonts.ready);
       await page.locator(".loading-state").waitFor({ state: "hidden" });
       if (name === "jelajah") {
-        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await page.evaluate(() =>
+          window.scrollTo(0, document.body.scrollHeight),
+        );
         await page.waitForTimeout(500);
       } else if (name === "profil") {
-        const historyTab = page.locator('button.profile-reader-tab:has-text("Riwayat")');
+        const historyTab = page.locator(
+          'button.profile-reader-tab:has-text("Riwayat")',
+        );
         if ((await historyTab.count()) > 0) {
           await historyTab.click();
           await page.waitForTimeout(400);
         }
       }
-      if (name !== "metodologi") {
-        await page.locator(".recharts-wrapper").first().waitFor({ timeout: 10000 });
+      if (name !== "metodologi" && name !== "arsitektur") {
+        await page
+          .locator(".recharts-wrapper")
+          .first()
+          .waitFor({ timeout: 10000 });
         await page.waitForFunction(() =>
           [...document.querySelectorAll(".recharts-wrapper")].every(
             (element) =>
@@ -50,7 +58,9 @@ try {
         );
       }
       if (name === "profil") {
-        const advTab = page.locator('button.profile-reader-tab:has-text("Ringkasan")');
+        const advTab = page.locator(
+          'button.profile-reader-tab:has-text("Ringkasan")',
+        );
         if ((await advTab.count()) > 0) {
           await advTab.click();
           await page.waitForTimeout(300);
@@ -89,7 +99,9 @@ try {
   );
   assert.equal(await page.locator(".region-table tbody tr").count(), 33);
 
-  await page.locator('.pagination__size .segmented__btn:has-text("10")').click();
+  await page
+    .locator('.pagination__size .segmented__btn:has-text("10")')
+    .click();
   await page.waitForFunction(
     () => document.querySelectorAll(".region-table tbody tr").length === 10,
   );
@@ -144,7 +156,9 @@ try {
   await page
     .getByRole("heading", { name: "Kota Medan", exact: true })
     .waitFor();
-  const historyBtn = page.locator("#tab-history, button.profile-reader-tab:has-text('Riwayat')");
+  const historyBtn = page.locator(
+    "#tab-history, button.profile-reader-tab:has-text('Riwayat')",
+  );
   if ((await historyBtn.count()) > 0) {
     await historyBtn.first().click();
     await page.waitForTimeout(400);
@@ -240,7 +254,9 @@ try {
   await page.goto(base);
   await page.keyboard.press("Tab");
   assert.ok(
-    (await page.evaluate(() => document.activeElement?.textContent))?.includes("Langsung ke konten"),
+    (await page.evaluate(() => document.activeElement?.textContent))?.includes(
+      "Langsung ke konten",
+    ),
   );
   assert.deepEqual(errors, []);
   console.log(

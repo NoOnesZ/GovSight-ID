@@ -10,6 +10,7 @@ import {
   Compass,
   Database,
   Landmark,
+  Layers,
   Lock,
   Menu,
   Scale,
@@ -21,7 +22,7 @@ const navigation = [
   {
     href: "/",
     label: "Jelajah anggaran",
-    desc: "Daftar dan ringkasan 10 pemda",
+    desc: "Daftar dan ringkasan 33 pemda",
     icon: Compass,
   },
   {
@@ -35,6 +36,12 @@ const navigation = [
     label: "Metodologi & sumber",
     desc: "Rumus, batas tafsir, berkas asli",
     icon: BookOpen,
+  },
+  {
+    href: "/arsitektur",
+    label: "Peta arsitektur",
+    desc: "Alur data & cetak biru skalabilitas",
+    icon: Layers,
   },
 ];
 
@@ -242,14 +249,21 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <Landmark size={14} aria-hidden="true" />
               <span>GovSight ID 2026</span>
             </span>
-            <span className="source-line__sep" aria-hidden="true">·</span>
+            <span className="source-line__sep" aria-hidden="true">
+              ·
+            </span>
             <span>Data APBD bersumber dari DJPK Kementerian Keuangan RI</span>
-            <span className="source-line__sep" aria-hidden="true">·</span>
+            <span className="source-line__sep" aria-hidden="true">
+              ·
+            </span>
             <span>Inisiatif independen keterbukaan fiskal daerah</span>
           </div>
           <div className="site-foot__links">
             <Link href="/metodologi" className="site-foot__link">
               Metodologi &amp; Sumber
+            </Link>
+            <Link href="/arsitektur" className="site-foot__link">
+              Peta Arsitektur
             </Link>
             <a
               href="https://djpk.kemenkeu.go.id/portal/data/apbd"
