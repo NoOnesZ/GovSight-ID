@@ -6497,6 +6497,32 @@ a.chip:active,
   overflow-x: auto;
 }
 
+/* Responsive text labels */
+.label-mobile {
+  display: none;
+}
+.label-desktop {
+  display: inline;
+}
+@media (max-width: 480px) {
+  .label-mobile {
+    display: inline;
+  }
+  .label-desktop {
+    display: none;
+  }
+}
+
+.chip--responsive {
+  max-width: 100%;
+  white-space: normal !important;
+  height: auto !important;
+  min-height: 24px;
+  padding: 3px 8px !important;
+  line-height: 1.35;
+  box-sizing: border-box;
+}
+
 /* Multi-Tier Back Navigation Bar */
 .tier-nav-bar {
   display: flex;
@@ -6509,6 +6535,33 @@ a.chip:active,
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
   box-shadow: var(--shadow-xs);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tier-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  height: auto !important;
+  padding: 6px 12px !important;
+  white-space: normal !important;
+  line-height: 1.35 !important;
+  text-align: left;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.tier-nav-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  font-weight: 500;
+  min-width: 0;
 }
 
 /* Matrix Table vs Mobile Cards */
@@ -6565,8 +6618,42 @@ a.chip:active,
     gap: 8px;
     padding: 10px 12px;
   }
-  .tier-nav-bar .btn {
-    width: 100%;
+  .tier-nav-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 8px 10px !important;
+  }
+  .tier-nav-status {
     justify-content: center;
+    text-align: center;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 380px) {
+  :root {
+    --gutter: 10px;
+  }
+  .content {
+    padding: 16px var(--gutter) 48px;
+  }
+  .blueprint-card {
+    padding: 10px 8px;
+  }
+  .blueprint-tier-card {
+    padding: 10px 8px;
+  }
+  .island-card__grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .provinsi-card__metrics {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .chip {
+    font-size: 0.6875rem;
+    padding: 0 6px;
   }
 }

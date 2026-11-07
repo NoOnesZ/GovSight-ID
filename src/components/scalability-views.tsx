@@ -142,14 +142,24 @@ export function ScalabilityBlueprint3Tier({
             marginBottom: "8px",
           }}
         >
-          <span className="chip chip--accent chip--square">
-            <Layers size={13} /> Blueprint Arsitektur Skalabilitas
+          <span className="chip chip--accent chip--square chip--responsive">
+            <Layers size={13} style={{ flexShrink: 0 }} />{" "}
+            <span className="label-desktop">
+              Blueprint Arsitektur Skalabilitas
+            </span>
+            <span className="label-mobile">Blueprint Arsitektur</span>
           </span>
-          <span className="chip chip--sunk chip--square">
-            Sumut 33 → Sumatera 154 → Nasional 552 Pemda
+          <span className="chip chip--sunk chip--square chip--responsive">
+            <span className="label-desktop">
+              Sumut 33 → Sumatera 154 → Nasional 552 Pemda
+            </span>
+            <span className="label-mobile">
+              33 Sumut → 154 Sumatera → 552 Nasional
+            </span>
           </span>
-          <span className="chip chip--ok chip--square">
-            <ShieldCheck size={13} /> Integritas SHA-256
+          <span className="chip chip--ok chip--square chip--responsive">
+            <ShieldCheck size={13} style={{ flexShrink: 0 }} /> Integritas
+            SHA-256
           </span>
         </div>
         <h2
@@ -611,24 +621,18 @@ export function RegionalSumateraMatrix({
       <div className="tier-nav-bar">
         <button
           type="button"
-          className="btn btn--secondary btn--sm"
+          className="btn btn--secondary btn--sm tier-nav-btn"
           onClick={() => onSelectTier?.(1)}
-          style={{ display: "inline-flex", alignItems: "center", gap: "7px" }}
         >
-          <ArrowLeft size={14} />
-          <span>Kembali ke Jelajah Anggaran Sumut (33 Pemda)</span>
-        </button>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span className="dot dot--info" />
-          <span
-            style={{
-              fontSize: "0.8125rem",
-              color: "var(--ink-2)",
-              fontWeight: 500,
-            }}
-          >
-            Mode Regional: 10 Provinsi · 154 Daerah Se-Sumatera
+          <ArrowLeft size={14} style={{ flexShrink: 0 }} />
+          <span className="label-desktop">
+            Kembali ke Jelajah Anggaran Sumut (33 Pemda)
           </span>
+          <span className="label-mobile">Kembali ke 33 Daerah Sumut</span>
+        </button>
+        <div className="tier-nav-status">
+          <span className="dot dot--info" style={{ flexShrink: 0 }} />
+          <span>Mode Regional: 10 Provinsi · 154 Daerah Se-Sumatera</span>
         </div>
       </div>
 
@@ -1312,24 +1316,18 @@ export function NationalRoadmapView({
       <div className="tier-nav-bar">
         <button
           type="button"
-          className="btn btn--secondary btn--sm"
+          className="btn btn--secondary btn--sm tier-nav-btn"
           onClick={() => onSelectTier?.(1)}
-          style={{ display: "inline-flex", alignItems: "center", gap: "7px" }}
         >
-          <ArrowLeft size={14} />
-          <span>Kembali ke Jelajah Anggaran Sumut (33 Pemda)</span>
-        </button>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span className="dot dot--accent" />
-          <span
-            style={{
-              fontSize: "0.8125rem",
-              color: "var(--ink-2)",
-              fontWeight: 500,
-            }}
-          >
-            Mode Nasional: 38 Provinsi · 514 Daerah Seluruh Indonesia
+          <ArrowLeft size={14} style={{ flexShrink: 0 }} />
+          <span className="label-desktop">
+            Kembali ke Jelajah Anggaran Sumut (33 Pemda)
           </span>
+          <span className="label-mobile">Kembali ke 33 Daerah Sumut</span>
+        </button>
+        <div className="tier-nav-status">
+          <span className="dot dot--accent" style={{ flexShrink: 0 }} />
+          <span>Mode Nasional: 38 Provinsi · 514 Daerah Seluruh Indonesia</span>
         </div>
       </div>
 
