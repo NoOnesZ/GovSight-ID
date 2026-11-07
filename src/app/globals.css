@@ -1998,6 +1998,38 @@ a.chip:active,
   height: 380px;
 }
 
+.chart--spending-vertical {
+  width: 100%;
+  min-width: 0;
+  height: auto;
+}
+
+.chart-scroll-viewport {
+  max-height: 480px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.chart-scroll-viewport::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chart-scroll-viewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chart-scroll-viewport::-webkit-scrollbar-thumb {
+  background: var(--line-strong, #dad7d1);
+  border-radius: 999px;
+}
+
+.chart-scroll-viewport::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-3, #8c8881);
+}
+
 .chart .recharts-cartesian-axis-tick text,
 .chart .recharts-legend-item-text {
   font-family: var(--font-sans);
@@ -4797,6 +4829,10 @@ a.chip:active,
 
   .chart--tall {
     height: 330px;
+  }
+
+  .chart-scroll-viewport {
+    max-height: 400px;
   }
 }
 

@@ -56,6 +56,9 @@ import {
 
 export function Explorer({ dataset }: { dataset: Dataset }) {
   const [urgencyExpanded, setUrgencyExpanded] = useState(true);
+  const [chartDisplayMode, setChartDisplayMode] = useState<
+    "top10" | "bottom10" | "all"
+  >("top10");
   const { year, month, params, update, period, invalidPeriod } = useFilters();
   const query = params.get("q") ?? "";
   const kind = params.get("jenis") ?? "semua";
@@ -282,6 +285,26 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
       };
     },
   );
+
+  // Data daerah untuk grafik perbandingan pagu & realisasi (dengan pilihan densitas 10 Terbesar / 10 Terkecil / Semua)
+  const displayedSpending = useMemo(() => {
+    if (visible.length <= 10) return visible;
+    if (chartDisplayMode === "top10") {
+      return [...visible]
+        .sort(
+          (a, b) => Number(b.total.budget ?? 0) - Number(a.total.budget ?? 0),
+        )
+        .slice(0, 10);
+    }
+    if (chartDisplayMode === "bottom10") {
+      return [...visible]
+        .sort(
+          (a, b) => Number(a.total.budget ?? 0) - Number(b.total.budget ?? 0),
+        )
+        .slice(0, 10);
+    }
+    return visible;
+  }, [visible, chartDisplayMode]);
 
   // Prioritas Pengawasan Publik (Fokus Telaah Kritis)
   const topFlaggedRegions = visible
@@ -1433,17 +1456,88 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
               </div>
 
               <div className="card">
-                <div className="card__head">
-                  <div>
+                <div
+                  className="card__head"
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div style={{ flex: "1 1 220px", minWidth: 0 }}>
                     <h3 className="card__title">Rencana dan realisasi</h3>
                     <p className="card__sub">
-                      Perbandingan pagu dan realisasi APBD antardaerah (triliun
-                      rupiah).
+                      {chartDisplayMode === "top10" && visible.length > 10
+                        ? `10 Daerah pagu terbesar dari ${visible.length} daerah terpilih (triliun rupiah).`
+                        : chartDisplayMode === "bottom10" && visible.length > 10
+                          ? `10 Daerah pagu terkecil dari ${visible.length} daerah terpilih (triliun rupiah).`
+                          : `Perbandingan pagu dan realisasi APBD ${visible.length} daerah terpilih (triliun rupiah).`}
                     </p>
                   </div>
+                  {visible.length > 10 && (
+                    <div
+                      className="segmented"
+                      role="tablist"
+                      aria-label="Pilihan tampilan grafik daerah"
+                      style={{ flexShrink: 0 }}
+                    >
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={chartDisplayMode === "top10"}
+                        className={`segmented__btn ${chartDisplayMode === "top10" ? "is-active" : ""}`}
+                        onClick={() => setChartDisplayMode("top10")}
+                        style={{
+                          fontSize: "0.75rem",
+                          padding: "0 9px",
+                          height: "26px",
+                        }}
+                      >
+                        10 Terbesar
+                      </button>
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={chartDisplayMode === "bottom10"}
+                        className={`segmented__btn ${chartDisplayMode === "bottom10" ? "is-active" : ""}`}
+                        onClick={() => setChartDisplayMode("bottom10")}
+                        style={{
+                          fontSize: "0.75rem",
+                          padding: "0 9px",
+                          height: "26px",
+                        }}
+                      >
+                        10 Terkecil
+                      </button>
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={chartDisplayMode === "all"}
+                        className={`segmented__btn ${chartDisplayMode === "all" ? "is-active" : ""}`}
+                        onClick={() => setChartDisplayMode("all")}
+                        style={{
+                          fontSize: "0.75rem",
+                          padding: "0 9px",
+                          height: "26px",
+                        }}
+                      >
+                        Semua ({visible.length})
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div className="card__body">
-                  <SpendingChart snapshots={visible} />
+                  <div
+                    className={
+                      chartDisplayMode === "all" && visible.length > 10
+                        ? "chart-scroll-viewport"
+                        : undefined
+                    }
+                  >
+                    <SpendingChart snapshots={displayedSpending} />
+                  </div>
                   <ChartLegend
                     items={[
                       { label: "Pagu belanja", color: chartColors.budget },

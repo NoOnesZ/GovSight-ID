@@ -205,6 +205,9 @@ export function ComparisonRateChart({ snapshots }: { snapshots: Snapshot[] }) {
             tickLine={false}
             tick={axisTick}
             dy={8}
+            tickFormatter={(name: string) =>
+              name.length > 13 ? `${name.slice(0, 12)}…` : name
+            }
           />
           <YAxis
             domain={[0, 100]}
@@ -248,10 +251,23 @@ export function SpendingChart({
   }));
 
   const isVertical = layout === "vertical";
+  // Setiap baris horizontal membutuhkan minimal 32px agar 2 bar dan label daerah
+  // memiliki ruang vertikal yang lapang dan tidak ada label teks yang bertumpuk.
+  const rowHeight = 32;
+  const dynamicHeight = isVertical
+    ? Math.max(300, data.length * rowHeight + 48)
+    : 292;
 
   return (
     <div
-      className={isVertical ? "chart chart--tall" : "chart chart--bars"}
+      className={
+        isVertical ? "chart chart--spending-vertical" : "chart chart--bars"
+      }
+      style={
+        isVertical
+          ? { height: dynamicHeight, minHeight: dynamicHeight }
+          : undefined
+      }
       role="img"
       aria-label="Grafik perbandingan pagu dan realisasi. Angka lengkap tersedia pada tabel daerah."
     >
@@ -259,15 +275,15 @@ export function SpendingChart({
         width="100%"
         height="100%"
         minWidth={1}
-        initialDimension={{ width: 650, height: isVertical ? 380 : 292 }}
+        initialDimension={{ width: 650, height: dynamicHeight }}
       >
         {isVertical ? (
           <BarChart
             layout="vertical"
             data={data}
-            margin={{ top: 4, left: 0, right: 14, bottom: 0 }}
-            barGap={2}
-            barCategoryGap="26%"
+            margin={{ top: 8, left: 4, right: 24, bottom: 8 }}
+            barGap={3}
+            barCategoryGap="22%"
           >
             <CartesianGrid
               strokeDasharray="2 4"
@@ -284,7 +300,7 @@ export function SpendingChart({
             <YAxis
               type="category"
               dataKey="name"
-              width={104}
+              width={142}
               axisLine={false}
               tickLine={false}
               tick={{ fill: C.label, fontSize: 11.5, fontFamily: "inherit" }}
@@ -301,14 +317,14 @@ export function SpendingChart({
               dataKey="Pagu"
               fill={C.budget}
               radius={[0, 3, 3, 0]}
-              maxBarSize={11}
+              maxBarSize={9}
             />
             <Bar
               isAnimationActive={false}
               dataKey="Realisasi"
               fill={C.realized}
               radius={[0, 3, 3, 0]}
-              maxBarSize={11}
+              maxBarSize={9}
             />
           </BarChart>
         ) : (
@@ -329,6 +345,9 @@ export function SpendingChart({
               tickLine={false}
               tick={axisTick}
               dy={8}
+              tickFormatter={(name: string) =>
+                name.length > 13 ? `${name.slice(0, 12)}…` : name
+              }
             />
             <YAxis
               tickFormatter={trillionTick}
