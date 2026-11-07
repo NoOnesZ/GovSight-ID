@@ -560,10 +560,9 @@ export function RegionalSumateraMatrix() {
         className="card"
         style={{
           padding: "20px 22px",
-          border: "1px solid var(--line)",
+          border: "1px solid var(--accent-line, #cbd5e1)",
           borderRadius: "var(--r)",
           background: "var(--paper)",
-          borderLeft: "4px solid var(--accent)",
         }}
         aria-labelledby="banner-sumatera-heading"
       >
@@ -650,7 +649,7 @@ export function RegionalSumateraMatrix() {
         <div className="card__head">
           <div>
             <h3 className="card__title">
-              Matrix Fiskal 10 Provinsi Se-Pulau Sumatera{" "}
+              Matrix Fiskal Provinsi Se-Pulau Sumatera{" "}
               <span className="count">{filteredProvinces.length}</span>
             </h3>
             <p className="card__sub">
@@ -958,10 +957,9 @@ export function NationalRoadmapView() {
         className="card"
         style={{
           padding: "20px 22px",
-          border: "1px solid var(--line)",
+          border: "1px solid var(--accent-line, #cbd5e1)",
           borderRadius: "var(--r)",
           background: "var(--paper)",
-          borderLeft: "4px solid var(--accent)",
         }}
         aria-labelledby="banner-nasional-heading"
       >
@@ -1123,7 +1121,7 @@ export function NationalRoadmapView() {
       </div>
 
       {/* UU HKPD Compliance Analysis Section (Flattened Containers) */}
-      <div className="card" style={{ borderLeft: "4px solid var(--warn-solid)" }}>
+      <div className="card" style={{ border: "1px solid var(--warn-line, #fde68a)" }}>
         <div className="card__head">
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>

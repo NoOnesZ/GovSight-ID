@@ -1025,7 +1025,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                     onClick={() => update({ jenis: "prioritas", fokus: null })}
                     title="10 Daerah pantauan utama dengan verifikasi kriptografis SHA-256"
                   >
-                    <ShieldCheck size={12} /> 10 Prioritas{" "}
+                    <ShieldCheck size={12} /> Prioritas SNA{" "}
                     <span className="count">{prioritasCount}</span>
                   </button>
                   <button
@@ -1033,7 +1033,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                     className={`filter-pill ${fokus !== "penanda" && kind === "kota" ? "is-active" : ""}`}
                     onClick={() => update({ jenis: "kota", fokus: null })}
                   >
-                    <Building2 size={12} /> 8 Kota{" "}
+                    <Building2 size={12} /> Kota{" "}
                     <span className="count">{kotaCount}</span>
                   </button>
                   <button
@@ -1041,7 +1041,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                     className={`filter-pill ${fokus !== "penanda" && kind === "kabupaten" ? "is-active" : ""}`}
                     onClick={() => update({ jenis: "kabupaten", fokus: null })}
                   >
-                    <Landmark size={12} /> 25 Kabupaten{" "}
+                    <Landmark size={12} /> Kabupaten{" "}
                     <span className="count">{kabCount}</span>
                   </button>
                   <button
@@ -1191,9 +1191,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
 
             {topFlaggedRegions.length > 0 && (
               <div
-                className="card"
+                className="card card--warn-alert"
                 style={{
-                  borderLeft: "4px solid var(--warn-solid)",
+                  border: "1px solid var(--warn-line)",
                   background: "var(--paper)",
                 }}
               >
@@ -1207,6 +1207,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                     flexWrap: "wrap",
                     padding: "14px 18px",
                     borderBottom: "1px solid var(--line)",
+                    background: "var(--warn-bg)",
                   }}
                 >
                   <div
@@ -1221,7 +1222,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                         width: "28px",
                         height: "28px",
                         borderRadius: "var(--r)",
-                        background: "var(--warn-bg)",
+                        background: "var(--paper)",
                         border: "1px solid var(--warn-line)",
                         display: "grid",
                         placeItems: "center",
@@ -1248,37 +1249,61 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 </div>
 
                 <div className="card__body" style={{ padding: "14px 18px" }}>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fit, minmax(280px, 1fr))",
-                      gap: "12px",
-                    }}
-                  >
+                  <div className="priority-grid">
                     {topFlaggedRegions.map((item, idx) => (
                       <Link
                         key={item.region.code}
                         href={`/daerah/${item.region.code}?${period}#lembar-advokasi`}
-                        className="priority__item"
-                        style={{ margin: 0 }}
+                        className="priority-card"
                       >
-                        <span className="priority__rank">{idx + 1}</span>
-                        <span className="priority__body">
-                          <span className="priority__name">
-                            <strong>{item.region.name}</strong>
-                            <span className="priority__share">
-                              {formatFlagShare(item.flag.share)} modal akhir TA
+                        <div className="priority-card__head">
+                          <div className="priority-card__title-wrap">
+                            <span
+                              className="priority-card__rank"
+                              aria-label={`Peringkat ${idx + 1}`}
+                            >
+                              {idx + 1}
                             </span>
-                          </span>
-                          <span className="priority__meta">
+                            <strong className="priority-card__name">
+                              {item.region.name}
+                            </strong>
+                          </div>
+                          <div className="priority-card__badge-wrap">
                             {persistenceChip(item.region.code)}
-                            <span className="priority__cta">
-                              Buka telaah &amp; pertanyaan publik{" "}
-                              <ArrowRight size={11} />
+                          </div>
+                        </div>
+
+                        <div className="priority-card__metric">
+                          <div className="priority-card__metric-val">
+                            <span className="priority-card__percent">
+                              {formatFlagShare(item.flag.share)}
                             </span>
+                            <span className="priority-card__metric-label">
+                              modal akhir TA
+                            </span>
+                          </div>
+                          <div
+                            className="priority-card__bar-track"
+                            role="progressbar"
+                            aria-valuenow={Math.round((item.flag.share ?? 0) * 100)}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                          >
+                            <div
+                              className="priority-card__bar-fill"
+                              style={{
+                                width: `${Math.min(100, Math.max(0, (item.flag.share ?? 0) * 100))}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="priority-card__foot">
+                          <span className="priority-card__cta">
+                            <span>Buka telaah &amp; pertanyaan publik</span>
+                            <ArrowRight size={12} />
                           </span>
-                        </span>
+                        </div>
                       </Link>
                     ))}
                   </div>

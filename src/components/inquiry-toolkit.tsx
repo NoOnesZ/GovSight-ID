@@ -602,14 +602,17 @@ export function InquiryToolkit({
                       className="inquiry-card__observation"
                       style={{
                         padding: "12px 16px",
-                        background: isAtensi ? "var(--warn-bg)" : "var(--sunk)",
-                        borderLeft: isAtensi
-                          ? "3px solid var(--warn-solid)"
+                        background: isAtensi
+                          ? "var(--warn-bg)"
                           : isKonteks
-                            ? "3px solid var(--accent)"
-                            : "3px solid var(--ok-solid)",
-                        borderBottom: "none",
-                        borderRadius: "0 var(--r-xs, 4px) var(--r-xs, 4px) 0",
+                            ? "var(--canvas)"
+                            : "var(--sunk)",
+                        border: isAtensi
+                          ? "1px solid var(--warn-line)"
+                          : isKonteks
+                            ? "1px solid var(--accent-line)"
+                            : "1px solid var(--line)",
+                        borderRadius: "var(--r)",
                         marginBottom: "14px",
                       }}
                     >

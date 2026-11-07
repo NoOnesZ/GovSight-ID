@@ -391,11 +391,11 @@ export const SpendingChart = memo(function SpendingChart({
   }, [snapshots]);
 
   const isVertical = layout === "vertical";
-  // Setiap baris horizontal membutuhkan minimal 32px agar 2 bar dan label daerah
+  // Setiap baris horizontal membutuhkan minimal 36px agar 2 bar dan label daerah
   // memiliki ruang vertikal yang lapang dan tidak ada label teks yang bertumpuk.
-  const rowHeight = 32;
+  const rowHeight = 36;
   const dynamicHeight = isVertical
-    ? Math.max(300, data.length * rowHeight + 48)
+    ? Math.max(320, data.length * rowHeight + 48)
     : 292;
 
   const ariaLabel = useMemo(() => {
@@ -416,7 +416,7 @@ export const SpendingChart = memo(function SpendingChart({
     >
       <ResponsiveContainer
         width="100%"
-        height="100%"
+        height={isVertical ? dynamicHeight : "100%"}
         minWidth={1}
         minHeight={dynamicHeight}
         initialDimension={{ width: 650, height: dynamicHeight }}
@@ -449,7 +449,7 @@ export const SpendingChart = memo(function SpendingChart({
             <YAxis
               type="category"
               dataKey="name"
-              width={isMobile ? 100 : 142}
+              width={isMobile ? 104 : 144}
               axisLine={false}
               tickLine={false}
               tick={{
@@ -459,7 +459,7 @@ export const SpendingChart = memo(function SpendingChart({
               }}
               interval={0}
               tickFormatter={(name: string) => {
-                const maxLen = isMobile ? 11 : 16;
+                const maxLen = isMobile ? 12 : 18;
                 return name.length > maxLen
                   ? `${name.slice(0, maxLen - 1)}…`
                   : name;

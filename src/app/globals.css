@@ -2273,14 +2273,14 @@ a.chip:active,
 }
 
 .chart-scroll-viewport {
-  max-height: 480px;
+  max-height: 520px;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 6px;
   scrollbar-width: thin;
   scrollbar-color: var(--line) transparent;
   content-visibility: auto;
-  contain-intrinsic-size: 0 380px;
+  contain-intrinsic-size: 0 420px;
 }
 
 .chart-scroll-viewport::-webkit-scrollbar {
@@ -2757,6 +2757,155 @@ a.chip:active,
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* Anomaly Alert Grid (Fokus Pengawasan Publik: Anomali Akhir Tahun) */
+.priority-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .priority-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.priority-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--paper);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.priority-card:hover {
+  border-color: var(--warn-line);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.priority-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.priority-card__title-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.priority-card__rank {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  color: var(--warn-ink);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.priority-card__name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  /* Uniform baseline across 1-line and 2-line names */
+  min-height: 34px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.priority-card__badge-wrap {
+  flex-shrink: 0;
+}
+
+.priority-card__metric {
+  margin-top: auto;
+  padding: 8px 0;
+}
+
+.priority-card__metric-val {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.priority-card__percent {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--warn-ink);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.02em;
+}
+
+.priority-card__metric-label {
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.priority-card__bar-track {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--warn-bg);
+  overflow: hidden;
+}
+
+.priority-card__bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--warn-solid);
+  transition: width 0.3s ease-out;
+}
+
+.priority-card__foot {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line-2, rgba(0, 0, 0, 0.06));
+}
+
+.priority-card__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.priority-card:hover .priority-card__cta {
+  color: var(--accent-hover, #1e3a8a);
 }
 
 .priority__item {
@@ -5794,19 +5943,18 @@ a.chip:active,
 .tier-banner {
   padding: 20px 24px;
   background: var(--paper);
-  border: 1px solid var(--line);
+  border: 1px solid var(--accent-line, #e2e8f0);
   border-radius: var(--r);
-  border-left: 4px solid var(--accent);
   margin-bottom: var(--gap);
   box-shadow: var(--shadow-xs);
 }
 
 .tier-banner--info {
-  border-left-color: var(--accent);
+  border-color: var(--accent-line, #cbd5e1);
 }
 
 .tier-banner--purple {
-  border-left-color: #7c3aed;
+  border-color: #ddd6fe;
 }
 
 .tier-banner__badges {
