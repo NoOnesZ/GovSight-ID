@@ -22,6 +22,7 @@ import {
   DownloadButton,
   EmptyState,
   ExternalSource,
+  GlossaryTerm,
   InfoNote,
   PeriodControls,
   ShareButton,
@@ -155,7 +156,7 @@ export function Profile({
         <div className="metrics">
           <div className="metric">
             <span className="metric__label">
-              <Wallet size={14} /> Total pagu belanja
+              <Wallet size={14} /> Total <GlossaryTerm term="pagu">pagu</GlossaryTerm> belanja
             </span>
             <strong
               className="metric__value"
@@ -167,7 +168,7 @@ export function Profile({
           </div>
           <div className="metric">
             <span className="metric__label">
-              <BarChart3 size={14} /> Realisasi belanja
+              <BarChart3 size={14} /> <GlossaryTerm term="realisasi">Realisasi</GlossaryTerm> belanja
             </span>
             <strong
               className="metric__value metric__value--accent"
@@ -201,7 +202,7 @@ export function Profile({
               />
             </span>
             <small className="metric__hint">
-              Realisasi dibagi pagu tahunan
+              <GlossaryTerm term="realisasi">Realisasi</GlossaryTerm> dibagi <GlossaryTerm term="pagu">pagu</GlossaryTerm> tahunan
             </small>
           </div>
         </div>
@@ -330,7 +331,7 @@ export function Profile({
                     letterSpacing: "-0.01em",
                   }}
                 >
-                  Estimasi Konversi Kapasitas Belanja Modal
+                  Estimasi Konversi Kapasitas <GlossaryTerm term="belanja-modal">Belanja Modal</GlossaryTerm>
                 </h3>
                 <p
                   style={{
@@ -340,7 +341,7 @@ export function Profile({
                     margin: "0 0 12px",
                   }}
                 >
-                  Realisasi belanja modal sebesar{" "}
+                  <GlossaryTerm term="realisasi">Realisasi</GlossaryTerm> <GlossaryTerm term="belanja-modal">belanja modal</GlossaryTerm> sebesar{" "}
                   <strong style={{ color: "var(--ink)", fontWeight: 600 }}>
                     {compactMoney(modalRealized)}
                   </strong>{" "}
@@ -384,7 +385,7 @@ export function Profile({
                       style={{
                         color: "var(--ink)",
                         fontWeight: 600,
-                        fontVariantNumeric: "tabular-nums",
+                        fontVariantNumeric: "tabular-nums lining-nums",
                         whiteSpace: "nowrap",
                       }}
                     >
@@ -418,7 +419,7 @@ export function Profile({
                       style={{
                         color: "var(--ink)",
                         fontWeight: 600,
-                        fontVariantNumeric: "tabular-nums",
+                        fontVariantNumeric: "tabular-nums lining-nums",
                         whiteSpace: "nowrap",
                       }}
                     >
@@ -452,7 +453,7 @@ export function Profile({
                       style={{
                         color: "var(--ink)",
                         fontWeight: 600,
-                        fontVariantNumeric: "tabular-nums",
+                        fontVariantNumeric: "tabular-nums lining-nums",
                         whiteSpace: "nowrap",
                       }}
                     >
@@ -487,7 +488,7 @@ export function Profile({
           <div className="card__head">
             <div>
               <h2 className="card__title">
-                Pagu dan realisasi menurut jenis belanja
+                <GlossaryTerm term="pagu">Pagu</GlossaryTerm> dan <GlossaryTerm term="realisasi">realisasi</GlossaryTerm> menurut jenis belanja
               </h2>
               <p className="card__sub">
                 Komposisi pada periode {months[month]} {year}.
@@ -500,8 +501,8 @@ export function Profile({
                 <thead>
                   <tr>
                     <th>Kategori</th>
-                    <th className="is-num">Porsi pagu</th>
-                    <th className="is-num">Porsi realisasi</th>
+                    <th className="is-num">Porsi <GlossaryTerm term="pagu">pagu</GlossaryTerm></th>
+                    <th className="is-num">Porsi <GlossaryTerm term="realisasi">realisasi</GlossaryTerm></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -510,9 +511,11 @@ export function Profile({
                     return (
                       <tr key={code}>
                         <th>
-                          {code === "modal"
-                            ? "Belanja modal"
-                            : "Belanja pegawai"}
+                          {code === "modal" ? (
+                            <GlossaryTerm term="belanja-modal">Belanja modal</GlossaryTerm>
+                          ) : (
+                            <GlossaryTerm term="belanja-pegawai">Belanja pegawai</GlossaryTerm>
+                          )}
                         </th>
                         <td className="is-num">
                           {formatFlagShare(shares.budget)}
@@ -563,7 +566,7 @@ export function Profile({
                     letterSpacing: "0.02em",
                   }}
                 >
-                  Rujukan UU No. 1/2022 (HKPD)
+                  Rujukan <GlossaryTerm term="uu-hkpd">UU No. 1/2022 (HKPD)</GlossaryTerm>
                 </span>
               </div>
 
@@ -586,20 +589,20 @@ export function Profile({
                     }}
                   >
                     <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--ink)" }}>
-                      Pasal 146 · Belanja Pegawai
+                      Pasal 146 · <GlossaryTerm term="belanja-pegawai">Belanja Pegawai</GlossaryTerm>
                     </span>
                     <strong
                       style={{
                         fontSize: "0.875rem",
                         fontWeight: 600,
                         color: "var(--ink)",
-                        fontVariantNumeric: "tabular-nums",
+                        fontVariantNumeric: "tabular-nums lining-nums",
                       }}
                     >
-                      {formatFlagShare(sharesPegawai.budget)} dari pagu
+                      {formatFlagShare(sharesPegawai.budget)} dari <GlossaryTerm term="pagu">pagu</GlossaryTerm>
                     </strong>
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--ink-3)", fontVariantNumeric: "tabular-nums" }}>
+                  <div style={{ fontSize: "0.75rem", color: "var(--ink-3)", fontVariantNumeric: "tabular-nums lining-nums" }}>
                     Peringkat #{pegawaiRank} tertinggi dari {periodSnapshots.length} daerah pantauan
                   </div>
                   <p
@@ -631,20 +634,20 @@ export function Profile({
                     }}
                   >
                     <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--ink)" }}>
-                      Pasal 147 · Belanja Modal
+                      Pasal 147 · <GlossaryTerm term="belanja-modal">Belanja Modal</GlossaryTerm>
                     </span>
                     <strong
                       style={{
                         fontSize: "0.875rem",
                         fontWeight: 600,
                         color: "var(--ink)",
-                        fontVariantNumeric: "tabular-nums",
+                        fontVariantNumeric: "tabular-nums lining-nums",
                       }}
                     >
-                      {formatFlagShare(sharesModal.budget)} dari pagu
+                      {formatFlagShare(sharesModal.budget)} dari <GlossaryTerm term="pagu">pagu</GlossaryTerm>
                     </strong>
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--ink-3)", fontVariantNumeric: "tabular-nums" }}>
+                  <div style={{ fontSize: "0.75rem", color: "var(--ink-3)", fontVariantNumeric: "tabular-nums lining-nums" }}>
                     Peringkat #{modalRank} tertinggi dari {periodSnapshots.length} daerah pantauan
                   </div>
                   <p
@@ -703,8 +706,8 @@ export function Profile({
                     <thead>
                       <tr>
                         <th>Periode</th>
-                        <th className="is-num">Pagu laporan</th>
-                        <th className="is-num">Realisasi kumulatif</th>
+                        <th className="is-num"><GlossaryTerm term="pagu">Pagu</GlossaryTerm> laporan</th>
+                        <th className="is-num"><GlossaryTerm term="realisasi">Realisasi</GlossaryTerm> kumulatif</th>
                         <th className="is-num">Serapan</th>
                       </tr>
                     </thead>
@@ -799,7 +802,7 @@ export function Profile({
                 <thead>
                   <tr>
                     <th>Tahun</th>
-                    <th className="is-num">Porsi belanja modal</th>
+                    <th className="is-num">Porsi <GlossaryTerm term="belanja-modal">belanja modal</GlossaryTerm></th>
                     <th>Sumber</th>
                   </tr>
                 </thead>
@@ -862,8 +865,8 @@ export function Profile({
                 <thead>
                   <tr>
                     <th>Tahun dan periode</th>
-                    <th className="is-num">Pagu tahunan</th>
-                    <th className="is-num">Realisasi</th>
+                    <th className="is-num"><GlossaryTerm term="pagu">Pagu</GlossaryTerm> tahunan</th>
+                    <th className="is-num"><GlossaryTerm term="realisasi">Realisasi</GlossaryTerm></th>
                     <th className="is-num">Serapan</th>
                   </tr>
                 </thead>

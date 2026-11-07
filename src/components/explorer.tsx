@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import Decimal from "decimal.js";
 import {
@@ -18,7 +18,9 @@ import {
   ChevronDown,
   CircleHelp,
   Landmark,
+  Scale,
   Search,
+  ShieldCheck,
   TriangleAlert,
   Wallet,
 } from "lucide-react";
@@ -48,6 +50,7 @@ import {
 } from "./shared";
 
 export function Explorer({ dataset }: { dataset: Dataset }) {
+  const [urgencyExpanded, setUrgencyExpanded] = useState(true);
   const { year, month, params, update, period, invalidPeriod } = useFilters();
   const query = params.get("q") ?? "";
   const kind = params.get("jenis") ?? "semua";
@@ -345,7 +348,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                       fontSize: "1.45rem",
                       fontWeight: 700,
                       letterSpacing: "-0.025em",
-                      fontVariantNumeric: "tabular-nums",
+                      fontVariantNumeric: "tabular-nums lining-nums",
                       display: "block",
                       margin: "4px 0 2px",
                       lineHeight: 1.15,
@@ -384,7 +387,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                         fontSize: "1.45rem",
                         fontWeight: 700,
                         letterSpacing: "-0.025em",
-                        fontVariantNumeric: "tabular-nums",
+                        fontVariantNumeric: "tabular-nums lining-nums",
                         lineHeight: 1.15,
                       }}
                     >
@@ -504,7 +507,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                   >
                     <span className={`dot dot--${cat.code}`} />
                     <span>{cat.label}</span>
-                    <strong style={{ fontVariantNumeric: "tabular-nums" }}>
+                    <strong style={{ fontVariantNumeric: "tabular-nums lining-nums" }}>
                       {percent(cat.share)}
                     </strong>
                   </span>
@@ -513,6 +516,170 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Komponen Visual Urgensi & Latar Belakang Publik */}
+      <section
+        className="urgency-panel"
+        aria-labelledby="urgensi-pengawasan-heading"
+      >
+        <div className="urgency-panel__head">
+          <div className="urgency-panel__titles">
+            <div className="urgency-panel__badge-row">
+              <span className="chip chip--accent chip--square">
+                Latar Belakang & Tujuan GovSight ID
+              </span>
+              <span className="chip chip--sunk chip--square">
+                Fiskal 10 Daerah Sumut
+              </span>
+            </div>
+            <h2
+              id="urgensi-pengawasan-heading"
+              className="urgency-panel__title"
+            >
+              Mengapa Pengawasan Belanja Daerah Mendesak?
+            </h2>
+            <p className="urgency-panel__lead">
+              Anggaran pendapatan dan belanja daerah (APBD) adalah mandat
+              pelayanan publik dari keringat warga. Tanpa transparansi dan
+              partisipasi aktif, alokasi raksasa ini rentan bocor, salah arah,
+              atau dipaksakan di pengujung tahun anggaran.
+            </p>
+          </div>
+          <div className="urgency-panel__actions">
+            <button
+              type="button"
+              className="btn btn--secondary btn--sm"
+              onClick={() => setUrgencyExpanded((prev) => !prev)}
+              aria-expanded={urgencyExpanded}
+              aria-controls="urgensi-pillars-grid"
+            >
+              <span>
+                {urgencyExpanded ? "Ringkas tampilan" : "Buka 3 pilar urgensi"}
+              </span>
+              <ChevronDown
+                size={14}
+                style={{
+                  transform: urgencyExpanded
+                    ? "rotate(180deg)"
+                    : "rotate(0deg)",
+                  transition: "transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+                }}
+              />
+            </button>
+          </div>
+        </div>
+
+        {urgencyExpanded ? (
+          <div
+            id="urgensi-pillars-grid"
+            className="urgency-grid"
+            role="region"
+            aria-label="Tiga Pilar Urgensi Pengawasan Belanja Daerah"
+          >
+            {/* Pilar 1: Skala Anggaran Raksasa */}
+            <div className="urgency-card">
+              <div className="urgency-card__top">
+                <span className="chip chip--square chip--sunk">Pilar 1</span>
+                <span className="urgency-card__icon" aria-hidden="true">
+                  <Wallet size={16} />
+                </span>
+              </div>
+              <div className="urgency-card__metric">
+                &gt;Rp 18 Triliun
+                <span className="urgency-card__metric-sub">/tahun</span>
+              </div>
+              <h3 className="urgency-card__title">Skala Anggaran Raksasa</h3>
+              <p className="urgency-card__text">
+                Akumulasi pagu 10 daerah pantauan di Sumut melampaui Rp 18
+                Triliun/tahun. Tanpa pengawasan publik yang aktif, alokasi
+                raksasa ini rentan tidak tepat sasaran.
+              </p>
+              <div className="urgency-card__foot">
+                <span className="dot dot--budget" />
+                <span>Konsolidasi 10 APBD daerah pantauan</span>
+              </div>
+            </div>
+
+            {/* Pilar 2: Pola Anomali Akhir Tahun */}
+            <div className="urgency-card">
+              <div className="urgency-card__top">
+                <span className="chip chip--square chip--warn">Pilar 2</span>
+                <span
+                  className="urgency-card__icon urgency-card__icon--warn"
+                  aria-hidden="true"
+                >
+                  <CalendarRange size={16} />
+                </span>
+              </div>
+              <div className="urgency-card__metric urgency-card__metric--warn">
+                &gt;30% di Nov–Des
+                <span className="urgency-card__metric-sub">
+                  lonjakan belanja modal
+                </span>
+              </div>
+              <h3 className="urgency-card__title">Pola Anomali Akhir Tahun</h3>
+              <p className="urgency-card__text">
+                Tren realisasi belanja modal fisik kerap melonjak drastis pada
+                November–Desember (&gt;30% dari total realisasi setahun),
+                memicu risiko proyek kejar tayang dan penurunan kualitas fisik
+                infrastruktur.
+              </p>
+              <div className="urgency-card__foot">
+                <span className="dot dot--modal" />
+                <span>Risiko kejar tayang & penurunan kualitas fisik</span>
+              </div>
+            </div>
+
+            {/* Pilar 3: Menegakkan Amanat UU HKPD No. 1/2022 */}
+            <div className="urgency-card">
+              <div className="urgency-card__top">
+                <span className="chip chip--square chip--ok">Pilar 3</span>
+                <span
+                  className="urgency-card__icon urgency-card__icon--ok"
+                  aria-hidden="true"
+                >
+                  <Scale size={16} />
+                </span>
+              </div>
+              <div className="urgency-card__metric urgency-card__metric--ok">
+                Modal ≥40% · Pegawai ≤30%
+              </div>
+              <h3 className="urgency-card__title">
+                Menegakkan Amanat UU HKPD No. 1/2022
+              </h3>
+              <p className="urgency-card__text">
+                Regulasi nasional mewajibkan belanja modal infrastruktur
+                minimal 40% dan membatasi belanja pegawai maksimal 30%.
+                GovSight ID mengaudit kepatuhan ini secara objektif.
+              </p>
+              <div className="urgency-card__foot">
+                <span className="dot dot--pegawai" />
+                <span>Mandat nasional Pasal 146 & 147 UU HKPD</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="urgency-collapsed-bar">
+            <div className="urgency-collapsed-bar__summary">
+              <span className="chip chip--square chip--warn">
+                3 Fakta Kritis:
+              </span>
+              <span className="urgency-collapsed-bar__text">
+                Pagu agregat &gt;Rp 18T/tahun · Lonjakan modal akhir tahun &gt;30%
+                · Audit mandat UU HKPD No. 1/2022 (Infrastruktur 40% & Pegawai
+                30%)
+              </span>
+            </div>
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm"
+              onClick={() => setUrgencyExpanded(true)}
+            >
+              Buka 3 pilar urgensi →
+            </button>
+          </div>
+        )}
       </section>
 
       <section id="jelajah">

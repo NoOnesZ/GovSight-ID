@@ -223,7 +223,7 @@ export function YearEnd({ dataset, code }: { dataset: Dataset; code: string }) {
                         color: "var(--ink)",
                         lineHeight: 1,
                         letterSpacing: "-0.03em",
-                        fontVariantNumeric: "tabular-nums",
+                        fontVariantNumeric: "tabular-nums lining-nums",
                       }}
                     >
                       {flag.share !== null ? formatFlagShare(flag.share) : "—"}
@@ -295,7 +295,7 @@ export function YearEnd({ dataset, code }: { dataset: Dataset; code: string }) {
                           fontSize: "0.875rem",
                           color: "var(--ink)",
                           fontWeight: 600,
-                          fontVariantNumeric: "tabular-nums",
+                          fontVariantNumeric: "tabular-nums lining-nums",
                           marginTop: "4px",
                           display: "block",
                         }}
@@ -323,7 +323,7 @@ export function YearEnd({ dataset, code }: { dataset: Dataset; code: string }) {
                           fontSize: "0.875rem",
                           color: "var(--ink)",
                           fontWeight: 600,
-                          fontVariantNumeric: "tabular-nums",
+                          fontVariantNumeric: "tabular-nums lining-nums",
                           marginTop: "4px",
                           display: "block",
                         }}

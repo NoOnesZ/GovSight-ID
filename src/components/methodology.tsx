@@ -1,14 +1,22 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import {
   ArrowDownToLine,
+  ArrowLeft,
+  ArrowRight,
   ArrowUpRight,
   Check,
+  Compass,
+  Cpu,
   Database,
+  FileCheck2,
   FileText,
   GraduationCap,
   Landmark,
   RefreshCw,
+  Scale,
   ShieldCheck,
 } from "lucide-react";
 import type { Dataset } from "@/lib/types";
@@ -24,7 +32,190 @@ import {
   useFilters,
 } from "./shared";
 
+const pipelineStages = [
+  {
+    step: "01",
+    phase: "Ingestion",
+    title: "Data Asli & Keterbukaan",
+    badge: "Sumber Terverifikasi",
+    summary: "DJPK Kemenkeu RI (350 snapshot terverifikasi SHA-256)",
+    icon: Database,
+    bullets: [
+      {
+        label: "Sumber Resmi",
+        desc: "DJPK Kemenkeu RI (350 snapshot terverifikasi SHA-256)",
+      },
+      {
+        label: "Format Data",
+        desc: "XML & CSV resmi tanpa modifikasi sepihak",
+      },
+    ],
+    technicalDetails: {
+      headline: "Ingestion Data Tanpa Modifikasi & Validasi Kriptografis",
+      description:
+        "GovSight ID mengumpulkan berkas APBD langsung dari portal SIKD DJPK Kementerian Keuangan RI. Setiap berkas diuji keasliannya dan disimpan dalam format aslinya agar dapat diverifikasi ulang oleh publik secara independen.",
+      highlights: [
+        {
+          term: "Cakupan Snapshot",
+          value: "350 snapshot APBD (2023 s.d. 2026) dari 10 daerah Sumut",
+        },
+        {
+          term: "Verifikasi Integritas",
+          value: "Checksum SHA-256 dihitung dan dicocokkan pada tiap unduhan",
+        },
+        {
+          term: "Format Asli",
+          value: "XML & CSV resmi pemerintah tanpa normalisasi sepihak",
+        },
+      ],
+      actionLink: {
+        label: "Periksa tabel berkas asli & hash di bawah",
+        href: "#sumber-data",
+      },
+    },
+  },
+  {
+    step: "02",
+    phase: "Data Core",
+    title: "Komputasi Presisi & Mesin Indikator",
+    badge: "Decimal.js Engine",
+    summary: "Decimal.js (Presisi mutlak rupiah tanpa rounding mengambang)",
+    icon: Cpu,
+    bullets: [
+      {
+        label: "Engine Komputasi",
+        desc: "Decimal.js (Presisi mutlak rupiah tanpa rounding mengambang)",
+      },
+      {
+        label: "Indikator Audit",
+        desc: "Audit batas Pasal 146 & 147 UU HKPD serta ambang lonjakan belanja modal akhir tahun",
+      },
+    ],
+    technicalDetails: {
+      headline: "Arsitektur Komputasi Keuangan Bebas Galat Floating-Point",
+      description:
+        "Perhitungan anggaran triliunan rupiah tidak boleh terdistorsi oleh galat pembulatan floating-point bawaan JavaScript (seperti 0.1 + 0.2 ≠ 0.3). Seluruh formula keuangan dihitung dengan pustaka Decimal.js presisi arbitrer.",
+      highlights: [
+        {
+          term: "Engine Presisi",
+          value: "Decimal.js untuk seluruh agregasi, rasio serapan, dan selisih rupiah",
+        },
+        {
+          term: "Pasal 146 UU HKPD",
+          value: "Batas belanja pegawai maksimal 30% dari total APBD",
+        },
+        {
+          term: "Pasal 147 UU HKPD",
+          value: "Kewajiban belanja modal infrastruktur minimal 40%",
+        },
+        {
+          term: "Ambang Modal Akhir TA",
+          value: "Deteksi lonjakan belanja modal >40% dalam 61 hari terakhir (Nov–Des)",
+        },
+      ],
+      actionLink: {
+        label: "Pelajari rumus detail serapan & modal",
+        href: "#rumus-indikator",
+      },
+    },
+  },
+  {
+    step: "03",
+    phase: "Navigation & Surfaces",
+    title: "Ruang Eksplorasi Publik",
+    badge: "Sitemap 3 Halaman",
+    summary: "Jelajah 10 Daerah (/), Profil Lengkap (/daerah/[kode]), Komparasi (/bandingkan)",
+    icon: Compass,
+    bullets: [
+      {
+        label: "Jelajah 10 Daerah (/)",
+        desc: "Ringkasan fiskal makro, pencarian, dan filter penanda kritis",
+      },
+      {
+        label: "Profil Lengkap (/daerah/[kode])",
+        desc: "Tren bulanan, riwayat modal 3 tahun & lembar telaah kritis",
+      },
+      {
+        label: "Komparasi Berdampingan (/bandingkan)",
+        desc: "Perbandingan paralel 2–3 daerah pada periode yang sama",
+      },
+    ],
+    technicalDetails: {
+      headline: "Sitemap Terstruktur untuk Eksplorasi Multi-Sudut Pandang",
+      description:
+        "GovSight ID membagi antarmuka menjadi 3 ruang eksplorasi terpadu yang saling terhubung melalui parameter periode URL yang sinkron:",
+      surfaces: [
+        {
+          title: "Jelajah 10 Daerah",
+          path: "/",
+          desc: "Tabel konsolidasi 10 pemda, pemfilteran kota/kabupaten, dan ringkasan fiskal makro.",
+        },
+        {
+          title: "Profil Lengkap Daerah",
+          path: "/daerah/0215",
+          desc: "Grafik serapan per bulan, persentase modal 3 tahun berturut-turut, serta evaluasi ambang HKPD.",
+        },
+        {
+          title: "Komparasi Berdampingan",
+          path: "/bandingkan",
+          desc: "Matriks perbandingan metrik fiskal berdampingan antara 2 hingga 3 daerah secara bersamaan.",
+        },
+      ],
+      actionLink: {
+        label: "Kunjungi halaman Jelajah Anggaran",
+        href: "/",
+      },
+    },
+  },
+  {
+    step: "04",
+    phase: "Actionable Output",
+    title: "Advokasi & Tindak Lanjut Nyata",
+    badge: "Actionable Output",
+    summary: "Unduh CSV diaudit, Cetak Lembar Pertanyaan PDF, Integrasi SP4N-LAPOR!",
+    icon: FileCheck2,
+    bullets: [
+      {
+        label: "Unduh CSV Diaudit",
+        desc: "Dataset tabular tervalidasi siap olah untuk jurnalis data & peneliti",
+      },
+      {
+        label: "Cetak Lembar Pertanyaan PDF",
+        desc: "Brief advokasi siap cetak untuk forum reses DPRD & musrenbang",
+      },
+      {
+        label: "Integrasi SP4N-LAPOR!",
+        desc: "Rujukan rekening belanja & nominal bukti untuk aduan resmi lapor.go.id",
+      },
+    ],
+    technicalDetails: {
+      headline: "Mengubah Angka Kering Menjadi Daya Tawar Advokasi Warga",
+      description:
+        "GovSight ID dirancang bukan sekadar sebagai dashboard pasif, melainkan instrumen aksi warga dan parlemen lokal:",
+      highlights: [
+        {
+          term: "Data Terbuka Diaudit",
+          value: "Ekspor CSV konsisten tanpa pembulatan mata uang",
+        },
+        {
+          term: "Instrumen Pengawasan Dewan",
+          value: "Lembar telaah kritis otomatis ramah cetak (Print/PDF)",
+        },
+        {
+          term: "Aduan Publik Berbasis Bukti",
+          value: "Kanal aduan resmi SP4N-LAPOR! dengan rujukan data akurat",
+        },
+      ],
+      actionLink: {
+        label: "Pelajari 3 kanal partisipasi warga di bawah",
+        href: "#kanal-aduan",
+      },
+    },
+  },
+];
+
 export function Methodology({ dataset }: { dataset: Dataset }) {
+  const [activeStage, setActiveStage] = useState<number>(0);
   const { year, month, update, invalidPeriod } = useFilters();
   if (invalidPeriod) return <UnavailablePeriod />;
   const snapshots = dataset.snapshots.filter(
@@ -69,7 +260,213 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </a>
         </div>
 
-        <div className="grid-2">
+        {/* Peta Arsitektur, Alur Data & Sitemap GovSight ID */}
+        <section
+          id="arsitektur-sitemap"
+          className="pipeline-section"
+          aria-labelledby="arsitektur-sitemap-heading"
+        >
+          <div className="pipeline-header">
+            <div className="pipeline-header__badge-row">
+              <span className="chip chip--accent chip--square">
+                Arsitektur & Sitemap
+              </span>
+              <span className="chip chip--sunk chip--square">
+                Alur Data 4 Tahap
+              </span>
+            </div>
+            <h2 id="arsitektur-sitemap-heading" className="pipeline-header__title">
+              Peta Arsitektur, Alur Data & Sitemap GovSight ID
+            </h2>
+            <p className="pipeline-header__desc">
+              Dari unduhan data mentah Kemenkeu hingga instrumen advokasi warga di lapangan.
+              Klik salah satu tahapan di bawah untuk menelaah spesifikasi teknis dan alur integrasinya.
+            </p>
+          </div>
+
+          {/* Visual Stepper / Timeline Nodes */}
+          <div
+            className="pipeline-stepper"
+            role="tablist"
+            aria-label="Tahapan Alur Data & Sitemap GovSight ID"
+          >
+            {pipelineStages.map((stage, idx) => {
+              const Icon = stage.icon;
+              const isActive = activeStage === idx;
+              return (
+                <button
+                  key={stage.step}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls={`pipeline-panel-${stage.step}`}
+                  id={`pipeline-tab-${stage.step}`}
+                  className={`pipeline-node ${isActive ? "is-active" : ""}`}
+                  onClick={() => setActiveStage(idx)}
+                >
+                  <div className="pipeline-node__top">
+                    <span className="pipeline-node__step">Tahap {stage.step}</span>
+                    <Icon size={16} />
+                  </div>
+                  <div>
+                    <span className="pipeline-node__phase">{stage.phase}</span>
+                    <h3 className="pipeline-node__title">{stage.title}</h3>
+                  </div>
+                  <div className="pipeline-node__summary">
+                    {stage.bullets.map((b, i) => (
+                      <div key={i} style={{ marginBottom: 4 }}>
+                        <strong style={{ fontSize: "0.72rem", color: "var(--ink)" }}>• {b.label}:</strong>{" "}
+                        <span style={{ fontSize: "0.72rem" }}>{b.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <span className="pipeline-node__badge">{stage.badge}</span>
+                  {idx < pipelineStages.length - 1 && (
+                    <span
+                      className="pipeline-node__connector-arrow"
+                      aria-hidden="true"
+                    >
+                      <ArrowRight size={10} />
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Interactive Detail Panel for Focused Stage */}
+          {(() => {
+            const current = pipelineStages[activeStage];
+            const CurrentIcon = current.icon;
+            return (
+              <div
+                id={`pipeline-panel-${current.step}`}
+                role="tabpanel"
+                aria-labelledby={`pipeline-tab-${current.step}`}
+                className="pipeline-detail"
+              >
+                <div className="pipeline-detail__top">
+                  <div className="pipeline-detail__header-title">
+                    <span className="chip chip--accent chip--square">
+                      Tahap {current.step} / 04
+                    </span>
+                    <span className="chip chip--sunk chip--square">
+                      {current.phase}
+                    </span>
+                    <strong style={{ fontSize: "0.9375rem", color: "var(--ink)" }}>
+                      {current.title}
+                    </strong>
+                  </div>
+                  <div className="pipeline-detail__nav">
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm"
+                      onClick={() => setActiveStage((p) => Math.max(0, p - 1))}
+                      disabled={activeStage === 0}
+                      aria-label="Tahap sebelumnya"
+                    >
+                      <ArrowLeft size={13} /> Sebelumnya
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm"
+                      onClick={() =>
+                        setActiveStage((p) =>
+                          Math.min(pipelineStages.length - 1, p + 1),
+                        )
+                      }
+                      disabled={activeStage === pipelineStages.length - 1}
+                      aria-label="Tahap berikutnya"
+                    >
+                      Berikutnya <ArrowRight size={13} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="pipeline-detail__content">
+                  {/* Left Column: Specifications & Engine */}
+                  <div className="pipeline-spec-card">
+                    <span className="pipeline-spec-card__title">
+                      <CurrentIcon size={14} /> Ringkasan Alur & Indikator
+                    </span>
+                    <ul className="pipeline-spec-list">
+                      {current.bullets.map((b, i) => (
+                        <li key={i} className="pipeline-spec-item is-highlight">
+                          <span className="pipeline-spec-item__label">{b.label}</span>
+                          <span className="pipeline-spec-item__desc">{b.desc}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "var(--ink-2)",
+                        lineHeight: 1.6,
+                        margin: "4px 0 0",
+                      }}
+                    >
+                      {current.technicalDetails.description}
+                    </p>
+                  </div>
+
+                  {/* Right Column: Technical Architecture or Surfaces */}
+                  <div className="pipeline-spec-card">
+                    <span className="pipeline-spec-card__title">
+                      <Check size={14} /> Detail Teknis & Akses Navigasi
+                    </span>
+
+                    {current.technicalDetails.surfaces ? (
+                      <div className="pipeline-pills" style={{ flexDirection: "column", gap: 8 }}>
+                        {current.technicalDetails.surfaces.map((s, idx) => (
+                          <Link
+                            key={idx}
+                            href={s.path}
+                            className="pipeline-pill"
+                            style={{ display: "flex", justifyContent: "space-between", padding: "8px 12px" }}
+                          >
+                            <div>
+                              <strong style={{ display: "block", fontSize: "0.8125rem", color: "var(--ink)" }}>
+                                {s.title}
+                              </strong>
+                              <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
+                                {s.desc}
+                              </span>
+                            </div>
+                            <code>{s.path}</code>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <ul className="pipeline-spec-list">
+                        {current.technicalDetails.highlights?.map((h, i) => (
+                          <li key={i} className="pipeline-spec-item">
+                            <span className="pipeline-spec-item__label">{h.term}</span>
+                            <span className="pipeline-spec-item__desc">{h.value}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {current.technicalDetails.actionLink && (
+                      <div style={{ marginTop: "auto", paddingTop: 8 }}>
+                        <a
+                          href={current.technicalDetails.actionLink.href}
+                          className="btn btn--secondary btn--sm"
+                          style={{ width: "100%", justifyContent: "center" }}
+                        >
+                          {current.technicalDetails.actionLink.label}{" "}
+                          <ArrowRight size={13} />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </section>
+
+        <div id="rumus-indikator" className="grid-2">
           <section className="card">
             <div className="card__body">
               <span className="chip chip--sunk">Pelaksanaan anggaran</span>
@@ -490,7 +887,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
             <div className="divider" style={{ margin: "32px 0 28px" }} />
 
             {/* Tiga Kanal Resmi Partisipasi & Pengaduan Warga */}
-            <div>
+            <div id="kanal-aduan">
               <h3
                 style={{
                   fontSize: "1rem",
@@ -661,7 +1058,7 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </div>
         </section>
 
-        <section className="card">
+        <section id="sumber-data" className="card">
           <div className="card__head">
             <div>
               <h2 className="card__title">Sumber yang bisa kamu periksa</h2>

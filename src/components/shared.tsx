@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -421,5 +421,257 @@ export function ExternalSource({ snapshot }: { snapshot: Snapshot }) {
       <span>Buka sumber asli</span>
       <ExternalLink size={13} style={{ flexShrink: 0 }} />
     </a>
+  );
+}
+
+export type GlossaryKey =
+  | "pagu"
+  | "realisasi"
+  | "belanja-modal"
+  | "modal"
+  | "belanja-pegawai"
+  | "pegawai"
+  | "uu-hkpd"
+  | "hkpd"
+  | "silpa";
+
+export interface GlossaryDefinition {
+  term: string;
+  definition: string;
+  lawRef?: string;
+}
+
+export const GLOSSARY: Record<string, GlossaryDefinition> = {
+  pagu: {
+    term: "Pagu",
+    definition:
+      "Total batas anggaran belanja yang direncanakan selama satu tahun anggaran.",
+  },
+  realisasi: {
+    term: "Realisasi",
+    definition:
+      "Jumlah uang kas daerah yang telah dicairkan dan dibelanjakan hingga bulan pelaporan.",
+  },
+  "belanja-modal": {
+    term: "Belanja Modal",
+    definition:
+      "Anggaran pembangunan aset fisik berumur panjang (jalan, jembatan, gedung sekolah, puskesmas).",
+  },
+  modal: {
+    term: "Belanja Modal",
+    definition:
+      "Anggaran pembangunan aset fisik berumur panjang (jalan, jembatan, gedung sekolah, puskesmas).",
+  },
+  "belanja-pegawai": {
+    term: "Belanja Pegawai",
+    definition:
+      "Biaya kompensasi ASN/PNS daerah (gaji, tunjangan, uang lembur).",
+  },
+  pegawai: {
+    term: "Belanja Pegawai",
+    definition:
+      "Biaya kompensasi ASN/PNS daerah (gaji, tunjangan, uang lembur).",
+  },
+  "uu-hkpd": {
+    term: "UU HKPD (No. 1/2022)",
+    definition:
+      "Undang-Undang Hubungan Keuangan antara Pemerintah Pusat dan Pemerintahan Daerah yang mewajibkan belanja modal min. 40% dan belanja pegawai maks. 30%.",
+    lawRef: "UU No. 1/2022 (Pasal 146 & 147)",
+  },
+  hkpd: {
+    term: "UU HKPD (No. 1/2022)",
+    definition:
+      "Undang-Undang Hubungan Keuangan antara Pemerintah Pusat dan Pemerintahan Daerah yang mewajibkan belanja modal min. 40% dan belanja pegawai maks. 30%.",
+    lawRef: "UU No. 1/2022 (Pasal 146 & 147)",
+  },
+  silpa: {
+    term: "SiLPA",
+    definition:
+      "Sisa Lebih Pembiayaan Anggaran, sisa kas APBD pada akhir tahun yang belum terpakai.",
+  },
+};
+
+export function GlossaryTerm({
+  term,
+  children,
+  definition,
+  title,
+  position = "top",
+}: {
+  term?: GlossaryKey | string;
+  children?: React.ReactNode;
+  definition?: string;
+  title?: string;
+  position?: "top" | "bottom";
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
+  const containerRef = useRef<HTMLSpanElement>(null);
+
+  const key = term ? term.toLowerCase().trim() : "";
+  const entry = GLOSSARY[key];
+  const itemTitle =
+    title ??
+    entry?.term ??
+    (typeof children === "string" ? children : "Istilah APBD");
+  const itemDefinition = definition ?? entry?.definition ?? "";
+  const lawRef = entry?.lawRef;
+
+  const isOpen = isHovered || isPinned;
+
+  useEffect(() => {
+    if (!isPinned) return;
+    function handleOutside(e: MouseEvent | TouchEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setIsPinned(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("touchstart", handleOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("touchstart", handleOutside);
+    };
+  }, [isPinned]);
+
+  return (
+    <span
+      ref={containerRef}
+      className="glossary-term"
+      tabIndex={0}
+      role="button"
+      aria-expanded={isOpen}
+      aria-haspopup="dialog"
+      aria-label={`${itemTitle}: ${itemDefinition}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
+      onClick={(e) => {
+        e.stopPropagation();
+        setIsPinned((prev) => !prev);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setIsPinned((prev) => !prev);
+        } else if (e.key === "Escape") {
+          setIsPinned(false);
+          setIsHovered(false);
+        }
+      }}
+      style={{
+        borderBottom: "1px dotted var(--ink-4)",
+        cursor: "help",
+        position: "relative",
+        display: "inline-block",
+        lineHeight: "inherit",
+        color: "inherit",
+        fontWeight: "inherit",
+      }}
+    >
+      {children ?? entry?.term ?? term}
+      {isOpen && itemDefinition && (
+        <span
+          role="tooltip"
+          className={`glossary-popover ${position === "bottom" ? "glossary-popover--bottom" : ""}`}
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            position: "absolute",
+            bottom: position === "bottom" ? "auto" : "calc(100% + 8px)",
+            top: position === "bottom" ? "calc(100% + 8px)" : "auto",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: "var(--paper)",
+            color: "var(--ink)",
+            border: "1px solid var(--line)",
+            borderRadius: "var(--r-sm, 7px)",
+            boxShadow: "0 4px 18px rgba(28, 27, 25, 0.12)",
+            padding: "9px 13px",
+            minWidth: "210px",
+            maxWidth: "min(290px, 85vw)",
+            width: "max-content",
+            zIndex: 1000,
+            fontSize: "0.75rem",
+            lineHeight: 1.45,
+            fontWeight: 400,
+            textAlign: "left",
+            whiteSpace: "normal",
+            pointerEvents: "auto",
+            display: "block",
+            letterSpacing: "normal",
+            textTransform: "none",
+          }}
+        >
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "8px",
+              marginBottom: "5px",
+              borderBottom: "1px solid var(--line)",
+              paddingBottom: "4px",
+            }}
+          >
+            <strong
+              style={{
+                fontWeight: 600,
+                color: "var(--ink)",
+                fontSize: "0.8125rem",
+              }}
+            >
+              {itemTitle}
+            </strong>
+            <span
+              style={{ display: "flex", alignItems: "center", gap: "6px" }}
+            >
+              {lawRef && (
+                <span
+                  style={{
+                    fontSize: "0.6875rem",
+                    fontWeight: 600,
+                    color: "var(--accent)",
+                    backgroundColor: "var(--accent-tint)",
+                    padding: "1px 5px",
+                    borderRadius: "3px",
+                  }}
+                >
+                  {lawRef}
+                </span>
+              )}
+              {isPinned && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPinned(false);
+                    setIsHovered(false);
+                  }}
+                  aria-label="Tutup popover"
+                  style={{
+                    background: "transparent",
+                    border: 0,
+                    padding: "0 2px",
+                    cursor: "pointer",
+                    color: "var(--ink-3)",
+                    fontSize: "0.75rem",
+                    lineHeight: 1,
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </span>
+          </span>
+          <span style={{ color: "var(--ink-2)", display: "block" }}>
+            {itemDefinition}
+          </span>
+        </span>
+      )}
+    </span>
   );
 }

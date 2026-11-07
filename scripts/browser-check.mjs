@@ -58,7 +58,7 @@ try {
     () => document.querySelectorAll(".region-table tbody tr").length === 1,
   );
   assert.match(page.url(), /q=Binjai/);
-  await page.getByLabel("Tahun anggaran").selectOption("2025");
+  await page.getByLabel("Tahun anggaran", { exact: true }).selectOption("2025");
   await page.waitForURL(/tahun=2025/);
   await page.waitForFunction(() =>
     document
@@ -98,7 +98,7 @@ try {
     "20",
   );
   assert.equal(await page.locator("#riwayat-tahunan tbody tr").count(), 3);
-  await page.getByLabel("Tahun anggaran").selectOption("2026");
+  await page.getByLabel("Tahun anggaran", { exact: true }).selectOption("2026");
   await page.waitForURL(/tahun=2026/);
   await page.waitForFunction(
     () =>

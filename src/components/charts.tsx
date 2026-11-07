@@ -44,7 +44,7 @@ const tooltipStyle = {
   padding: "8px 10px",
   boxShadow:
     "0 2px 4px -2px rgba(28,27,25,.06), 0 8px 20px -10px rgba(28,27,25,.16)",
-  fontVariantNumeric: "tabular-nums",
+  fontVariantNumeric: "tabular-nums lining-nums",
 } as const;
 
 const tooltipLabelStyle = {
