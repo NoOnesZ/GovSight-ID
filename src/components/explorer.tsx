@@ -42,7 +42,10 @@ import {
 } from "@/lib/format";
 import { percentage, sumAmounts } from "@/lib/data-core";
 import { ChartLegend, SpendingChart, chartColors } from "./charts";
-import { RegionalSumateraMatrix, NationalRoadmapView } from "./scalability-views";
+import {
+  RegionalSumateraMatrix,
+  NationalRoadmapView,
+} from "./scalability-views";
 import {
   DownloadButton,
   EmptyState,
@@ -457,7 +460,8 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
             unduh.
           </p>
           <p className="hero__byline">
-            Inisiatif Independen Pengawasan Anggaran Publik Sumatera Utara · Berbasis Data Resmi SIKD Kemenkeu
+            Inisiatif Independen Pengawasan Anggaran Publik Sumatera Utara ·
+            Berbasis Data Resmi SIKD Kemenkeu
           </p>
           <div className="hero__actions">
             <a className="btn btn--primary" href="#jelajah">
@@ -478,7 +482,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                   {regions.length} Pemda Terpantau · {periodLabel(year, month)}
                 </span>
               </div>
-              <span className="chip chip--ok chip--square">Konsolidasi Resmi SIKD</span>
+              <span className="chip chip--ok chip--square">
+                Konsolidasi Resmi SIKD
+              </span>
             </div>
 
             <div
@@ -596,7 +602,10 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                         gap: "5px",
                       }}
                     >
-                      <TriangleAlert size={12} style={{ color: "var(--warn-ink)" }} />
+                      <TriangleAlert
+                        size={12}
+                        style={{ color: "var(--warn-ink)" }}
+                      />
                       Sorotan Penanda Kritis ({latestCompleteYear})
                     </span>
                     <strong
@@ -674,7 +683,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                   >
                     <span className={`dot dot--${cat.code}`} />
                     <span>{cat.label}</span>
-                    <strong style={{ fontVariantNumeric: "tabular-nums lining-nums" }}>
+                    <strong
+                      style={{ fontVariantNumeric: "tabular-nums lining-nums" }}
+                    >
                       {percent(cat.share)}
                     </strong>
                   </span>
@@ -780,8 +791,8 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
               <h3 className="urgency-card__title">Pola Anomali Akhir Tahun</h3>
               <p className="urgency-card__text">
                 Tren realisasi belanja modal fisik kerap melonjak drastis pada
-                November–Desember (&gt;30% dari total realisasi setahun),
-                memicu risiko proyek kejar tayang dan penurunan kualitas fisik
+                November–Desember (&gt;30% dari total realisasi setahun), memicu
+                risiko proyek kejar tayang dan penurunan kualitas fisik
                 infrastruktur.
               </p>
               <div className="urgency-card__foot">
@@ -808,9 +819,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 Menegakkan Amanat UU HKPD No. 1/2022
               </h3>
               <p className="urgency-card__text">
-                Regulasi nasional mewajibkan belanja modal infrastruktur
-                minimal 40% dan membatasi belanja pegawai maksimal 30%.
-                GovSight ID mengaudit kepatuhan ini secara objektif.
+                Regulasi nasional mewajibkan belanja modal infrastruktur minimal
+                40% dan membatasi belanja pegawai maksimal 30%. GovSight ID
+                mengaudit kepatuhan ini secara objektif.
               </p>
               <div className="urgency-card__foot">
                 <span className="dot dot--pegawai" />
@@ -825,9 +836,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 3 Fakta Kritis:
               </span>
               <span className="urgency-collapsed-bar__text">
-                Pagu agregat &gt;Rp 70T/tahun se-Sumut · Lonjakan modal akhir tahun &gt;30%
-                · Audit mandat UU HKPD No. 1/2022 (Infrastruktur 40% & Pegawai
-                30%)
+                Pagu agregat &gt;Rp 70T/tahun se-Sumut · Lonjakan modal akhir
+                tahun &gt;30% · Audit mandat UU HKPD No. 1/2022 (Infrastruktur
+                40% & Pegawai 30%)
               </span>
             </div>
             <button
@@ -874,9 +885,12 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
               </span>
             </div>
             <strong className="scope-card__title">Sumatera Utara</strong>
-            <span className="scope-card__meta">33 Daerah (8 Kota · 25 Kabupaten)</span>
+            <span className="scope-card__meta">
+              33 Daerah (8 Kota · 25 Kabupaten)
+            </span>
             <p className="scope-card__desc">
-              Audit granular SIKD: 10 prioritas audit SHA-256 dan 23 pemda ekspansi modular tahap 2.
+              Audit granular SIKD: 10 prioritas audit SHA-256 dan 23 pemda
+              ekspansi modular tahap 2.
             </p>
           </button>
 
@@ -897,7 +911,8 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
             <strong className="scope-card__title">Pulau Sumatera</strong>
             <span className="scope-card__meta">10 Provinsi · 154 Daerah</span>
             <p className="scope-card__desc">
-              Matriks komparasi fiskal 10 provinsi se-Sumatera dan status pipeline ingestion modular.
+              Matriks komparasi fiskal 10 provinsi se-Sumatera dan status
+              pipeline ingestion modular.
             </p>
           </button>
 
@@ -918,7 +933,8 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
             <strong className="scope-card__title">Seluruh Indonesia</strong>
             <span className="scope-card__meta">38 Provinsi · 514 Daerah</span>
             <p className="scope-card__desc">
-              Roadmap pengawasan agregat APBD Rp 1,15 Kuadriliun di 6 gugus kepulauan Nusantara.
+              Roadmap pengawasan agregat APBD Rp 1,15 Kuadriliun di 6 gugus
+              kepulauan Nusantara.
             </p>
           </button>
         </div>
@@ -952,9 +968,13 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
         </SectionHeading>
 
         {tier === "2" ? (
-          <RegionalSumateraMatrix />
+          <RegionalSumateraMatrix
+            onSelectTier={(t) => update({ tier: String(t) as "1" | "2" | "3" })}
+          />
         ) : tier === "3" ? (
-          <NationalRoadmapView />
+          <NationalRoadmapView
+            onSelectTier={(t) => update({ tier: String(t) as "1" | "2" | "3" })}
+          />
         ) : (
           <>
             <div className="toolbar">
@@ -988,7 +1008,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                   >
                     <option value="nama">Urut: nama daerah</option>
                     <option value="realisasi">Urut: realisasi terbesar</option>
-                    <option value="penumpukan">Urut: penumpukan akhir tahun</option>
+                    <option value="penumpukan">
+                      Urut: penumpukan akhir tahun
+                    </option>
                   </select>
                   <ChevronDown size={14} className="field__caret" />
                 </label>
@@ -1075,8 +1097,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                     className={`filter-pill ${zona === "semua" ? "is-active" : ""}`}
                     onClick={() => update({ zona: null })}
                   >
-                    Semua Zona{" "}
-                    <span className="count">{snapshots.length}</span>
+                    Semua Zona <span className="count">{snapshots.length}</span>
                   </button>
                   <button
                     type="button"
@@ -1087,8 +1108,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                       })
                     }
                   >
-                    Mebidangro{" "}
-                    <span className="count">{mebidangroCount}</span>
+                    Mebidangro <span className="count">{mebidangroCount}</span>
                   </button>
                   <button
                     type="button"
@@ -1099,16 +1119,14 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                       })
                     }
                   >
-                    Tapanuli{" "}
-                    <span className="count">{tapanuliCount}</span>
+                    Tapanuli <span className="count">{tapanuliCount}</span>
                   </button>
                   <button
                     type="button"
                     className={`filter-pill ${zona === "pantai-timur" ? "is-active" : ""}`}
                     onClick={() =>
                       update({
-                        zona:
-                          zona === "pantai-timur" ? null : "pantai-timur",
+                        zona: zona === "pantai-timur" ? null : "pantai-timur",
                       })
                     }
                   >
@@ -1121,9 +1139,7 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                     onClick={() =>
                       update({
                         zona:
-                          zona === "dataran-tinggi"
-                            ? null
-                            : "dataran-tinggi",
+                          zona === "dataran-tinggi" ? null : "dataran-tinggi",
                       })
                     }
                   >
@@ -1137,222 +1153,227 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                       update({ zona: zona === "nias" ? null : "nias" })
                     }
                   >
-                    Kepulauan Nias{" "}
-                    <span className="count">{niasCount}</span>
+                    Kepulauan Nias <span className="count">{niasCount}</span>
                   </button>
                 </div>
               </div>
             </div>
 
-        {visible.length ? (
-          <div className="stack" style={{ marginTop: "var(--gap)" }}>
-            <div className="summary">
-              <div className="summary__item">
-                <span className="summary__label">
-                  <Building2 size={14} /> Daerah ditampilkan
-                </span>
-                <span className="summary__value">
-                  {visible.length}
-                  <small> dari {snapshots.length}</small>
-                </span>
-              </div>
-              <div className="summary__item">
-                <span className="summary__label">
-                  <Wallet size={14} /> Total pagu belanja
-                </span>
-                <span className="summary__value" title={fullMoney(totalBudget)}>
-                  {compactMoney(totalBudget)}
-                </span>
-              </div>
-              <div className="summary__item summary__item--accent">
-                <span className="summary__label">
-                  <BarChart3 size={14} /> Total realisasi
-                </span>
-                <span
-                  className="summary__value"
-                  title={fullMoney(totalRealized)}
-                >
-                  {compactMoney(totalRealized)}
-                </span>
-              </div>
-              <div className="summary__item">
-                <span className="summary__label">
-                  <CalendarRange size={14} /> Periode laporan
-                </span>
-                <span className="summary__value summary__value--sm">
-                  {periodLabel(year, month)}
-                  <small>
-                    {" "}
-                    · {year === runningYear ? "tahun berjalan" : "historis"}
-                  </small>
-                </span>
-              </div>
-            </div>
-
-            {topFlaggedRegions.length > 0 && (
-              <div
-                className="card card--warn-alert"
-                style={{
-                  border: "1px solid var(--warn-line)",
-                  background: "var(--paper)",
-                }}
-              >
-                <div
-                  className="card__head"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "12px",
-                    flexWrap: "wrap",
-                    padding: "14px 18px",
-                    borderBottom: "1px solid var(--line)",
-                    background: "var(--warn-bg)",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "28px",
-                        height: "28px",
-                        borderRadius: "var(--r)",
-                        background: "var(--paper)",
-                        border: "1px solid var(--warn-line)",
-                        display: "grid",
-                        placeItems: "center",
-                        color: "var(--warn-ink)",
-                        flexShrink: 0,
-                      }}
+            {visible.length ? (
+              <div className="stack" style={{ marginTop: "var(--gap)" }}>
+                <div className="summary">
+                  <div className="summary__item">
+                    <span className="summary__label">
+                      <Building2 size={14} /> Daerah ditampilkan
+                    </span>
+                    <span className="summary__value">
+                      {visible.length}
+                      <small> dari {snapshots.length}</small>
+                    </span>
+                  </div>
+                  <div className="summary__item">
+                    <span className="summary__label">
+                      <Wallet size={14} /> Total pagu belanja
+                    </span>
+                    <span
+                      className="summary__value"
+                      title={fullMoney(totalBudget)}
                     >
-                      <TriangleAlert size={15} />
-                    </div>
+                      {compactMoney(totalBudget)}
+                    </span>
+                  </div>
+                  <div className="summary__item summary__item--accent">
+                    <span className="summary__label">
+                      <BarChart3 size={14} /> Total realisasi
+                    </span>
+                    <span
+                      className="summary__value"
+                      title={fullMoney(totalRealized)}
+                    >
+                      {compactMoney(totalRealized)}
+                    </span>
+                  </div>
+                  <div className="summary__item">
+                    <span className="summary__label">
+                      <CalendarRange size={14} /> Periode laporan
+                    </span>
+                    <span className="summary__value summary__value--sm">
+                      {periodLabel(year, month)}
+                      <small>
+                        {" "}
+                        · {year === runningYear ? "tahun berjalan" : "historis"}
+                      </small>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="card regions">
+                  <div className="card__head">
                     <div>
-                      <h3
-                        className="card__title"
-                        style={{ fontSize: "0.9375rem", margin: 0 }}
-                      >
-                        Fokus Pengawasan Publik: Anomali Akhir Tahun
+                      <h3 className="card__title">
+                        Daftar Daerah Terpantau{" "}
+                        <span className="count">{visible.length}</span>
                       </h3>
-                      <p className="card__sub" style={{ margin: "2px 0 0" }}>
-                        Konsentrasi pencairan belanja modal fisik di akhir tahun
-                        melampaui ambang kewajaran 40%.
+                      <p className="card__sub">
+                        Pagu APBD, realisasi belanja, dan indikator penanda
+                        belanja modal fisik akhir tahun {latestCompleteYear}.
+                        {visible.length > 10 && pageSize !== "all" && (
+                          <span className="muted">
+                            {" "}
+                            · Halaman {currentPage} dari {totalPages}{" "}
+                            (menampilkan {startDisplay}–{endDisplay})
+                          </span>
+                        )}
                       </p>
                     </div>
                   </div>
-                  <span className="chip chip--warn">Catatan Telaah Kritis</span>
-                </div>
 
-                <div className="card__body" style={{ padding: "14px 18px" }}>
-                  <div className="priority-grid">
-                    {topFlaggedRegions.map((item, idx) => (
-                      <Link
-                        key={item.region.code}
-                        href={`/daerah/${item.region.code}?${period}#lembar-advokasi`}
-                        className="priority-card"
-                      >
-                        <div className="priority-card__head">
-                          <div className="priority-card__title-wrap">
-                            <span
-                              className="priority-card__rank"
-                              aria-label={`Peringkat ${idx + 1}`}
-                            >
-                              {idx + 1}
-                            </span>
-                            <strong className="priority-card__name">
-                              {item.region.name}
-                            </strong>
-                          </div>
-                          <div className="priority-card__badge-wrap">
-                            {persistenceChip(item.region.code)}
-                          </div>
-                        </div>
-
-                        <div className="priority-card__metric">
-                          <div className="priority-card__metric-val">
-                            <span className="priority-card__percent">
-                              {formatFlagShare(item.flag.share)}
-                            </span>
-                            <span className="priority-card__metric-label">
-                              modal akhir TA
-                            </span>
-                          </div>
-                          <div
-                            className="priority-card__bar-track"
-                            role="progressbar"
-                            aria-valuenow={Math.round((item.flag.share ?? 0) * 100)}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          >
-                            <div
-                              className="priority-card__bar-fill"
-                              style={{
-                                width: `${Math.min(100, Math.max(0, (item.flag.share ?? 0) * 100))}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="priority-card__foot">
-                          <span className="priority-card__cta">
-                            <span>Buka telaah &amp; pertanyaan publik</span>
-                            <ArrowRight size={12} />
-                          </span>
-                        </div>
-                      </Link>
-                    ))}
+                  <div className="table-wrap">
+                    <table className="region-table">
+                      <thead>
+                        <tr>
+                          <th style={{ width: "22%" }}>Daerah</th>
+                          <th style={{ width: "16%" }}>Status Audit</th>
+                          <th className="is-num" style={{ width: "20%" }}>
+                            Pagu / Realisasi
+                          </th>
+                          <th className="is-num" style={{ width: "18%" }}>
+                            Tingkat Serapan
+                          </th>
+                          <th style={{ width: "20%" }}>
+                            Penanda Belanja Akhir Tahun ({latestCompleteYear})
+                          </th>
+                          <th style={{ width: "4%" }}>
+                            <span className="sr-only">Profil</span>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {paginatedVisible.map((snapshot) => {
+                          const region = regions.find(
+                            (item) => item.code === snapshot.regionCode,
+                          )!;
+                          const rowRate = percentage(
+                            snapshot.total.realized,
+                            snapshot.total.budget,
+                          );
+                          const over = rowRate !== null && rowRate > 100;
+                          return (
+                            <tr key={region.code}>
+                              <td>
+                                <Link
+                                  className="region-cell"
+                                  href={`/daerah/${region.code}?${period}`}
+                                >
+                                  <span className="region-cell__name">
+                                    {region.shortName}
+                                  </span>
+                                  <span className="region-cell__kind">
+                                    {kindLabel(region.type)}
+                                  </span>
+                                </Link>
+                              </td>
+                              <td>
+                                {region.statusAudit === "audit-penuh" ? (
+                                  <span
+                                    className="chip chip--ok chip--square"
+                                    title="Terverifikasi berkas resmi SIKD Kemenkeu dengan hash SHA-256"
+                                    style={{
+                                      fontSize: "0.6875rem",
+                                      padding: "2px 6px",
+                                    }}
+                                  >
+                                    <ShieldCheck size={12} /> Audit SHA-256
+                                  </span>
+                                ) : (
+                                  <span
+                                    className="chip chip--sunk chip--square"
+                                    title="Data pagu & realisasi terpetakan dalam pipeline ekspansi modular tahap 2"
+                                    style={{
+                                      fontSize: "0.6875rem",
+                                      padding: "2px 6px",
+                                    }}
+                                  >
+                                    <Sparkles size={12} /> Ekspansi Tahap 2
+                                  </span>
+                                )}
+                              </td>
+                              <td className="is-num">
+                                <span className="money-pair">
+                                  <strong
+                                    title={fullMoney(snapshot.total.realized)}
+                                  >
+                                    {compactMoney(snapshot.total.realized)}
+                                  </strong>
+                                  <span
+                                    title={fullMoney(snapshot.total.budget)}
+                                  >
+                                    pagu {compactMoney(snapshot.total.budget)}
+                                  </span>
+                                </span>
+                              </td>
+                              <td className="is-num">
+                                <span className="rate-cell">
+                                  <span className="rate-cell__top">
+                                    <strong className={over ? "is-over" : ""}>
+                                      {percent(rowRate)}
+                                    </strong>
+                                    {over && (
+                                      <span
+                                        className="chip chip--warn chip--square"
+                                        title="Realisasi melampaui pagu tercatat di SIKD (umumnya karena APBD-P belum tersinkronisasi di pusat data)"
+                                      >
+                                        &gt;100%
+                                      </span>
+                                    )}
+                                  </span>
+                                  <span className="meter meter--thin">
+                                    <span
+                                      className={over ? "is-over" : ""}
+                                      style={{
+                                        width: `${Math.min(rowRate ?? 0, 100)}%`,
+                                      }}
+                                    />
+                                  </span>
+                                </span>
+                              </td>
+                              <td>
+                                {flagFor(region.code).share === null ? (
+                                  <span className="muted">Belum tersedia</span>
+                                ) : (
+                                  <span className="flag-cell">
+                                    <span className="flag-cell__top">
+                                      <span className="flag-cell__share">
+                                        {formatFlagShare(
+                                          flagFor(region.code).share,
+                                        )}
+                                      </span>
+                                      <span className="flag-cell__rank">
+                                        #{rankMap.get(region.code)} dari{" "}
+                                        {regions.length}
+                                      </span>
+                                    </span>
+                                    {persistenceChip(region.code)}
+                                  </span>
+                                )}
+                              </td>
+                              <td>
+                                <Link
+                                  className="icon-link"
+                                  href={`/daerah/${region.code}?${period}`}
+                                  aria-label={`Lihat profil ${region.name}`}
+                                >
+                                  <ArrowUpRight size={16} />
+                                </Link>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
-                </div>
-              </div>
-            )}
 
-            <div className="card regions">
-              <div className="card__head">
-                <div>
-                  <h3 className="card__title">
-                    Daftar Daerah Terpantau{" "}
-                    <span className="count">{visible.length}</span>
-                  </h3>
-                  <p className="card__sub">
-                    Pagu APBD, realisasi belanja, dan indikator penanda belanja
-                    modal fisik akhir tahun {latestCompleteYear}.
-                    {visible.length > 10 && pageSize !== "all" && (
-                      <span className="muted">
-                        {" "}
-                        · Halaman {currentPage} dari {totalPages} (menampilkan{" "}
-                        {startDisplay}–{endDisplay})
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </div>
-
-              <div className="table-wrap">
-                <table className="region-table">
-                  <thead>
-                    <tr>
-                      <th style={{ width: "22%" }}>Daerah</th>
-                      <th style={{ width: "16%" }}>Status Audit</th>
-                      <th className="is-num" style={{ width: "20%" }}>
-                        Pagu / Realisasi
-                      </th>
-                      <th className="is-num" style={{ width: "18%" }}>
-                        Tingkat Serapan
-                      </th>
-                      <th style={{ width: "20%" }}>
-                        Penanda Belanja Akhir Tahun ({latestCompleteYear})
-                      </th>
-                      <th style={{ width: "4%" }}>
-                        <span className="sr-only">Profil</span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                  <div className="region-cards">
                     {paginatedVisible.map((snapshot) => {
                       const region = regions.find(
                         (item) => item.code === snapshot.regionCode,
@@ -1362,469 +1383,487 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                         snapshot.total.budget,
                       );
                       const over = rowRate !== null && rowRate > 100;
+                      const flag = flagFor(region.code);
                       return (
-                        <tr key={region.code}>
-                          <td>
-                            <Link
-                              className="region-cell"
-                              href={`/daerah/${region.code}?${period}`}
-                            >
-                              <span className="region-cell__name">
+                        <Link
+                          key={region.code}
+                          className="region-card"
+                          href={`/daerah/${region.code}?${period}`}
+                        >
+                          <div className="region-card__top">
+                            <div>
+                              <strong className="region-cell__name">
                                 {region.shortName}
-                              </span>
+                              </strong>
                               <span className="region-cell__kind">
                                 {kindLabel(region.type)}
                               </span>
-                            </Link>
-                          </td>
-                          <td>
-                            {region.statusAudit === "audit-penuh" ? (
-                              <span
-                                className="chip chip--ok chip--square"
-                                title="Terverifikasi berkas resmi SIKD Kemenkeu dengan hash SHA-256"
-                                style={{
-                                  fontSize: "0.6875rem",
-                                  padding: "2px 6px",
-                                }}
-                              >
-                                <ShieldCheck size={12} /> Audit SHA-256
-                              </span>
-                            ) : (
-                              <span
-                                className="chip chip--sunk chip--square"
-                                title="Data pagu & realisasi terpetakan dalam pipeline ekspansi modular tahap 2"
-                                style={{
-                                  fontSize: "0.6875rem",
-                                  padding: "2px 6px",
-                                }}
-                              >
-                                <Sparkles size={12} /> Ekspansi Tahap 2
-                              </span>
-                            )}
-                          </td>
-                          <td className="is-num">
-                            <span className="money-pair">
-                              <strong
-                                title={fullMoney(snapshot.total.realized)}
-                              >
-                                {compactMoney(snapshot.total.realized)}
-                              </strong>
-                              <span title={fullMoney(snapshot.total.budget)}>
-                                pagu {compactMoney(snapshot.total.budget)}
-                              </span>
-                            </span>
-                          </td>
-                          <td className="is-num">
-                            <span className="rate-cell">
-                              <span className="rate-cell__top">
-                                <strong className={over ? "is-over" : ""}>
-                                  {percent(rowRate)}
-                                </strong>
-                                {over && (
+                              <div style={{ marginTop: 4 }}>
+                                {region.statusAudit === "audit-penuh" ? (
                                   <span
-                                    className="chip chip--warn chip--square"
-                                    title="Realisasi melampaui pagu tercatat di SIKD (umumnya karena APBD-P belum tersinkronisasi di pusat data)"
+                                    className="chip chip--ok chip--square"
+                                    style={{
+                                      fontSize: "0.6875rem",
+                                      padding: "1px 6px",
+                                    }}
                                   >
-                                    &gt;100%
+                                    <ShieldCheck size={11} /> Audit SHA-256
+                                  </span>
+                                ) : (
+                                  <span
+                                    className="chip chip--sunk chip--square"
+                                    style={{
+                                      fontSize: "0.6875rem",
+                                      padding: "1px 6px",
+                                    }}
+                                  >
+                                    <Sparkles size={11} /> Ekspansi Tahap 2
                                   </span>
                                 )}
-                              </span>
-                              <span className="meter meter--thin">
-                                <span
-                                  className={over ? "is-over" : ""}
-                                  style={{
-                                    width: `${Math.min(rowRate ?? 0, 100)}%`,
-                                  }}
-                                />
-                              </span>
-                            </span>
-                          </td>
-                          <td>
-                            {flagFor(region.code).share === null ? (
-                              <span className="muted">Belum tersedia</span>
-                            ) : (
-                              <span className="flag-cell">
-                                <span className="flag-cell__top">
-                                  <span className="flag-cell__share">
-                                    {formatFlagShare(
-                                      flagFor(region.code).share,
-                                    )}
-                                  </span>
-                                  <span className="flag-cell__rank">
-                                    #{rankMap.get(region.code)} dari{" "}
-                                    {regions.length}
-                                  </span>
-                                </span>
-                                {persistenceChip(region.code)}
+                              </div>
+                            </div>
+                            <ArrowUpRight size={16} />
+                          </div>
+                          <div className="region-card__grid">
+                            <div className="region-card__item">
+                              <span>Realisasi</span>
+                              <strong>
+                                {compactMoney(snapshot.total.realized)}
+                              </strong>
+                            </div>
+                            <div className="region-card__item">
+                              <span>Pagu</span>
+                              <strong>
+                                {compactMoney(snapshot.total.budget)}
+                              </strong>
+                            </div>
+                            <div className="region-card__item">
+                              <span>Serapan</span>
+                              <strong className={over ? "is-over" : ""}>
+                                {percent(rowRate)}
+                              </strong>
+                            </div>
+                            <div className="region-card__item">
+                              <span>Penanda {latestCompleteYear}</span>
+                              <strong>{formatFlagShare(flag.share)}</strong>
+                            </div>
+                          </div>
+                          <div className="region-card__flags">
+                            {over && (
+                              <span className="chip chip--warn chip--square">
+                                Realisasi &gt;100% pagu
                               </span>
                             )}
-                          </td>
-                          <td>
-                            <Link
-                              className="icon-link"
-                              href={`/daerah/${region.code}?${period}`}
-                              aria-label={`Lihat profil ${region.name}`}
-                            >
-                              <ArrowUpRight size={16} />
-                            </Link>
-                          </td>
-                        </tr>
+                            {persistenceChip(region.code)}
+                          </div>
+                        </Link>
                       );
                     })}
-                  </tbody>
-                </table>
-              </div>
+                  </div>
 
-              <div className="region-cards">
-                {paginatedVisible.map((snapshot) => {
-                  const region = regions.find(
-                    (item) => item.code === snapshot.regionCode,
-                  )!;
-                  const rowRate = percentage(
-                    snapshot.total.realized,
-                    snapshot.total.budget,
-                  );
-                  const over = rowRate !== null && rowRate > 100;
-                  const flag = flagFor(region.code);
-                  return (
-                    <Link
-                      key={region.code}
-                      className="region-card"
-                      href={`/daerah/${region.code}?${period}`}
-                    >
-                      <div className="region-card__top">
-                        <div>
-                          <strong className="region-cell__name">
-                            {region.shortName}
-                          </strong>
-                          <span className="region-cell__kind">
-                            {kindLabel(region.type)}
+                  <div className="card__foot">
+                    {visible.length > 10 && (
+                      <div
+                        className="pagination"
+                        role="navigation"
+                        aria-label="Navigasi halaman daftar daerah"
+                      >
+                        <div className="pagination__info">
+                          Menampilkan {startDisplay}–{endDisplay} dari{" "}
+                          {visible.length} daerah
+                        </div>
+                        <div className="pagination__controls">
+                          <button
+                            type="button"
+                            className="pagination__btn"
+                            onClick={() =>
+                              setCurrentPage((p) => Math.max(1, p - 1))
+                            }
+                            disabled={currentPage <= 1}
+                            aria-label="Halaman sebelumnya"
+                          >
+                            <ChevronLeft size={14} /> Sebelumnya
+                          </button>
+                          <div
+                            className="pagination__page-numbers"
+                            role="group"
+                            aria-label="Nomor halaman"
+                          >
+                            {Array.from(
+                              { length: totalPages },
+                              (_, i) => i + 1,
+                            ).map((pageNum) => (
+                              <button
+                                key={pageNum}
+                                type="button"
+                                className={`pagination__btn ${currentPage === pageNum ? "is-active" : ""}`}
+                                onClick={() => setCurrentPage(pageNum)}
+                                aria-current={
+                                  currentPage === pageNum ? "page" : undefined
+                                }
+                              >
+                                {pageNum}
+                              </button>
+                            ))}
+                          </div>
+                          <button
+                            type="button"
+                            className="pagination__btn"
+                            onClick={() =>
+                              setCurrentPage((p) => Math.min(totalPages, p + 1))
+                            }
+                            disabled={currentPage >= totalPages}
+                            aria-label="Halaman selanjutnya"
+                          >
+                            Berikutnya <ChevronRight size={14} />
+                          </button>
+                        </div>
+                        <div
+                          className="pagination__size"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: "0.8125rem",
+                              color: "var(--ink-3)",
+                              fontWeight: 500,
+                            }}
+                          >
+                            Baris:
                           </span>
-                          <div style={{ marginTop: 4 }}>
-                            {region.statusAudit === "audit-penuh" ? (
-                              <span
-                                className="chip chip--ok chip--square"
-                                style={{
-                                  fontSize: "0.6875rem",
-                                  padding: "1px 6px",
-                                }}
-                              >
-                                <ShieldCheck size={11} /> Audit SHA-256
-                              </span>
-                            ) : (
-                              <span
-                                className="chip chip--sunk chip--square"
-                                style={{
-                                  fontSize: "0.6875rem",
-                                  padding: "1px 6px",
-                                }}
-                              >
-                                <Sparkles size={11} /> Ekspansi Tahap 2
-                              </span>
-                            )}
+                          <div
+                            className="segmented"
+                            role="group"
+                            aria-label="Jumlah daerah per halaman"
+                          >
+                            <button
+                              type="button"
+                              className={`segmented__btn ${pageSize === 10 ? "is-active" : ""}`}
+                              onClick={() => {
+                                setPageSize(10);
+                                setCurrentPage(1);
+                              }}
+                            >
+                              10
+                            </button>
+                            <button
+                              type="button"
+                              className={`segmented__btn ${pageSize === 25 ? "is-active" : ""}`}
+                              onClick={() => {
+                                setPageSize(25);
+                                setCurrentPage(1);
+                              }}
+                            >
+                              25
+                            </button>
+                            <button
+                              type="button"
+                              className={`segmented__btn ${pageSize === "all" ? "is-active" : ""}`}
+                              onClick={() => {
+                                setPageSize("all");
+                                setCurrentPage(1);
+                              }}
+                            >
+                              Semua
+                            </button>
                           </div>
                         </div>
-                        <ArrowUpRight size={16} />
                       </div>
-                      <div className="region-card__grid">
-                        <div className="region-card__item">
-                          <span>Realisasi</span>
-                          <strong>
-                            {compactMoney(snapshot.total.realized)}
-                          </strong>
-                        </div>
-                        <div className="region-card__item">
-                          <span>Pagu</span>
-                          <strong>{compactMoney(snapshot.total.budget)}</strong>
-                        </div>
-                        <div className="region-card__item">
-                          <span>Serapan</span>
-                          <strong className={over ? "is-over" : ""}>
-                            {percent(rowRate)}
-                          </strong>
-                        </div>
-                        <div className="region-card__item">
-                          <span>Penanda {latestCompleteYear}</span>
-                          <strong>{formatFlagShare(flag.share)}</strong>
-                        </div>
-                      </div>
-                      <div className="region-card__flags">
-                        {over && (
-                          <span className="chip chip--warn chip--square">
-                            Realisasi &gt;100% pagu
-                          </span>
-                        )}
-                        {persistenceChip(region.code)}
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
+                    )}
+                    <InfoNote>
+                      Serapan menunjukkan bagian pagu yang sudah dibelanjakan,
+                      bukan penilaian mutu layanan.
+                    </InfoNote>
+                  </div>
+                </div>
 
-              <div className="card__foot">
-                {visible.length > 10 && (
+                {topFlaggedRegions.length > 0 && (
                   <div
-                    className="pagination"
-                    role="navigation"
-                    aria-label="Navigasi halaman daftar daerah"
+                    className="card card--warn-alert"
+                    style={{
+                      border: "1px solid var(--warn-line)",
+                      background: "var(--paper)",
+                    }}
                   >
-                    <div className="pagination__info">
-                      Menampilkan {startDisplay}–{endDisplay} dari {visible.length} daerah
-                    </div>
-                    <div className="pagination__controls">
-                      <button
-                        type="button"
-                        className="pagination__btn"
-                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                        disabled={currentPage <= 1}
-                        aria-label="Halaman sebelumnya"
-                      >
-                        <ChevronLeft size={14} /> Sebelumnya
-                      </button>
-                      <div
-                        className="pagination__page-numbers"
-                        role="group"
-                        aria-label="Nomor halaman"
-                      >
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                          (pageNum) => (
-                            <button
-                              key={pageNum}
-                              type="button"
-                              className={`pagination__btn ${currentPage === pageNum ? "is-active" : ""}`}
-                              onClick={() => setCurrentPage(pageNum)}
-                              aria-current={
-                                currentPage === pageNum ? "page" : undefined
-                              }
-                            >
-                              {pageNum}
-                            </button>
-                          ),
-                        )}
-                      </div>
-                      <button
-                        type="button"
-                        className="pagination__btn"
-                        onClick={() =>
-                          setCurrentPage((p) => Math.min(totalPages, p + 1))
-                        }
-                        disabled={currentPage >= totalPages}
-                        aria-label="Halaman selanjutnya"
-                      >
-                        Berikutnya <ChevronRight size={14} />
-                      </button>
-                    </div>
                     <div
-                      className="pagination__size"
+                      className="card__head"
                       style={{
-                        display: "inline-flex",
+                        display: "flex",
                         alignItems: "center",
-                        gap: "8px",
+                        justifyContent: "space-between",
+                        gap: "12px",
+                        flexWrap: "wrap",
+                        padding: "14px 18px",
+                        borderBottom: "1px solid var(--line)",
+                        background: "var(--warn-bg)",
                       }}
                     >
-                      <span
+                      <div
                         style={{
-                          fontSize: "0.8125rem",
-                          color: "var(--ink-3)",
-                          fontWeight: 500,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
                         }}
                       >
-                        Baris:
+                        <div
+                          style={{
+                            width: "28px",
+                            height: "28px",
+                            borderRadius: "var(--r)",
+                            background: "var(--paper)",
+                            border: "1px solid var(--warn-line)",
+                            display: "grid",
+                            placeItems: "center",
+                            color: "var(--warn-ink)",
+                            flexShrink: 0,
+                          }}
+                        >
+                          <TriangleAlert size={15} />
+                        </div>
+                        <div>
+                          <h3
+                            className="card__title"
+                            style={{ fontSize: "0.9375rem", margin: 0 }}
+                          >
+                            Fokus Pengawasan Publik: Anomali Akhir Tahun
+                          </h3>
+                          <p
+                            className="card__sub"
+                            style={{ margin: "2px 0 0" }}
+                          >
+                            Konsentrasi pencairan belanja modal fisik di akhir
+                            tahun melampaui ambang kewajaran 40%.
+                          </p>
+                        </div>
+                      </div>
+                      <span className="chip chip--warn">
+                        Catatan Telaah Kritis
                       </span>
-                      <div
-                        className="segmented"
-                        role="group"
-                        aria-label="Jumlah daerah per halaman"
-                      >
-                        <button
-                          type="button"
-                          className={`segmented__btn ${pageSize === 10 ? "is-active" : ""}`}
-                          onClick={() => {
-                            setPageSize(10);
-                            setCurrentPage(1);
-                          }}
-                        >
-                          10
-                        </button>
-                        <button
-                          type="button"
-                          className={`segmented__btn ${pageSize === 25 ? "is-active" : ""}`}
-                          onClick={() => {
-                            setPageSize(25);
-                            setCurrentPage(1);
-                          }}
-                        >
-                          25
-                        </button>
-                        <button
-                          type="button"
-                          className={`segmented__btn ${pageSize === "all" ? "is-active" : ""}`}
-                          onClick={() => {
-                            setPageSize("all");
-                            setCurrentPage(1);
-                          }}
-                        >
-                          Semua
-                        </button>
+                    </div>
+
+                    <div
+                      className="card__body"
+                      style={{ padding: "14px 18px" }}
+                    >
+                      <div className="priority-grid">
+                        {topFlaggedRegions.map((item, idx) => (
+                          <Link
+                            key={item.region.code}
+                            href={`/daerah/${item.region.code}?${period}#lembar-advokasi`}
+                            className="priority-card"
+                          >
+                            <div className="priority-card__head">
+                              <div className="priority-card__title-wrap">
+                                <span
+                                  className="priority-card__rank"
+                                  aria-label={`Peringkat ${idx + 1}`}
+                                >
+                                  {idx + 1}
+                                </span>
+                                <strong className="priority-card__name">
+                                  {item.region.name}
+                                </strong>
+                              </div>
+                              <div className="priority-card__badge-wrap">
+                                {persistenceChip(item.region.code)}
+                              </div>
+                            </div>
+
+                            <div className="priority-card__metric">
+                              <div className="priority-card__metric-val">
+                                <span className="priority-card__percent">
+                                  {formatFlagShare(item.flag.share)}
+                                </span>
+                                <span className="priority-card__metric-label">
+                                  modal akhir TA
+                                </span>
+                              </div>
+                              <div
+                                className="priority-card__bar-track"
+                                role="progressbar"
+                                aria-valuenow={Math.round(
+                                  (item.flag.share ?? 0) * 100,
+                                )}
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                              >
+                                <div
+                                  className="priority-card__bar-fill"
+                                  style={{
+                                    width: `${Math.min(100, Math.max(0, (item.flag.share ?? 0) * 100))}%`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="priority-card__foot">
+                              <span className="priority-card__cta">
+                                <span>Buka telaah &amp; pertanyaan publik</span>
+                                <ArrowRight size={12} />
+                              </span>
+                            </div>
+                          </Link>
+                        ))}
                       </div>
                     </div>
                   </div>
                 )}
-                <InfoNote>
-                  Serapan menunjukkan bagian pagu yang sudah dibelanjakan, bukan
-                  penilaian mutu layanan.
-                </InfoNote>
-              </div>
-            </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
-                gap: "var(--gap)",
-              }}
-            >
-              <div className="card">
-                <div className="card__head">
-                  <div>
-                    <h3 className="card__title">Komposisi realisasi belanja</h3>
-                    <p className="card__sub">
-                      Porsi per kategori dari total realisasi{" "}
-                      {compactMoney(totalRealized)} ({visible.length} daerah
-                      terpilih)
-                    </p>
-                  </div>
-                </div>
-                <div className="card__body">
-                  <div
-                    className="stack-bar"
-                    role="img"
-                    aria-label="Komposisi realisasi belanja kumulatif daerah yang ditampilkan"
-                  >
-                    {visibleCategories.map((cat) => (
-                      <span
-                        key={cat.code}
-                        className={`seg--${cat.code}`}
-                        style={{ width: `${Math.max(cat.share ?? 0, 0)}%` }}
-                        title={`${cat.label}: ${percent(cat.share)} (${compactMoney(cat.realized)})`}
-                      />
-                    ))}
-                  </div>
-                  <div className="legend">
-                    {visibleCategories.map((cat) => (
-                      <div key={cat.code} className="legend__row">
-                        <span className={`dot dot--${cat.code}`} />
-                        <span className="legend__name">{cat.label}</span>
-                        <span className="legend__value">
-                          <strong>{percent(cat.share)}</strong>
-                          <small title={fullMoney(cat.realized)}>
-                            {compactMoney(cat.realized)}
-                          </small>
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="card">
                 <div
-                  className="card__head"
                   style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    justifyContent: "space-between",
-                    gap: "10px",
-                    flexWrap: "wrap",
+                    display: "grid",
+                    gridTemplateColumns:
+                      "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
+                    gap: "var(--gap)",
                   }}
                 >
-                  <div style={{ flex: "1 1 220px", minWidth: 0 }}>
-                    <h3 className="card__title">Rencana dan realisasi</h3>
-                    <p className="card__sub">
-                      {chartDisplayMode === "top10" && visible.length > 10
-                        ? `10 Daerah pagu terbesar dari ${visible.length} daerah terpilih (triliun rupiah).`
-                        : chartDisplayMode === "bottom10" && visible.length > 10
-                          ? `10 Daerah pagu terkecil dari ${visible.length} daerah terpilih (triliun rupiah).`
-                          : `Perbandingan pagu dan realisasi APBD ${visible.length} daerah terpilih (triliun rupiah).`}
-                    </p>
-                  </div>
-                  {visible.length > 10 && (
-                    <div
-                      className="segmented"
-                      role="tablist"
-                      aria-label="Pilihan tampilan grafik daerah"
-                      style={{ flexShrink: 0 }}
-                    >
-                      <button
-                        type="button"
-                        role="tab"
-                        aria-selected={chartDisplayMode === "top10"}
-                        className={`segmented__btn ${chartDisplayMode === "top10" ? "is-active" : ""}`}
-                        onClick={() => setChartDisplayMode("top10")}
-                        style={{
-                          fontSize: "0.75rem",
-                          padding: "0 9px",
-                          height: "26px",
-                        }}
-                      >
-                        10 Terbesar
-                      </button>
-                      <button
-                        type="button"
-                        role="tab"
-                        aria-selected={chartDisplayMode === "bottom10"}
-                        className={`segmented__btn ${chartDisplayMode === "bottom10" ? "is-active" : ""}`}
-                        onClick={() => setChartDisplayMode("bottom10")}
-                        style={{
-                          fontSize: "0.75rem",
-                          padding: "0 9px",
-                          height: "26px",
-                        }}
-                      >
-                        10 Terkecil
-                      </button>
-                      <button
-                        type="button"
-                        role="tab"
-                        aria-selected={chartDisplayMode === "all"}
-                        className={`segmented__btn ${chartDisplayMode === "all" ? "is-active" : ""}`}
-                        onClick={() => setChartDisplayMode("all")}
-                        style={{
-                          fontSize: "0.75rem",
-                          padding: "0 9px",
-                          height: "26px",
-                        }}
-                      >
-                        Semua ({visible.length})
-                      </button>
+                  <div className="card">
+                    <div className="card__head">
+                      <div>
+                        <h3 className="card__title">
+                          Komposisi realisasi belanja
+                        </h3>
+                        <p className="card__sub">
+                          Porsi per kategori dari total realisasi{" "}
+                          {compactMoney(totalRealized)} ({visible.length} daerah
+                          terpilih)
+                        </p>
+                      </div>
                     </div>
-                  )}
-                </div>
-                <div className="card__body">
-                  <LazySpendingChart
-                    snapshots={displayedSpending}
-                    isScrollViewport={
-                      chartDisplayMode === "all" && visible.length > 10
-                    }
-                  />
-                  <ChartLegend
-                    items={[
-                      { label: "Pagu belanja", color: chartColors.budget },
-                      { label: "Realisasi", color: chartColors.realized },
-                    ]}
-                  />
-                </div>
-              </div>
-            </div>
+                    <div className="card__body">
+                      <div
+                        className="stack-bar"
+                        role="img"
+                        aria-label="Komposisi realisasi belanja kumulatif daerah yang ditampilkan"
+                      >
+                        {visibleCategories.map((cat) => (
+                          <span
+                            key={cat.code}
+                            className={`seg--${cat.code}`}
+                            style={{ width: `${Math.max(cat.share ?? 0, 0)}%` }}
+                            title={`${cat.label}: ${percent(cat.share)} (${compactMoney(cat.realized)})`}
+                          />
+                        ))}
+                      </div>
+                      <div className="legend">
+                        {visibleCategories.map((cat) => (
+                          <div key={cat.code} className="legend__row">
+                            <span className={`dot dot--${cat.code}`} />
+                            <span className="legend__name">{cat.label}</span>
+                            <span className="legend__value">
+                              <strong>{percent(cat.share)}</strong>
+                              <small title={fullMoney(cat.realized)}>
+                                {compactMoney(cat.realized)}
+                              </small>
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
 
-            <SourceNote snapshot={visible[0]} />
-          </div>
-        ) : (
-          <EmptyState title="Daerah tidak ditemukan">
-            Coba cari {regionListLabel}, atau ubah filter jenis daerah.
-          </EmptyState>
-        )}
+                  <div className="card">
+                    <div
+                      className="card__head"
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        justifyContent: "space-between",
+                        gap: "10px",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <div style={{ flex: "1 1 220px", minWidth: 0 }}>
+                        <h3 className="card__title">Rencana dan realisasi</h3>
+                        <p className="card__sub">
+                          {chartDisplayMode === "top10" && visible.length > 10
+                            ? `10 Daerah pagu terbesar dari ${visible.length} daerah terpilih (triliun rupiah).`
+                            : chartDisplayMode === "bottom10" &&
+                                visible.length > 10
+                              ? `10 Daerah pagu terkecil dari ${visible.length} daerah terpilih (triliun rupiah).`
+                              : `Perbandingan pagu dan realisasi APBD ${visible.length} daerah terpilih (triliun rupiah).`}
+                        </p>
+                      </div>
+                      {visible.length > 10 && (
+                        <div
+                          className="segmented"
+                          role="tablist"
+                          aria-label="Pilihan tampilan grafik daerah"
+                          style={{ flexShrink: 0 }}
+                        >
+                          <button
+                            type="button"
+                            role="tab"
+                            aria-selected={chartDisplayMode === "top10"}
+                            className={`segmented__btn ${chartDisplayMode === "top10" ? "is-active" : ""}`}
+                            onClick={() => setChartDisplayMode("top10")}
+                            style={{
+                              fontSize: "0.75rem",
+                              padding: "0 9px",
+                              height: "26px",
+                            }}
+                          >
+                            10 Terbesar
+                          </button>
+                          <button
+                            type="button"
+                            role="tab"
+                            aria-selected={chartDisplayMode === "bottom10"}
+                            className={`segmented__btn ${chartDisplayMode === "bottom10" ? "is-active" : ""}`}
+                            onClick={() => setChartDisplayMode("bottom10")}
+                            style={{
+                              fontSize: "0.75rem",
+                              padding: "0 9px",
+                              height: "26px",
+                            }}
+                          >
+                            10 Terkecil
+                          </button>
+                          <button
+                            type="button"
+                            role="tab"
+                            aria-selected={chartDisplayMode === "all"}
+                            className={`segmented__btn ${chartDisplayMode === "all" ? "is-active" : ""}`}
+                            onClick={() => setChartDisplayMode("all")}
+                            style={{
+                              fontSize: "0.75rem",
+                              padding: "0 9px",
+                              height: "26px",
+                            }}
+                          >
+                            Semua ({visible.length})
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <div className="card__body">
+                      <LazySpendingChart
+                        snapshots={displayedSpending}
+                        isScrollViewport={
+                          chartDisplayMode === "all" && visible.length > 10
+                        }
+                      />
+                      <ChartLegend
+                        items={[
+                          { label: "Pagu belanja", color: chartColors.budget },
+                          { label: "Realisasi", color: chartColors.realized },
+                        ]}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <SourceNote snapshot={visible[0]} />
+              </div>
+            ) : (
+              <EmptyState title="Daerah tidak ditemukan">
+                Coba cari {regionListLabel}, atau ubah filter jenis daerah.
+              </EmptyState>
+            )}
           </>
         )}
       </section>

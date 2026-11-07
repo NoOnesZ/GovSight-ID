@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   BarChart3,
@@ -31,6 +32,7 @@ import {
   TrendingUp,
   TriangleAlert,
   Wallet,
+  X,
   Zap,
 } from "lucide-react";
 import {
@@ -47,21 +49,86 @@ import { InfoNote } from "./shared";
 // BLUEPRINT ARSITEKTUR 3 TIER (Sumut 33 -> Sumatra 154 -> Nasional 552)
 // ============================================================================
 
+const pipelineStepsData = [
+  {
+    step: "01",
+    name: "01. Sumber",
+    title: "SIKD DJPK Kemenkeu",
+    icon: Server,
+    summary:
+      "Ekstraksi berkas XML & CSV resmi secara bertahap via Token Bucket.",
+    chipClass: "chip--square",
+    spec: "Endpoint SIKD Portal (djpk.kemenkeu.go.id)",
+    details:
+      "Pengambilan data menggunakan mekanisme Token Bucket (maksimal 5 request/detik) dengan fallback retry eksponensial. Memastikan beban server portal kementerian tetap aman tanpa terpicu 429 Too Many Requests.",
+    code: "GET /portal/data/apbd?tahun={year}&kodedaerah={code}\nFormat: Raw XML/CSV · Token Bucket: 5 req/s · Timeout: 8000ms",
+  },
+  {
+    step: "02",
+    name: "02. Integrity",
+    title: "Vault SHA-256",
+    icon: Key,
+    summary:
+      "Komputasi sidik jari digital sebelum berkas mentah disimpan permanen.",
+    chipClass: "chip--ok chip--square",
+    spec: "SHA-256 Cryptographic Checksum Engine",
+    details:
+      "Setiap berkas mentah yang diunduh langsung dihitung cryptographic hash SHA-256 (256-bit digest) di tingkat ingestion. Jika isi berkas berubah 1 byte pun di masa mendatang, checksum otomatis mismatch dan menggagalkan pipeline demi integritas audit publik.",
+    code: "crypto.createHash('sha256').update(fileBuffer).digest('hex')\nIntegritas: 100% snapshot terverifikasi against SHA-256 registry",
+  },
+  {
+    step: "03",
+    name: "03. Precision",
+    title: "Decimal.js Engine",
+    icon: Scale,
+    summary:
+      "Aritmetika presisi 20 digit tanpa risiko galat pembulatan floating-point.",
+    chipClass: "chip--accent chip--square",
+    spec: "Arbitrary-Precision Decimal Arithmetic",
+    details:
+      "Uang publik menolak galat floating-point IEEE-754 (seperti 0.1 + 0.2 = 0.30000000000000004). Seluruh kalkulasi serapan, pagu, realisasi, dan selisih belanja dihitung dengan presisi mutlak 20 digit Decimal.js sebelum format tampilan.",
+    code: "const rate = new Decimal(realized).dividedBy(budget).times(100).toDecimalPlaces(2);\nPresisi: Eksak hingga satuan rupiah terkecil tanpa distorsi kalkulasi",
+  },
+  {
+    step: "04",
+    name: "04. Partition",
+    title: "Modular 3 Tier",
+    icon: Database,
+    summary:
+      "Partisi regional (Sumut 33 → 154 → 552) dan Meta-Index ringan (<50 KB).",
+    chipClass: "chip--square",
+    spec: "Declarative Regional Chunk Partitioning",
+    details:
+      "Arsitektur monolitik 25MB ditolak karena menyebabkan OOM crash di ponsel ber-RAM 2GB–3GB. Data dipartisi per wilayah (Sumatera, Jawa, dsb.) dan tahun; pengguna hanya mengunduh search index awal <50 KB dan data daerah on-demand ~18 KB.",
+    code: "Search Index: 48 KB (Gzip) · Region Detail: ~18 KB on-demand\nPencegahan OOM: 0 browser crash pada smartphone low-end",
+  },
+  {
+    step: "05",
+    name: "05. Delivery",
+    title: "Edge Caching & Advokasi",
+    icon: Smartphone,
+    summary:
+      "Respons cepat (<80ms) di ponsel warga plus integrasi SP4N-LAPOR!.",
+    chipClass: "chip--square",
+    spec: "Global Edge CDN & Citizen Inquiry Generator",
+    details:
+      "Respons data disajikan melalui Edge CDN dengan cache tag invalidation (<80ms). Dilengkapi fitur langsung: 1-click salin naskah telaah kritis dan draf pengaduan resmi terstruktur untuk portal aduan SP4N-LAPOR! Ombudsman/KemenPAN-RB.",
+    code: "Cache-Control: public, s-maxage=86400, stale-while-revalidate=3600\nCivic Advocacy: Format Aduan Resmi SP4N-LAPOR! (UU No. 25/2009)",
+  },
+];
+
 export function ScalabilityBlueprint3Tier({
-  activeTier,
+  activeTier = 1,
+  onSelectTier,
 }: {
   activeTier?: 1 | 2 | 3;
+  onSelectTier?: (tier: 1 | 2 | 3) => void;
 }) {
+  const [expandedStep, setExpandedStep] = useState<number | null>(null);
+
   return (
     <section
-      className="card"
-      style={{
-        padding: "22px 24px",
-        borderRadius: "var(--r)",
-        border: "1px solid var(--line)",
-        background: "var(--paper)",
-        marginBottom: "var(--gap)",
-      }}
+      className="blueprint-card"
       aria-labelledby="scalability-blueprint-heading"
     >
       {/* Header Blueprint */}
@@ -107,222 +174,223 @@ export function ScalabilityBlueprint3Tier({
             maxWidth: "840px",
           }}
         >
-          Transisi teknis dari sistem baseline 33 daerah di Sumatera Utara menuju pemrosesan ingestion modular 154 kabupaten/kota regional Sumatera dan konsolidasi 552 pemda se-Indonesia. Dirancang dengan presisi rupiah mutlak dan efisiensi payload perangkat seluler warga.
+          Transisi teknis dari sistem baseline 33 daerah di Sumatera Utara
+          menuju pemrosesan ingestion modular 154 kabupaten/kota regional
+          Sumatera dan konsolidasi 552 pemda se-Indonesia. Ketuk salah satu
+          kartu tier di bawah untuk beralih mode cakupan atau kembali ke daerah
+          asal.
         </p>
       </div>
 
-      {/* 3 Tier Cards: Flattened, Calm Visual Hierarchy */}
+      {/* 3 Tier Cards: Interactive Buttons that Apply Tier Selection */}
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
-          gap: "14px",
-          marginBottom: "20px",
-        }}
+        className="blueprint-tiers-grid"
+        role="tablist"
+        aria-label="Pilihan Tingkat Skalabilitas GovSight ID"
       >
         {/* Tier 1: Sumatera Utara */}
-        <div
-          style={{
-            padding: "16px 18px",
-            background: activeTier === 1 ? "var(--canvas)" : "var(--paper)",
-            border: activeTier === 1 ? "2px solid var(--accent)" : "1px solid var(--line)",
-            borderRadius: "var(--r)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-          }}
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTier === 1}
+          className={`blueprint-tier-card ${activeTier === 1 ? "is-active" : ""}`}
+          onClick={() => onSelectTier?.(1)}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+          <div className="blueprint-tier-card__top">
             <div>
-              <span
-                style={{
-                  fontSize: "0.6875rem",
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.04em",
-                  color: "var(--ink-3)",
-                  display: "block",
-                }}
-              >
+              <span className="blueprint-tier-card__tier">
                 Tier 1 · Baseline
               </span>
-              <strong style={{ fontSize: "1rem", color: "var(--ink)", display: "block", marginTop: "2px" }}>
+              <strong className="blueprint-tier-card__name">
                 Sumatera Utara
               </strong>
             </div>
-            <span className="chip chip--ok chip--square" style={{ fontSize: "0.6875rem" }}>
-              <CheckCircle2 size={11} /> 100% Aktif
-            </span>
-          </div>
-
-          <div style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5 }}>
-            <span style={{ display: "block", color: "var(--ink)", fontWeight: 600 }}>
-              33 Pemda (8 Kota · 25 Kabupaten)
-            </span>
-            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", display: "block" }}>
-              Pagu APBD: Rp 63,2 Triliun · 350+ Snapshot
-            </span>
-          </div>
-
-          <div
-            style={{
-              paddingTop: "10px",
-              borderTop: "1px solid var(--line-2)",
-              fontSize: "0.75rem",
-              color: "var(--ink-2)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-            }}
-          >
-            <div>
-              <strong style={{ color: "var(--ink)" }}>Arsitektur:</strong> In-Memory JSON Chunk (&lt;450 KB)
-            </div>
-            <div>
-              <strong style={{ color: "var(--ink)" }}>Integritas:</strong> SHA-256 Checksum per Berkas XML/CSV
-            </div>
-            <div>
-              <strong style={{ color: "var(--ink)" }}>Evaluasi:</strong> Risiko Lonjakan Akhir Tahun &amp; Mandat Modal
-            </div>
-          </div>
-        </div>
-
-        {/* Tier 2: Regional Pulau Sumatera */}
-        <div
-          style={{
-            padding: "16px 18px",
-            background: activeTier === 2 ? "var(--canvas)" : "var(--paper)",
-            border: activeTier === 2 ? "2px solid var(--accent)" : "1px solid var(--line)",
-            borderRadius: "var(--r)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
-            <div>
+            {activeTier === 1 ? (
               <span
-                style={{
-                  fontSize: "0.6875rem",
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.04em",
-                  color: "var(--ink-3)",
-                  display: "block",
-                }}
+                className="chip chip--ok chip--square"
+                style={{ fontSize: "0.6875rem" }}
               >
+                <CheckCircle2 size={11} /> 100% Aktif
+              </span>
+            ) : (
+              <span
+                className="chip chip--sunk chip--square"
+                style={{ fontSize: "0.6875rem" }}
+              >
+                Kembali ke Sumut
+              </span>
+            )}
+          </div>
+
+          <div className="blueprint-tier-card__body">
+            <strong>33 Pemda (8 Kota · 25 Kabupaten)</strong>
+            <span>Pagu APBD: Rp 63,2 Triliun · 350+ Snapshot</span>
+          </div>
+
+          <div className="blueprint-tier-card__specs">
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Arsitektur:</strong>{" "}
+              In-Memory JSON Chunk (&lt;450 KB)
+            </div>
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Integritas:</strong>{" "}
+              SHA-256 Checksum per Berkas XML/CSV
+            </div>
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Evaluasi:</strong> Risiko
+              Lonjakan Akhir Tahun &amp; Mandat Modal
+            </div>
+          </div>
+
+          {activeTier !== 1 ? (
+            <div className="blueprint-tier-card__cta">
+              <ArrowLeft size={12} />
+              <span>Tap untuk kembali ke 33 Pemda Sumut</span>
+            </div>
+          ) : (
+            <div className="blueprint-tier-card__cta">
+              <CheckCircle2 size={12} />
+              <span>Sedang Ditampilkan (Home Base)</span>
+            </div>
+          )}
+        </button>
+
+        {/* Tier 2: Pulau Sumatera */}
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTier === 2}
+          className={`blueprint-tier-card ${activeTier === 2 ? "is-active" : ""}`}
+          onClick={() => onSelectTier?.(2)}
+        >
+          <div className="blueprint-tier-card__top">
+            <div>
+              <span className="blueprint-tier-card__tier">
                 Tier 2 · Regional
               </span>
-              <strong style={{ fontSize: "1rem", color: "var(--ink)", display: "block", marginTop: "2px" }}>
+              <strong className="blueprint-tier-card__name">
                 Pulau Sumatera
               </strong>
             </div>
-            <span className="chip chip--info chip--square" style={{ fontSize: "0.6875rem" }}>
-              <Clock size={11} /> 33 Live · 121 Staged
-            </span>
-          </div>
-
-          <div style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5 }}>
-            <span style={{ display: "block", color: "var(--ink)", fontWeight: 600 }}>
-              154 Pemda (10 Provinsi Se-Sumatera)
-            </span>
-            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", display: "block" }}>
-              Pagu Agregat: Rp 296,8 Triliun · ~5.544 Snapshot
-            </span>
-          </div>
-
-          <div
-            style={{
-              paddingTop: "10px",
-              borderTop: "1px solid var(--line-2)",
-              fontSize: "0.75rem",
-              color: "var(--ink-2)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-            }}
-          >
-            <div>
-              <strong style={{ color: "var(--ink)" }}>Arsitektur:</strong> Partition Chunks per Provinsi (&lt;180 KB)
-            </div>
-            <div>
-              <strong style={{ color: "var(--ink)" }}>Integritas:</strong> Worker Pool Rate-Limited (5 req/s)
-            </div>
-            <div>
-              <strong style={{ color: "var(--ink)" }}>Evaluasi:</strong> Disparitas Fiskal Wilayah &amp; Serapan Modal
-            </div>
-          </div>
-        </div>
-
-        {/* Tier 3: Skalabilitas Nasional */}
-        <div
-          style={{
-            padding: "16px 18px",
-            background: activeTier === 3 ? "var(--canvas)" : "var(--paper)",
-            border: activeTier === 3 ? "2px solid var(--accent)" : "1px solid var(--line)",
-            borderRadius: "var(--r)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
-            <div>
+            {activeTier === 2 ? (
               <span
-                style={{
-                  fontSize: "0.6875rem",
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.04em",
-                  color: "var(--ink-3)",
-                  display: "block",
-                }}
+                className="chip chip--info chip--square"
+                style={{ fontSize: "0.6875rem" }}
               >
+                <Clock size={11} /> Sedang Aktif
+              </span>
+            ) : (
+              <span
+                className="chip chip--sunk chip--square"
+                style={{ fontSize: "0.6875rem" }}
+              >
+                33 Live · 121 Staged
+              </span>
+            )}
+          </div>
+
+          <div className="blueprint-tier-card__body">
+            <strong>154 Pemda (10 Provinsi Se-Sumatera)</strong>
+            <span>Pagu Agregat: Rp 296,8 Triliun · ~5.544 Snapshot</span>
+          </div>
+
+          <div className="blueprint-tier-card__specs">
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Arsitektur:</strong>{" "}
+              Partition Chunks per Provinsi (&lt;180 KB)
+            </div>
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Integritas:</strong>{" "}
+              Worker Pool Rate-Limited (5 req/s)
+            </div>
+            <div>
+              <strong style={{ color: "var(--ink)" }}>Evaluasi:</strong>{" "}
+              Disparitas Fiskal Wilayah &amp; Serapan Modal
+            </div>
+          </div>
+
+          {activeTier === 2 ? (
+            <div className="blueprint-tier-card__cta">
+              <CheckCircle2 size={12} />
+              <span>Sedang Aktif (Preview Regional)</span>
+            </div>
+          ) : (
+            <div className="blueprint-tier-card__cta">
+              <span>Buka Matriks Sumatera (Tier 2)</span>
+              <ArrowRight size={12} />
+            </div>
+          )}
+        </button>
+
+        {/* Tier 3: Seluruh Indonesia */}
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTier === 3}
+          className={`blueprint-tier-card ${activeTier === 3 ? "is-active" : ""}`}
+          onClick={() => onSelectTier?.(3)}
+        >
+          <div className="blueprint-tier-card__top">
+            <div>
+              <span className="blueprint-tier-card__tier">
                 Tier 3 · Nasional
               </span>
-              <strong style={{ fontSize: "1rem", color: "var(--ink)", display: "block", marginTop: "2px" }}>
+              <strong className="blueprint-tier-card__name">
                 Seluruh Indonesia
               </strong>
             </div>
-            <span className="chip chip--square" style={{ fontSize: "0.6875rem", background: "var(--canvas)", border: "1px solid var(--line)" }}>
-              <Globe size={11} /> 552 Pemda Otonom
-            </span>
+            {activeTier === 3 ? (
+              <span
+                className="chip chip--accent chip--square"
+                style={{ fontSize: "0.6875rem" }}
+              >
+                <Globe size={11} /> Sedang Aktif
+              </span>
+            ) : (
+              <span
+                className="chip chip--sunk chip--square"
+                style={{ fontSize: "0.6875rem" }}
+              >
+                552 Pemda Otonom
+              </span>
+            )}
           </div>
 
-          <div style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.5 }}>
-            <span style={{ display: "block", color: "var(--ink)", fontWeight: 600 }}>
-              514 Kab/Kota + 38 Provinsi (6 Gugus)
-            </span>
-            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", display: "block" }}>
-              Pagu Nasional: Rp 1,15 Kuadriliun · ~59.000 Snapshot
-            </span>
+          <div className="blueprint-tier-card__body">
+            <strong>514 Kab/Kota + 38 Provinsi (6 Gugus)</strong>
+            <span>Pagu Nasional: Rp 1,15 Kuadriliun · ~59.000 Snapshot</span>
           </div>
 
-          <div
-            style={{
-              paddingTop: "10px",
-              borderTop: "1px solid var(--line-2)",
-              fontSize: "0.75rem",
-              color: "var(--ink-2)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-            }}
-          >
+          <div className="blueprint-tier-card__specs">
             <div>
-              <strong style={{ color: "var(--ink)" }}>Arsitektur:</strong> Neon Serverless PostgreSQL + Meta-Index (&lt;50 KB)
+              <strong style={{ color: "var(--ink)" }}>Arsitektur:</strong> Neon
+              Serverless PostgreSQL + Meta-Index (&lt;50 KB)
             </div>
             <div>
-              <strong style={{ color: "var(--ink)" }}>Integritas:</strong> Rantai Audit Publik Terbuka &amp; CDN Edge (&lt;80ms)
+              <strong style={{ color: "var(--ink)" }}>Integritas:</strong>{" "}
+              Rantai Audit Publik Terbuka &amp; CDN Edge (&lt;80ms)
             </div>
             <div>
-              <strong style={{ color: "var(--ink)" }}>Evaluasi:</strong> Mandat Pasal 146 &amp; 147 UU HKPD No. 1/2022
+              <strong style={{ color: "var(--ink)" }}>Evaluasi:</strong> Mandat
+              Pasal 146 &amp; 147 UU HKPD No. 1/2022
             </div>
           </div>
-        </div>
+
+          {activeTier === 3 ? (
+            <div className="blueprint-tier-card__cta">
+              <CheckCircle2 size={12} />
+              <span>Sedang Aktif (Roadmap Nasional)</span>
+            </div>
+          ) : (
+            <div className="blueprint-tier-card__cta">
+              <span>Buka Roadmap Nasional (Tier 3)</span>
+              <ArrowRight size={12} />
+            </div>
+          )}
+        </button>
       </div>
 
-      {/* Diagram Representasi Alur Data (Data Flow Pipeline) */}
+      {/* Diagram Representasi Alur Data (Interactive Data Flow Pipeline) */}
       <div
         style={{
           padding: "16px",
@@ -334,163 +402,138 @@ export function ScalabilityBlueprint3Tier({
           boxSizing: "border-box",
         }}
       >
-        <div style={{ marginBottom: "12px" }}>
-          <span
-            style={{
-              fontSize: "0.6875rem",
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.04em",
-              color: "var(--ink-3)",
-              display: "block",
-            }}
-          >
-            Alur Pemrosesan Data Kriptografis (End-to-End Pipeline)
-          </span>
-          <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", margin: "2px 0 0" }}>
-            Transisi data dari pengambilan arsip primer pemerintah hingga presentasi analitis tanpa galat pembulatan.
-          </p>
-        </div>
-
-        {/* Responsive Pipeline Steps: Wraps cleanly on mobile without horizontal scroll */}
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))",
-            gap: "10px",
-            width: "100%",
+            marginBottom: "12px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "8px",
           }}
         >
-          {/* Step 1 */}
-          <div
-            style={{
-              padding: "12px",
-              background: "var(--paper)",
-              border: "1px solid var(--line)",
-              borderRadius: "var(--r-sm)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span className="chip chip--square" style={{ fontSize: "0.6875rem", padding: "1px 6px" }}>
-                01. Sumber
-              </span>
-              <Server size={13} style={{ color: "var(--ink-3)" }} />
-            </div>
-            <strong style={{ fontSize: "0.8125rem", color: "var(--ink)", marginTop: "2px" }}>
-              SIKD DJPK Kemenkeu
-            </strong>
-            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", lineHeight: 1.4 }}>
-              Ekstraksi berkas XML &amp; CSV resmi secara bertahap via Token Bucket.
+          <div>
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                color: "var(--ink-3)",
+                display: "block",
+              }}
+            >
+              Alur Pemrosesan Data Kriptografis (End-to-End Pipeline)
             </span>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--ink-2)",
+                margin: "2px 0 0",
+              }}
+            >
+              Ketuk salah satu langkah alur data di bawah untuk melihat
+              spesifikasi teknis dan jaminan integritasnya:
+            </p>
           </div>
-
-          {/* Step 2 */}
-          <div
-            style={{
-              padding: "12px",
-              background: "var(--paper)",
-              border: "1px solid var(--line)",
-              borderRadius: "var(--r-sm)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span className="chip chip--ok chip--square" style={{ fontSize: "0.6875rem", padding: "1px 6px" }}>
-                02. Integrity
-              </span>
-              <Key size={13} style={{ color: "var(--ok)" }} />
-            </div>
-            <strong style={{ fontSize: "0.8125rem", color: "var(--ink)", marginTop: "2px" }}>
-              Vault SHA-256
-            </strong>
-            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", lineHeight: 1.4 }}>
-              Komputasi sidik jari digital sebelum berkas mentah disimpan permanen.
-            </span>
-          </div>
-
-          {/* Step 3 */}
-          <div
-            style={{
-              padding: "12px",
-              background: "var(--paper)",
-              border: "1px solid var(--line)",
-              borderRadius: "var(--r-sm)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span className="chip chip--accent chip--square" style={{ fontSize: "0.6875rem", padding: "1px 6px" }}>
-                03. Precision
-              </span>
-              <Scale size={13} style={{ color: "var(--accent)" }} />
-            </div>
-            <strong style={{ fontSize: "0.8125rem", color: "var(--ink)", marginTop: "2px" }}>
-              Decimal.js Engine
-            </strong>
-            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", lineHeight: 1.4 }}>
-              Aritmetika presisi 20 digit tanpa risiko galat pembulatan floating-point.
-            </span>
-          </div>
-
-          {/* Step 4 */}
-          <div
-            style={{
-              padding: "12px",
-              background: "var(--paper)",
-              border: "1px solid var(--line)",
-              borderRadius: "var(--r-sm)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span className="chip chip--square" style={{ fontSize: "0.6875rem", padding: "1px 6px" }}>
-                04. Partition
-              </span>
-              <Database size={13} style={{ color: "var(--ink-3)" }} />
-            </div>
-            <strong style={{ fontSize: "0.8125rem", color: "var(--ink)", marginTop: "2px" }}>
-              Modular 3 Tier
-            </strong>
-            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", lineHeight: 1.4 }}>
-              Partisi regional (Sumut 33 → 154 → 552) dan Meta-Index ringan (&lt;50 KB).
-            </span>
-          </div>
-
-          {/* Step 5 */}
-          <div
-            style={{
-              padding: "12px",
-              background: "var(--paper)",
-              border: "1px solid var(--line)",
-              borderRadius: "var(--r-sm)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span className="chip chip--square" style={{ fontSize: "0.6875rem", padding: "1px 6px" }}>
-                05. Delivery
-              </span>
-              <Smartphone size={13} style={{ color: "var(--ink-3)" }} />
-            </div>
-            <strong style={{ fontSize: "0.8125rem", color: "var(--ink)", marginTop: "2px" }}>
-              Edge Caching &amp; Advokasi
-            </strong>
-            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)", lineHeight: 1.4 }}>
-              Respons cepat (&lt;80ms) di ponsel warga plus integrasi SP4N-LAPOR!.
-            </span>
-          </div>
+          {expandedStep !== null && (
+            <button
+              type="button"
+              className="btn btn--secondary btn--sm"
+              onClick={() => setExpandedStep(null)}
+              style={{ fontSize: "0.75rem", padding: "2px 8px", gap: "4px" }}
+            >
+              <X size={12} /> Tutup Detail
+            </button>
+          )}
         </div>
+
+        {/* Interactive Pipeline Step Buttons */}
+        <div
+          className="blueprint-pipeline-grid"
+          role="group"
+          aria-label="5 Tahap Pipeline Data"
+        >
+          {pipelineStepsData.map((stepItem, idx) => {
+            const Icon = stepItem.icon;
+            const isCurrent = expandedStep === idx;
+            return (
+              <button
+                key={stepItem.step}
+                type="button"
+                className={`pipeline-step-btn ${isCurrent ? "is-active" : ""}`}
+                onClick={() => setExpandedStep(isCurrent ? null : idx)}
+                aria-expanded={isCurrent}
+                aria-label={`Lihat detail ${stepItem.name}: ${stepItem.title}`}
+              >
+                <div className="pipeline-step-btn__head">
+                  <span
+                    className={`chip ${stepItem.chipClass}`}
+                    style={{ fontSize: "0.6875rem", padding: "1px 6px" }}
+                  >
+                    {stepItem.name}
+                  </span>
+                  <Icon
+                    size={13}
+                    style={{
+                      color: isCurrent ? "var(--accent)" : "var(--ink-3)",
+                    }}
+                  />
+                </div>
+                <strong className="pipeline-step-btn__title">
+                  {stepItem.title}
+                </strong>
+                <span className="pipeline-step-btn__desc">
+                  {stepItem.summary}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Technical Inspector Drawer (Toggles open/close on tap) */}
+        {expandedStep !== null && (
+          <div
+            className="pipeline-drawer"
+            role="region"
+            aria-label="Spesifikasi Teknis Tahap Terpilih"
+          >
+            {(() => {
+              const currentItem = pipelineStepsData[expandedStep];
+              const CurrentIcon = currentItem.icon;
+              return (
+                <>
+                  <div className="pipeline-drawer__head">
+                    <h4 className="pipeline-drawer__title">
+                      <CurrentIcon
+                        size={16}
+                        style={{ color: "var(--accent)" }}
+                      />
+                      <span>
+                        {currentItem.name} · {currentItem.title} (
+                        {currentItem.spec})
+                      </span>
+                    </h4>
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm"
+                      onClick={() => setExpandedStep(null)}
+                      style={{ fontSize: "0.75rem", padding: "3px 8px" }}
+                    >
+                      <X size={12} /> Kembali ke Tampilan Standar
+                    </button>
+                  </div>
+                  <p className="pipeline-drawer__body" style={{ margin: 0 }}>
+                    {currentItem.details}
+                  </p>
+                  <pre className="pipeline-drawer__code">
+                    <code>{currentItem.code}</code>
+                  </pre>
+                </>
+              );
+            })()}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -500,10 +543,16 @@ export function ScalabilityBlueprint3Tier({
 // TIER 2: Regional Pulau Sumatera (10 Provinsi · 154 Daerah)
 // ============================================================================
 
-export function RegionalSumateraMatrix() {
+export function RegionalSumateraMatrix({
+  onSelectTier,
+}: {
+  onSelectTier?: (tier: 1 | 2 | 3) => void;
+} = {}) {
   const [filterStatus, setFilterStatus] = useState<string>("semua");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [sortField, setSortField] = useState<"nama" | "pagu" | "serapan">("pagu");
+  const [sortField, setSortField] = useState<"nama" | "pagu" | "serapan">(
+    "pagu",
+  );
 
   const totalDaerah = useMemo(
     () => sumateraProvinces.reduce((acc, p) => acc + p.daerahCount, 0),
@@ -522,7 +571,10 @@ export function RegionalSumateraMatrix() {
     [],
   );
   const avgSerapanModal = useMemo(() => {
-    const sum = sumateraProvinces.reduce((acc, p) => acc + p.modalAbsorptionRate, 0);
+    const sum = sumateraProvinces.reduce(
+      (acc, p) => acc + p.modalAbsorptionRate,
+      0,
+    );
     return Number((sum / sumateraProvinces.length).toFixed(1));
   }, []);
 
@@ -532,7 +584,9 @@ export function RegionalSumateraMatrix() {
         const matchesQuery =
           p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           p.capital.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.featuredDaerah.some((d) => d.toLowerCase().includes(searchQuery.toLowerCase()));
+          p.featuredDaerah.some((d) =>
+            d.toLowerCase().includes(searchQuery.toLowerCase()),
+          );
         const matchesStatus =
           filterStatus === "semua"
             ? true
@@ -545,15 +599,41 @@ export function RegionalSumateraMatrix() {
       })
       .sort((a, b) => {
         if (sortField === "pagu") return b.aggregateBudget - a.aggregateBudget;
-        if (sortField === "serapan") return b.modalAbsorptionRate - a.modalAbsorptionRate;
+        if (sortField === "serapan")
+          return b.modalAbsorptionRate - a.modalAbsorptionRate;
         return a.name.localeCompare(b.name, "id");
       });
   }, [searchQuery, filterStatus, sortField]);
 
   return (
     <div className="stack" style={{ marginTop: "var(--gap)" }}>
+      {/* Multi-Tier Back Navigation Bar */}
+      <div className="tier-nav-bar">
+        <button
+          type="button"
+          className="btn btn--secondary btn--sm"
+          onClick={() => onSelectTier?.(1)}
+          style={{ display: "inline-flex", alignItems: "center", gap: "7px" }}
+        >
+          <ArrowLeft size={14} />
+          <span>Kembali ke Jelajah Anggaran Sumut (33 Pemda)</span>
+        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <span className="dot dot--info" />
+          <span
+            style={{
+              fontSize: "0.8125rem",
+              color: "var(--ink-2)",
+              fontWeight: 500,
+            }}
+          >
+            Mode Regional: 10 Provinsi · 154 Daerah Se-Sumatera
+          </span>
+        </div>
+      </div>
+
       {/* 3-Tier Blueprint Component at top */}
-      <ScalabilityBlueprint3Tier activeTier={2} />
+      <ScalabilityBlueprint3Tier activeTier={2} onSelectTier={onSelectTier} />
 
       {/* Banner Arsitektur Modular Sumatera (Flattened & Calm) */}
       <section
@@ -566,7 +646,15 @@ export function RegionalSumateraMatrix() {
         }}
         aria-labelledby="banner-sumatera-heading"
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            flexWrap: "wrap",
+            marginBottom: "8px",
+          }}
+        >
           <span className="chip chip--accent chip--square">
             <Layers size={13} /> Arsitektur Skalabilitas Tier 2
           </span>
@@ -577,28 +665,74 @@ export function RegionalSumateraMatrix() {
             10 Provinsi Terpetakan
           </span>
         </div>
-        <h2 id="banner-sumatera-heading" style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 8px", color: "var(--ink)", lineHeight: 1.3 }}>
-          Cakupan Regional Sumatera: 154 Kabupaten/Kota dalam proses ingestion modular per provinsi
+        <h2
+          id="banner-sumatera-heading"
+          style={{
+            fontSize: "1.25rem",
+            fontWeight: 700,
+            margin: "0 0 8px",
+            color: "var(--ink)",
+            lineHeight: 1.3,
+          }}
+        >
+          Cakupan Regional Sumatera: 154 Kabupaten/Kota dalam proses ingestion
+          modular per provinsi
         </h2>
-        <p style={{ fontSize: "0.875rem", color: "var(--ink-2)", lineHeight: 1.55, margin: "0 0 16px", maxWidth: "820px" }}>
-          GovSight ID memperluas jangkauan pemantauan belanja publik dari Sumatera Utara menuju 10 provinsi di seluruh Pulau Sumatera.
-          Sistem ingestion modular memproses 154 APBD kabupaten/kota dengan standardisasi skema SIKD Kementerian Keuangan dan verifikasi integritas data SHA-256.
+        <p
+          style={{
+            fontSize: "0.875rem",
+            color: "var(--ink-2)",
+            lineHeight: 1.55,
+            margin: "0 0 16px",
+            maxWidth: "820px",
+          }}
+        >
+          GovSight ID memperluas jangkauan pemantauan belanja publik dari
+          Sumatera Utara menuju 10 provinsi di seluruh Pulau Sumatera. Sistem
+          ingestion modular memproses 154 APBD kabupaten/kota dengan
+          standardisasi skema SIKD Kementerian Keuangan dan verifikasi
+          integritas data SHA-256.
         </p>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
             gap: "12px",
             paddingTop: "14px",
             borderTop: "1px solid var(--line-2)",
           }}
         >
-          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+          <div
+            style={{
+              padding: "10px 12px",
+              background: "var(--canvas)",
+              borderRadius: "var(--r-sm)",
+              border: "1px solid var(--line-2)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                color: "var(--ink-3)",
+                display: "block",
+              }}
+            >
               Cakupan Wilayah
             </span>
-            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ink)", display: "block", margin: "2px 0 1px" }}>
+            <strong
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--ink)",
+                display: "block",
+                margin: "2px 0 1px",
+              }}
+            >
               10 Provinsi
             </strong>
             <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
@@ -606,11 +740,36 @@ export function RegionalSumateraMatrix() {
             </span>
           </div>
 
-          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+          <div
+            style={{
+              padding: "10px 12px",
+              background: "var(--canvas)",
+              borderRadius: "var(--r-sm)",
+              border: "1px solid var(--line-2)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                color: "var(--ink-3)",
+                display: "block",
+              }}
+            >
               Total Agregat APBD
             </span>
-            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ink)", display: "block", margin: "2px 0 1px" }} title={fullMoney(totalPagu.toString())}>
+            <strong
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--ink)",
+                display: "block",
+                margin: "2px 0 1px",
+              }}
+              title={fullMoney(totalPagu.toString())}
+            >
               {compactMoney(totalPagu.toString())}
             </strong>
             <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
@@ -618,11 +777,35 @@ export function RegionalSumateraMatrix() {
             </span>
           </div>
 
-          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+          <div
+            style={{
+              padding: "10px 12px",
+              background: "var(--canvas)",
+              borderRadius: "var(--r-sm)",
+              border: "1px solid var(--line-2)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                color: "var(--ink-3)",
+                display: "block",
+              }}
+            >
               Rata-rata Serapan Modal
             </span>
-            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ok)", display: "block", margin: "2px 0 1px" }}>
+            <strong
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--ok)",
+                display: "block",
+                margin: "2px 0 1px",
+              }}
+            >
               {percent(avgSerapanModal)}
             </strong>
             <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
@@ -630,11 +813,35 @@ export function RegionalSumateraMatrix() {
             </span>
           </div>
 
-          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+          <div
+            style={{
+              padding: "10px 12px",
+              background: "var(--canvas)",
+              borderRadius: "var(--r-sm)",
+              border: "1px solid var(--line-2)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                color: "var(--ink-3)",
+                display: "block",
+              }}
+            >
               Status Ingestion
             </span>
-            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--accent)", display: "block", margin: "2px 0 1px" }}>
+            <strong
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--accent)",
+                display: "block",
+                margin: "2px 0 1px",
+              }}
+            >
               33 Live · 121 Staged
             </strong>
             <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
@@ -653,7 +860,8 @@ export function RegionalSumateraMatrix() {
               <span className="count">{filteredProvinces.length}</span>
             </h3>
             <p className="card__sub">
-              Perbandingan pagu APBD, rata-rata serapan belanja modal infrastruktur, dan kesiapan pipeline ingestion data.
+              Perbandingan pagu APBD, rata-rata serapan belanja modal
+              infrastruktur, dan kesiapan pipeline ingestion data.
             </p>
           </div>
           <div className="section-head__actions">
@@ -686,7 +894,11 @@ export function RegionalSumateraMatrix() {
               />
             </label>
             <div className="toolbar__group toolbar__group--end">
-              <div className="segmented" role="group" aria-label="Filter status ingestion">
+              <div
+                className="segmented"
+                role="group"
+                aria-label="Filter status ingestion"
+              >
                 <button
                   type="button"
                   className={`segmented__item ${filterStatus === "semua" ? "is-active" : ""}`}
@@ -720,13 +932,18 @@ export function RegionalSumateraMatrix() {
           </div>
 
           {/* Desktop Table View with smooth touch scrolling */}
-          <div className="table-wrap" style={{ WebkitOverflowScrolling: "touch" }}>
+          <div
+            className="table-wrap matrix-table-wrap"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
             <table className="region-table">
               <thead>
                 <tr>
                   <th style={{ width: "22%" }}>Provinsi &amp; Ibukota</th>
                   <th style={{ width: "16%" }}>Cakupan Daerah</th>
-                  <th className="is-num" style={{ width: "18%" }}>Estimasi Agregat APBD</th>
+                  <th className="is-num" style={{ width: "18%" }}>
+                    Estimasi Agregat APBD
+                  </th>
                   <th style={{ width: "22%" }}>Serapan Belanja Modal</th>
                   <th style={{ width: "12%" }}>Porsi Pegawai</th>
                   <th style={{ width: "10%" }}>Pipeline Status</th>
@@ -737,19 +954,43 @@ export function RegionalSumateraMatrix() {
                   <tr key={p.code}>
                     <td>
                       <div className="region-cell">
-                        <span className="region-cell__name">
-                          {p.name}
-                        </span>
+                        <span className="region-cell__name">{p.name}</span>
                         <span className="region-cell__kind">
                           Ibukota: {p.capital}
                         </span>
+                        {p.code === "12" && onSelectTier && (
+                          <button
+                            type="button"
+                            className="btn btn--secondary btn--sm"
+                            onClick={() => onSelectTier(1)}
+                            style={{
+                              marginTop: 6,
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 5,
+                              fontSize: "0.6875rem",
+                              padding: "2px 7px",
+                            }}
+                            title="Buka 33 Daerah Terpantau Sumatera Utara"
+                          >
+                            <ArrowLeft size={11} /> Buka 33 Daerah Sumut
+                          </button>
+                        )}
                       </div>
                     </td>
                     <td>
-                      <span style={{ fontSize: "0.8125rem", color: "var(--ink)" }}>
+                      <span
+                        style={{ fontSize: "0.8125rem", color: "var(--ink)" }}
+                      >
                         <strong>{p.daerahCount}</strong> Daerah
                       </span>
-                      <span style={{ fontSize: "0.6875rem", color: "var(--ink-3)", display: "block" }}>
+                      <span
+                        style={{
+                          fontSize: "0.6875rem",
+                          color: "var(--ink-3)",
+                          display: "block",
+                        }}
+                      >
                         {p.kotaCount} Kota · {p.kabCount} Kabupaten
                       </span>
                     </td>
@@ -762,7 +1003,12 @@ export function RegionalSumateraMatrix() {
                       <div className="rate-cell">
                         <span className="rate-cell__top">
                           <strong>{percent(p.modalAbsorptionRate)}</strong>
-                          <span style={{ fontSize: "0.6875rem", color: "var(--ink-4)" }}>
+                          <span
+                            style={{
+                              fontSize: "0.6875rem",
+                              color: "var(--ink-4)",
+                            }}
+                          >
                             (Target UU &ge;40%)
                           </span>
                         </span>
@@ -782,30 +1028,46 @@ export function RegionalSumateraMatrix() {
                       </div>
                     </td>
                     <td>
-                      <span style={{ fontSize: "0.8125rem", color: "var(--ink)" }}>
+                      <span
+                        style={{ fontSize: "0.8125rem", color: "var(--ink)" }}
+                      >
                         {percent(p.pegawaiAbsorptionRate)}
                       </span>
                       <span
                         style={{
                           fontSize: "0.6875rem",
                           display: "block",
-                          color: p.pegawaiAbsorptionRate > 30 ? "var(--warn-ink)" : "var(--ok-ink)",
+                          color:
+                            p.pegawaiAbsorptionRate > 30
+                              ? "var(--warn-ink)"
+                              : "var(--ok-ink)",
                         }}
                       >
-                        {p.pegawaiAbsorptionRate > 30 ? "> Batas 30%" : "Sesuai UU"}
+                        {p.pegawaiAbsorptionRate > 30
+                          ? "> Batas 30%"
+                          : "Sesuai UU"}
                       </span>
                     </td>
                     <td>
                       {p.statusIngestion === "Aktif Penuh" ? (
-                        <span className="chip chip--ok chip--square" style={{ fontSize: "0.6875rem" }}>
+                        <span
+                          className="chip chip--ok chip--square"
+                          style={{ fontSize: "0.6875rem" }}
+                        >
                           <ShieldCheck size={11} /> Aktif (100%)
                         </span>
                       ) : p.statusIngestion === "In Progress" ? (
-                        <span className="chip chip--info chip--square" style={{ fontSize: "0.6875rem" }}>
+                        <span
+                          className="chip chip--info chip--square"
+                          style={{ fontSize: "0.6875rem" }}
+                        >
                           <Clock size={11} /> {p.progressPercent}%
                         </span>
                       ) : (
-                        <span className="chip chip--sunk chip--square" style={{ fontSize: "0.6875rem" }}>
+                        <span
+                          className="chip chip--sunk chip--square"
+                          style={{ fontSize: "0.6875rem" }}
+                        >
                           <Database size={11} /> Staged
                         </span>
                       )}
@@ -816,21 +1078,38 @@ export function RegionalSumateraMatrix() {
             </table>
           </div>
 
-          {/* Mobile Cards for Provinces (Flattened) */}
-          <div className="region-cards">
+          {/* Mobile Cards for Provinces (Touch-Friendly) */}
+          <div className="matrix-cards">
             {filteredProvinces.map((p) => (
-              <div key={p.code} className="provinsi-card" style={{ border: "1px solid var(--line)", borderRadius: "var(--r)", background: "var(--paper)", padding: "14px 16px" }}>
+              <div
+                key={p.code}
+                className="provinsi-card"
+                style={{
+                  border: "1px solid var(--line)",
+                  borderRadius: "var(--r)",
+                  background: "var(--paper)",
+                  padding: "14px 16px",
+                }}
+              >
                 <div className="provinsi-card__head">
                   <div>
                     <h4 className="provinsi-card__name">{p.name}</h4>
-                    <span className="provinsi-card__cap">Ibukota: {p.capital}</span>
+                    <span className="provinsi-card__cap">
+                      Ibukota: {p.capital}
+                    </span>
                   </div>
                   {p.statusIngestion === "Aktif Penuh" ? (
-                    <span className="chip chip--ok chip--square">Aktif Penuh</span>
+                    <span className="chip chip--ok chip--square">
+                      Aktif Penuh
+                    </span>
                   ) : p.statusIngestion === "In Progress" ? (
-                    <span className="chip chip--info chip--square">{p.progressPercent}% Ingestion</span>
+                    <span className="chip chip--info chip--square">
+                      {p.progressPercent}% Ingestion
+                    </span>
                   ) : (
-                    <span className="chip chip--sunk chip--square">Pipeline Rujukan</span>
+                    <span className="chip chip--sunk chip--square">
+                      Pipeline Rujukan
+                    </span>
                   )}
                 </div>
 
@@ -843,11 +1122,16 @@ export function RegionalSumateraMatrix() {
                   </div>
                   <div className="provinsi-card__metric-item">
                     <span>Cakupan Wilayah</span>
-                    <strong>{p.daerahCount} Daerah ({p.kotaCount} Kota, {p.kabCount} Kab)</strong>
+                    <strong>
+                      {p.daerahCount} Daerah ({p.kotaCount} Kota, {p.kabCount}{" "}
+                      Kab)
+                    </strong>
                   </div>
                   <div className="provinsi-card__metric-item">
                     <span>Serapan Modal Fisik</span>
-                    <strong style={{ color: "var(--ok)" }}>{percent(p.modalAbsorptionRate)}</strong>
+                    <strong style={{ color: "var(--ok)" }}>
+                      {percent(p.modalAbsorptionRate)}
+                    </strong>
                   </div>
                   <div className="provinsi-card__metric-item">
                     <span>Porsi Belanja Pegawai</span>
@@ -857,8 +1141,35 @@ export function RegionalSumateraMatrix() {
 
                 <div style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
                   <span>Daerah rujukan: </span>
-                  <span style={{ color: "var(--ink-2)" }}>{p.featuredDaerah.join(", ")}</span>
+                  <span style={{ color: "var(--ink-2)" }}>
+                    {p.featuredDaerah.join(", ")}
+                  </span>
                 </div>
+
+                {p.code === "12" && onSelectTier && (
+                  <div
+                    style={{
+                      marginTop: 10,
+                      paddingTop: 8,
+                      borderTop: "1px dashed var(--line)",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm"
+                      onClick={() => onSelectTier(1)}
+                      style={{
+                        width: "100%",
+                        justifyContent: "center",
+                        gap: 6,
+                        fontSize: "0.8125rem",
+                      }}
+                    >
+                      <ArrowLeft size={13} /> Buka Jelajah 33 Pemda Sumut (Home
+                      Base)
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -866,8 +1177,9 @@ export function RegionalSumateraMatrix() {
 
         <div className="card__foot">
           <InfoNote>
-            Estimasi agregat APBD se-Sumatera dihimpun dari konsolidasi data publik DJPK Kementerian Keuangan.
-            Pembaruan ingestion modular dirilis bertahap per batch provinsi.
+            Estimasi agregat APBD se-Sumatera dihimpun dari konsolidasi data
+            publik DJPK Kementerian Keuangan. Pembaruan ingestion modular
+            dirilis bertahap per batch provinsi.
           </InfoNote>
         </div>
       </div>
@@ -876,14 +1188,18 @@ export function RegionalSumateraMatrix() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
           gap: "var(--gap)",
         }}
       >
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+              <span
+                className="chip chip--square"
+                style={{ marginBottom: 6, fontSize: "0.6875rem" }}
+              >
                 Analisis Agregat
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
@@ -892,9 +1208,22 @@ export function RegionalSumateraMatrix() {
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
-              <strong>Sumatera Utara ({compactMoney("63240000000000")})</strong> dan{" "}
-              <strong>Sumatera Selatan ({compactMoney("44280000000000")})</strong> mengelola lebih dari 36% dari seluruh total APBD di Pulau Sumatera. Pengawasan publik di kedua provinsi ini memiliki dampak sistemik terhadap stabilitas perekonomian regional.
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--ink-2)",
+                lineHeight: 1.55,
+                margin: 0,
+              }}
+            >
+              <strong>Sumatera Utara ({compactMoney("63240000000000")})</strong>{" "}
+              dan{" "}
+              <strong>
+                Sumatera Selatan ({compactMoney("44280000000000")})
+              </strong>{" "}
+              mengelola lebih dari 36% dari seluruh total APBD di Pulau
+              Sumatera. Pengawasan publik di kedua provinsi ini memiliki dampak
+              sistemik terhadap stabilitas perekonomian regional.
             </p>
           </div>
         </div>
@@ -902,7 +1231,10 @@ export function RegionalSumateraMatrix() {
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+              <span
+                className="chip chip--square"
+                style={{ marginBottom: 6, fontSize: "0.6875rem" }}
+              >
                 Kinerja Realisasi
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
@@ -911,9 +1243,19 @@ export function RegionalSumateraMatrix() {
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--ink-2)",
+                lineHeight: 1.55,
+                margin: 0,
+              }}
+            >
               <strong>Kepulauan Riau (21,1%)</strong> dan{" "}
-              <strong>Bangka Belitung (20,3%)</strong> mencatatkan proporsi realisasi modal fisik terbaik. Sebaliknya, Bengkulu (16,4%) dan Aceh (16,8%) membutuhkan akselerasi lelang proyek dini demi mencegah kejar tayang akhir tahun.
+              <strong>Bangka Belitung (20,3%)</strong> mencatatkan proporsi
+              realisasi modal fisik terbaik. Sebaliknya, Bengkulu (16,4%) dan
+              Aceh (16,8%) membutuhkan akselerasi lelang proyek dini demi
+              mencegah kejar tayang akhir tahun.
             </p>
           </div>
         </div>
@@ -921,7 +1263,10 @@ export function RegionalSumateraMatrix() {
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--ok chip--square" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+              <span
+                className="chip chip--ok chip--square"
+                style={{ marginBottom: 6, fontSize: "0.6875rem" }}
+              >
                 Audit Integritas
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
@@ -930,8 +1275,18 @@ export function RegionalSumateraMatrix() {
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
-              Setiap berkas XML/CSV dari 154 daerah melewati validasi checksum SHA-256 yang identik dengan standar Sumatera Utara, menjamin seluruh angka belanja publik dapat diaudit ulang secara independen oleh masyarakat sipil.
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--ink-2)",
+                lineHeight: 1.55,
+                margin: 0,
+              }}
+            >
+              Setiap berkas XML/CSV dari 154 daerah melewati validasi checksum
+              SHA-256 yang identik dengan standar Sumatera Utara, menjamin
+              seluruh angka belanja publik dapat diaudit ulang secara independen
+              oleh masyarakat sipil.
             </p>
           </div>
         </div>
@@ -944,13 +1299,42 @@ export function RegionalSumateraMatrix() {
 // TIER 3: Roadmap Skalabilitas Nasional (38 Provinsi · 514 Pemda)
 // ============================================================================
 
-export function NationalRoadmapView() {
+export function NationalRoadmapView({
+  onSelectTier,
+}: {
+  onSelectTier?: (tier: 1 | 2 | 3) => void;
+} = {}) {
   const summary = nationalFiscalSummary;
 
   return (
     <div className="stack" style={{ marginTop: "var(--gap)" }}>
+      {/* Multi-Tier Back Navigation Bar */}
+      <div className="tier-nav-bar">
+        <button
+          type="button"
+          className="btn btn--secondary btn--sm"
+          onClick={() => onSelectTier?.(1)}
+          style={{ display: "inline-flex", alignItems: "center", gap: "7px" }}
+        >
+          <ArrowLeft size={14} />
+          <span>Kembali ke Jelajah Anggaran Sumut (33 Pemda)</span>
+        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <span className="dot dot--accent" />
+          <span
+            style={{
+              fontSize: "0.8125rem",
+              color: "var(--ink-2)",
+              fontWeight: 500,
+            }}
+          >
+            Mode Nasional: 38 Provinsi · 514 Daerah Seluruh Indonesia
+          </span>
+        </div>
+      </div>
+
       {/* 3-Tier Blueprint Component at top */}
-      <ScalabilityBlueprint3Tier activeTier={3} />
+      <ScalabilityBlueprint3Tier activeTier={3} onSelectTier={onSelectTier} />
 
       {/* Header Banner Nasional (Flattened & Calm, No Gimmick) */}
       <section
@@ -963,7 +1347,15 @@ export function NationalRoadmapView() {
         }}
         aria-labelledby="banner-nasional-heading"
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            flexWrap: "wrap",
+            marginBottom: "8px",
+          }}
+        >
           <span className="chip chip--square">
             <Globe size={13} /> Arsitektur Skalabilitas Tier 3
           </span>
@@ -974,40 +1366,112 @@ export function NationalRoadmapView() {
             38 Provinsi · 514 Daerah
           </span>
         </div>
-        <h2 id="banner-nasional-heading" style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 8px", color: "var(--ink)", lineHeight: 1.3 }}>
-          Roadmap Skalabilitas Nasional: 38 Provinsi · 514 Pemda Seluruh Indonesia
+        <h2
+          id="banner-nasional-heading"
+          style={{
+            fontSize: "1.25rem",
+            fontWeight: 700,
+            margin: "0 0 8px",
+            color: "var(--ink)",
+            lineHeight: 1.3,
+          }}
+        >
+          Roadmap Skalabilitas Nasional: 38 Provinsi · 514 Pemda Seluruh
+          Indonesia
         </h2>
-        <p style={{ fontSize: "0.875rem", color: "var(--ink-2)", lineHeight: 1.55, margin: "0 0 16px", maxWidth: "820px" }}>
-          Membuka transparansi Rp 1,15 Kuadriliun belanja publik daerah di seluruh Indonesia — dari Sabang sampai Merauke.
-          GovSight ID dirancang dengan arsitektur desentralistik untuk memetakan kepatuhan belanja modal terhadap amanat Undang-Undang HKPD No. 1/2022 di seluruh 6 gugus kepulauan Nusantara.
+        <p
+          style={{
+            fontSize: "0.875rem",
+            color: "var(--ink-2)",
+            lineHeight: 1.55,
+            margin: "0 0 16px",
+            maxWidth: "820px",
+          }}
+        >
+          Membuka transparansi Rp 1,15 Kuadriliun belanja publik daerah di
+          seluruh Indonesia — dari Sabang sampai Merauke. GovSight ID dirancang
+          dengan arsitektur desentralistik untuk memetakan kepatuhan belanja
+          modal terhadap amanat Undang-Undang HKPD No. 1/2022 di seluruh 6 gugus
+          kepulauan Nusantara.
         </p>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
             gap: "12px",
             paddingTop: "14px",
             borderTop: "1px solid var(--line-2)",
           }}
         >
-          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+          <div
+            style={{
+              padding: "10px 12px",
+              background: "var(--canvas)",
+              borderRadius: "var(--r-sm)",
+              border: "1px solid var(--line-2)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                color: "var(--ink-3)",
+                display: "block",
+              }}
+            >
               Cakupan Nasional
             </span>
-            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ink)", display: "block", margin: "2px 0 1px" }}>
+            <strong
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--ink)",
+                display: "block",
+                margin: "2px 0 1px",
+              }}
+            >
               514 Pemda
             </strong>
             <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
-              38 Provinsi ({summary.totalKota} Kota · {summary.totalKabupaten} Kab)
+              38 Provinsi ({summary.totalKota} Kota · {summary.totalKabupaten}{" "}
+              Kab)
             </span>
           </div>
 
-          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+          <div
+            style={{
+              padding: "10px 12px",
+              background: "var(--canvas)",
+              borderRadius: "var(--r-sm)",
+              border: "1px solid var(--line-2)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                color: "var(--ink-3)",
+                display: "block",
+              }}
+            >
               Konsolidasi APBD Nasional
             </span>
-            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ink)", display: "block", margin: "2px 0 1px" }} title={fullMoney(summary.totalAggregateBudget.toString())}>
+            <strong
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--ink)",
+                display: "block",
+                margin: "2px 0 1px",
+              }}
+              title={fullMoney(summary.totalAggregateBudget.toString())}
+            >
               Rp 1,15 Kuadriliun
             </strong>
             <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
@@ -1015,11 +1479,35 @@ export function NationalRoadmapView() {
             </span>
           </div>
 
-          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+          <div
+            style={{
+              padding: "10px 12px",
+              background: "var(--canvas)",
+              borderRadius: "var(--r-sm)",
+              border: "1px solid var(--line-2)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                color: "var(--ink-3)",
+                display: "block",
+              }}
+            >
               Gugus Kepulauan
             </span>
-            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ink)", display: "block", margin: "2px 0 1px" }}>
+            <strong
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--ink)",
+                display: "block",
+                margin: "2px 0 1px",
+              }}
+            >
               6 Gugus
             </strong>
             <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
@@ -1027,11 +1515,35 @@ export function NationalRoadmapView() {
             </span>
           </div>
 
-          <div style={{ padding: "10px 12px", background: "var(--canvas)", borderRadius: "var(--r-sm)", border: "1px solid var(--line-2)" }}>
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-3)", display: "block" }}>
+          <div
+            style={{
+              padding: "10px 12px",
+              background: "var(--canvas)",
+              borderRadius: "var(--r-sm)",
+              border: "1px solid var(--line-2)",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                color: "var(--ink-3)",
+                display: "block",
+              }}
+            >
               Potensi Akselerasi Modal
             </span>
-            <strong style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--ok)", display: "block", margin: "2px 0 1px" }}>
+            <strong
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "var(--ok)",
+                display: "block",
+                margin: "2px 0 1px",
+              }}
+            >
               &gt;Rp 120 Triliun
             </strong>
             <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
@@ -1049,7 +1561,8 @@ export function NationalRoadmapView() {
               Distribusi Fiskal 6 Gugus Kepulauan Nusantara
             </h3>
             <p className="card__sub">
-              Peta implementasi bertahap pengawasan APBD di 514 kabupaten dan kota di seluruh Indonesia.
+              Peta implementasi bertahap pengawasan APBD di 514 kabupaten dan
+              kota di seluruh Indonesia.
             </p>
           </div>
           <span className="chip chip--accent">514 Daerah Terpetakan</span>
@@ -1058,12 +1571,21 @@ export function NationalRoadmapView() {
         <div className="card__body">
           <div className="island-group-grid">
             {nationalIslandsGroups.map((gugus) => (
-              <div key={gugus.id} className="island-card" style={{ border: "1px solid var(--line)", borderRadius: "var(--r)", background: "var(--paper)" }}>
+              <div
+                key={gugus.id}
+                className="island-card"
+                style={{
+                  border: "1px solid var(--line)",
+                  borderRadius: "var(--r)",
+                  background: "var(--paper)",
+                }}
+              >
                 <div className="island-card__head">
                   <div>
                     <h4 className="island-card__title">{gugus.name}</h4>
                     <span className="island-card__meta">
-                      {gugus.provincesCount} Provinsi · {gugus.daerahCount} Daerah
+                      {gugus.provincesCount} Provinsi · {gugus.daerahCount}{" "}
+                      Daerah
                     </span>
                   </div>
                   <span
@@ -1106,8 +1628,53 @@ export function NationalRoadmapView() {
                 </div>
 
                 <div className="island-card__foot">
-                  <span>Status: <strong style={{ color: "var(--ink)" }}>{gugus.status}</strong></span>
+                  <span>
+                    Status:{" "}
+                    <strong style={{ color: "var(--ink)" }}>
+                      {gugus.status}
+                    </strong>
+                  </span>
                 </div>
+
+                {gugus.name === "Sumatera" && onSelectTier && (
+                  <div
+                    style={{
+                      marginTop: 8,
+                      paddingTop: 8,
+                      borderTop: "1px dashed var(--line)",
+                      display: "flex",
+                      gap: 8,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm"
+                      onClick={() => onSelectTier(2)}
+                      style={{
+                        fontSize: "0.75rem",
+                        padding: "4px 8px",
+                        flex: 1,
+                        justifyContent: "center",
+                      }}
+                    >
+                      Buka Matriks Sumatera (Tier 2) →
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn--primary btn--sm"
+                      onClick={() => onSelectTier(1)}
+                      style={{
+                        fontSize: "0.75rem",
+                        padding: "4px 8px",
+                        flex: 1,
+                        justifyContent: "center",
+                      }}
+                    >
+                      <ArrowLeft size={12} /> Kembali ke Sumut (Tier 1)
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -1115,23 +1682,36 @@ export function NationalRoadmapView() {
 
         <div className="card__foot">
           <InfoNote>
-            Setiap gugus kepulauan memiliki karakteristik fiskal yang unik, dari dominasi kawasan metropolitan di Jawa hingga alokasi otonomi khusus dan tantangan geografis di Maluku-Papua.
+            Setiap gugus kepulauan memiliki karakteristik fiskal yang unik, dari
+            dominasi kawasan metropolitan di Jawa hingga alokasi otonomi khusus
+            dan tantangan geografis di Maluku-Papua.
           </InfoNote>
         </div>
       </div>
 
       {/* UU HKPD Compliance Analysis Section (Flattened Containers) */}
-      <div className="card" style={{ border: "1px solid var(--warn-line, #fde68a)" }}>
+      <div
+        className="card"
+        style={{ border: "1px solid var(--warn-line, #fde68a)" }}
+      >
         <div className="card__head">
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 4,
+              }}
+            >
               <Scale size={16} style={{ color: "var(--warn-ink)" }} />
               <h3 className="card__title">
                 Kepatuhan Mandat Nasional UU HKPD No. 1/2022
               </h3>
             </div>
             <p className="card__sub">
-              Perbandingan rata-rata alokasi belanja daerah nasional terhadap batas hukum yang diwajibkan negara.
+              Perbandingan rata-rata alokasi belanja daerah nasional terhadap
+              batas hukum yang diwajibkan negara.
             </p>
           </div>
           <span className="chip chip--warn">Analisis Kesenjangan Fiskal</span>
@@ -1141,7 +1721,8 @@ export function NationalRoadmapView() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
               gap: 16,
             }}
           >
@@ -1154,25 +1735,64 @@ export function NationalRoadmapView() {
                 border: "1px solid var(--line)",
               }}
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-                <strong style={{ fontSize: "0.9375rem" }}>Belanja Modal Infrastruktur Publik</strong>
-                <span className="chip chip--warn chip--square">Kesenjangan -21,8%</span>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "baseline",
+                  marginBottom: 6,
+                }}
+              >
+                <strong style={{ fontSize: "0.9375rem" }}>
+                  Belanja Modal Infrastruktur Publik
+                </strong>
+                <span className="chip chip--warn chip--square">
+                  Kesenjangan -21,8%
+                </span>
               </div>
-              <p style={{ fontSize: "0.8125rem", color: "var(--ink-3)", margin: "0 0 12px", lineHeight: 1.5 }}>
-                Pasal 147 UU HKPD mewajibkan alokasi belanja modal infrastruktur pelayanan publik minimal <strong>40%</strong> dari total APBD.
+              <p
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--ink-3)",
+                  margin: "0 0 12px",
+                  lineHeight: 1.5,
+                }}
+              >
+                Pasal 147 UU HKPD mewajibkan alokasi belanja modal infrastruktur
+                pelayanan publik minimal <strong>40%</strong> dari total APBD.
               </p>
 
               <div style={{ marginBottom: 8 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: 4 }}>
-                  <span>Realisasi Rata-rata Nasional: <strong>18,2%</strong></span>
-                  <span style={{ color: "var(--ok-ink)", fontWeight: 600 }}>Target Hukum: &ge;40%</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: "0.75rem",
+                    marginBottom: 4,
+                  }}
+                >
+                  <span>
+                    Realisasi Rata-rata Nasional: <strong>18,2%</strong>
+                  </span>
+                  <span style={{ color: "var(--ok-ink)", fontWeight: 600 }}>
+                    Target Hukum: &ge;40%
+                  </span>
                 </div>
                 <div className="meter" style={{ height: 10 }}>
-                  <span style={{ width: "18.2%", background: "var(--warn-solid)" }} />
+                  <span
+                    style={{ width: "18.2%", background: "var(--warn-solid)" }}
+                  />
                 </div>
               </div>
-              <span style={{ fontSize: "0.75rem", color: "var(--warn-ink)", fontWeight: 500 }}>
-                Hanya segelintir daerah yang telah memenuhi mandat 40%. Mayoritas masih tertahan di rentang 15%–22%.
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--warn-ink)",
+                  fontWeight: 500,
+                }}
+              >
+                Hanya segelintir daerah yang telah memenuhi mandat 40%.
+                Mayoritas masih tertahan di rentang 15%–22%.
               </span>
             </div>
 
@@ -1185,25 +1805,59 @@ export function NationalRoadmapView() {
                 border: "1px solid var(--line)",
               }}
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-                <strong style={{ fontSize: "0.9375rem" }}>Batas Maksimal Belanja Pegawai</strong>
-                <span className="chip chip--warn chip--square">Melebihi Batas +4,6%</span>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "baseline",
+                  marginBottom: 6,
+                }}
+              >
+                <strong style={{ fontSize: "0.9375rem" }}>
+                  Batas Maksimal Belanja Pegawai
+                </strong>
+                <span className="chip chip--warn chip--square">
+                  Melebihi Batas +4,6%
+                </span>
               </div>
-              <p style={{ fontSize: "0.8125rem", color: "var(--ink-3)", margin: "0 0 12px", lineHeight: 1.5 }}>
-                Pasal 146 UU HKPD membatasi belanja aparatur/pegawai maksimal <strong>30%</strong> demi menjaga ruang belanja langsung bagi warga.
+              <p
+                style={{
+                  fontSize: "0.8125rem",
+                  color: "var(--ink-3)",
+                  margin: "0 0 12px",
+                  lineHeight: 1.5,
+                }}
+              >
+                Pasal 146 UU HKPD membatasi belanja aparatur/pegawai maksimal{" "}
+                <strong>30%</strong> demi menjaga ruang belanja langsung bagi
+                warga.
               </p>
 
               <div style={{ marginBottom: 8 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: 4 }}>
-                  <span>Rata-rata Nasional: <strong>34,6%</strong></span>
-                  <span style={{ color: "var(--accent)", fontWeight: 600 }}>Batas Maksimal: &le;30%</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: "0.75rem",
+                    marginBottom: 4,
+                  }}
+                >
+                  <span>
+                    Rata-rata Nasional: <strong>34,6%</strong>
+                  </span>
+                  <span style={{ color: "var(--accent)", fontWeight: 600 }}>
+                    Batas Maksimal: &le;30%
+                  </span>
                 </div>
                 <div className="meter" style={{ height: 10 }}>
-                  <span style={{ width: "34.6%", background: "var(--accent)" }} />
+                  <span
+                    style={{ width: "34.6%", background: "var(--accent)" }}
+                  />
                 </div>
               </div>
               <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
-                Kelebihan alokasi belanja pegawai menekan kapasitas daerah dalam membangun rumah sakit, sekolah, dan jalan mantap.
+                Kelebihan alokasi belanja pegawai menekan kapasitas daerah dalam
+                membangun rumah sakit, sekolah, dan jalan mantap.
               </span>
             </div>
           </div>
@@ -1214,14 +1868,18 @@ export function NationalRoadmapView() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
           gap: "var(--gap)",
         }}
       >
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+              <span
+                className="chip chip--square"
+                style={{ marginBottom: 6, fontSize: "0.6875rem" }}
+              >
                 Pengawasan Proyek
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
@@ -1230,8 +1888,18 @@ export function NationalRoadmapView() {
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
-              Dengan mendeteksi lonjakan belanja modal &gt;40% di akhir tahun anggaran, pengawasan publik dapat menyelamatkan kualitas fisik proyek infrastruktur senilai Rp 126,8 Triliun secara nasional dari risiko pekerjaan terburu-buru di musim hujan.
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--ink-2)",
+                lineHeight: 1.55,
+                margin: 0,
+              }}
+            >
+              Dengan mendeteksi lonjakan belanja modal &gt;40% di akhir tahun
+              anggaran, pengawasan publik dapat menyelamatkan kualitas fisik
+              proyek infrastruktur senilai Rp 126,8 Triliun secara nasional dari
+              risiko pekerjaan terburu-buru di musim hujan.
             </p>
           </div>
         </div>
@@ -1239,7 +1907,10 @@ export function NationalRoadmapView() {
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+              <span
+                className="chip chip--square"
+                style={{ marginBottom: 6, fontSize: "0.6875rem" }}
+              >
                 Efisiensi Anggaran
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
@@ -1248,8 +1919,18 @@ export function NationalRoadmapView() {
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
-              Penurunan bertahap porsi belanja pegawai menuju ambang batas 30% berpotensi membebaskan ruang fiskal hingga Rp 52,7 Triliun per tahun untuk dialihkan langsung ke subsidi kesehatan warga, beasiswa pendidikan, dan program pengentasan kemiskinan ekstrem.
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--ink-2)",
+                lineHeight: 1.55,
+                margin: 0,
+              }}
+            >
+              Penurunan bertahap porsi belanja pegawai menuju ambang batas 30%
+              berpotensi membebaskan ruang fiskal hingga Rp 52,7 Triliun per
+              tahun untuk dialihkan langsung ke subsidi kesehatan warga,
+              beasiswa pendidikan, dan program pengentasan kemiskinan ekstrem.
             </p>
           </div>
         </div>
@@ -1257,7 +1938,10 @@ export function NationalRoadmapView() {
         <div className="card">
           <div className="card__head">
             <div>
-              <span className="chip chip--square chip--ok" style={{ marginBottom: 6, fontSize: "0.6875rem" }}>
+              <span
+                className="chip chip--square chip--ok"
+                style={{ marginBottom: 6, fontSize: "0.6875rem" }}
+              >
                 Integritas Terbuka
               </span>
               <h3 className="card__title" style={{ fontSize: "0.9375rem" }}>
@@ -1266,8 +1950,18 @@ export function NationalRoadmapView() {
             </div>
           </div>
           <div className="card__body">
-            <p style={{ fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.55, margin: 0 }}>
-              Standar kriptografi SHA-256 membekali jurnalis, akademisi, dan organisasi masyarakat sipil dengan data primer yang sah secara metodologis, memutus asimetri informasi antara penyelenggara anggaran dan pembayar pajak.
+            <p
+              style={{
+                fontSize: "0.8125rem",
+                color: "var(--ink-2)",
+                lineHeight: 1.55,
+                margin: 0,
+              }}
+            >
+              Standar kriptografi SHA-256 membekali jurnalis, akademisi, dan
+              organisasi masyarakat sipil dengan data primer yang sah secara
+              metodologis, memutus asimetri informasi antara penyelenggara
+              anggaran dan pembayar pajak.
             </p>
           </div>
         </div>

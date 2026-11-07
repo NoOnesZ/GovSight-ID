@@ -759,6 +759,7 @@ export function ArchitectureView({ dataset: _dataset }: { dataset: Dataset }) {
           {/* Blueprint 3-Tier Visualizer Component */}
           <ScalabilityBlueprint3Tier
             activeTier={(scalabilityPhase + 1) as 1 | 2 | 3}
+            onSelectTier={(t) => setScalabilityPhase(t - 1)}
           />
 
           <div className="pipeline-header" style={{ marginTop: 24 }}>
@@ -1320,8 +1321,20 @@ export function ArchitectureView({ dataset: _dataset }: { dataset: Dataset }) {
       {/* TAB 4: PREVIEW REGIONAL SUMATERA & NASIONAL */}
       {activeTab === "regional" && (
         <div className="stack" style={{ gap: "var(--gap)" }}>
-          <RegionalSumateraMatrix />
-          <NationalRoadmapView />
+          <RegionalSumateraMatrix
+            onSelectTier={(t) => {
+              if (t === 1) {
+                window.location.href = "/";
+              }
+            }}
+          />
+          <NationalRoadmapView
+            onSelectTier={(t) => {
+              if (t === 1) {
+                window.location.href = "/";
+              }
+            }}
+          />
         </div>
       )}
 
