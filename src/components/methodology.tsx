@@ -20,7 +20,6 @@ import {
   Landmark,
   Layers,
   RefreshCw,
-  Scale,
   Server,
   ShieldCheck,
   Zap,
@@ -59,7 +58,6 @@ const scalabilityPhases = [
     clientPayload: "450 KB (Gzip: ~68 KB)",
     latencyTarget: "< 50 ms (TTFB)",
     throughputTarget: "50 – 100 req/s",
-    costEstimate: "$0 / bulan (Vercel Free Tier)",
     storageArch: "Static In-Memory JSON (data/snapshots.json)",
     partitionStrategy: "Monolitik Lokal (Cakupan Terbatas)",
     computeModel: "Next.js SSG Build-time + Decimal.js Arbitrary Precision",
@@ -94,7 +92,6 @@ const scalabilityPhases = [
     clientPayload: "Index ~15 KB + Chunk ~180 KB",
     latencyTarget: "< 80 ms (TTFB)",
     throughputTarget: "500 – 1.000 req/s",
-    costEstimate: "~$19 / bulan (Vercel Pro + Managed Cache)",
     storageArch: "Partitioned Static JSON Chunks per Provinsi + Ingestion Queue",
     partitionStrategy: "Horizontal Partitioning per Kode Provinsi (data/chunks/[prov].json)",
     computeModel: "Next.js ISR 24 Jam + Server Actions untuk Filter Lintas Wilayah",
@@ -129,7 +126,6 @@ const scalabilityPhases = [
     clientPayload: "Index <50 KB + Detail Daerah ~18 KB",
     latencyTarget: "< 100 ms (P95 Nasional)",
     throughputTarget: "5.000+ req/s (Elastis Auto-Scale)",
-    costEstimate: "~$50 – $120 / bulan (Neon Serverless + Edge)",
     storageArch: "Neon Serverless PostgreSQL (List Partitioning) + Global Search Index",
     partitionStrategy: "Declarative Partitioning PostgreSQL 15+ per province_code & year",
     computeModel: "Distributed Ingestion Worker Pool + Edge Serverless Dynamic Engine",
@@ -757,18 +753,6 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                       Kapasitas beban bersamaan
                     </span>
                   </div>
-
-                  <div className="metric">
-                    <span className="metric__label">
-                      <Scale size={13} /> Estimasi Biaya Infra
-                    </span>
-                    <strong className="metric__value" style={{ fontSize: "1.125rem" }}>
-                      {currentPhase.costEstimate}
-                    </strong>
-                    <span className="metric__hint" style={{ fontSize: "0.72rem" }}>
-                      Civic tech efisiensi maksimal
-                    </span>
-                  </div>
                 </div>
 
                 {/* 2 Kolom Spesifikasi Detail */}
@@ -901,12 +885,6 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                     <td>SSG Build-time + Decimal.js</td>
                     <td>ISR 24 Jam + Server Actions</td>
                     <td>Distributed Worker Pool + Edge</td>
-                  </tr>
-                  <tr>
-                    <th>Biaya Infrastruktur</th>
-                    <td><strong>$0 / bulan</strong> (Free Tier)</td>
-                    <td><strong>~$19 / bulan</strong> (Vercel Pro)</td>
-                    <td><strong>~$50 – $120 / bulan</strong></td>
                   </tr>
                 </tbody>
               </table>
