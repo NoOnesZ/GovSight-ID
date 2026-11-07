@@ -52,7 +52,7 @@ try {
   }
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(base);
-  assert.equal(await page.locator(".region-table tbody tr").count(), 10);
+  assert.equal(await page.locator(".region-table tbody tr").count(), 33);
   await page.getByRole("textbox", { name: "Cari daerah" }).fill("Binjai");
   await page.waitForFunction(
     () => document.querySelectorAll(".region-table tbody tr").length === 1,

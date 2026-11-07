@@ -17,10 +17,14 @@ import {
   CalendarRange,
   ChevronDown,
   CircleHelp,
+  Globe,
   Landmark,
+  Layers,
+  MapPin,
   Scale,
   Search,
   ShieldCheck,
+  Sparkles,
   TriangleAlert,
   Wallet,
 } from "lucide-react";
@@ -36,6 +40,7 @@ import {
 } from "@/lib/format";
 import { percentage, sumAmounts } from "@/lib/data-core";
 import { ChartLegend, SpendingChart, chartColors } from "./charts";
+import { RegionalSumateraMatrix, NationalRoadmapView } from "./scalability-views";
 import {
   DownloadButton,
   EmptyState,
@@ -55,6 +60,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
   const query = params.get("q") ?? "";
   const kind = params.get("jenis") ?? "semua";
   const fokus = params.get("fokus") ?? "semua";
+  const zona = params.get("zona") ?? "semua";
+  const rawTier = params.get("tier");
+  const tier = rawTier === "2" || rawTier === "3" ? rawTier : "1";
   const rawSort = params.get("urut");
   const sort =
     rawSort === "realisasi" || rawSort === "penumpukan" ? rawSort : "nama";
@@ -117,6 +125,10 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
   const flaggedCount = snapshots.filter(
     (s) => flagFor(s.regionCode).status === "ditandai",
   ).length;
+  const prioritasCount = snapshots.filter((s) => {
+    const r = regions.find((item) => item.code === s.regionCode);
+    return r?.statusAudit === "audit-penuh";
+  }).length;
   const kotaCount = snapshots.filter((s) => {
     const r = regions.find((item) => item.code === s.regionCode);
     return r?.type === "kota";
@@ -125,18 +137,48 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
     const r = regions.find((item) => item.code === s.regionCode);
     return r?.type === "kabupaten";
   }).length;
+
+  const mebidangroCount = snapshots.filter((s) => {
+    const r = regions.find((item) => item.code === s.regionCode);
+    return r?.zones?.includes("mebidangro");
+  }).length;
+  const tapanuliCount = snapshots.filter((s) => {
+    const r = regions.find((item) => item.code === s.regionCode);
+    return r?.zones?.includes("tapanuli");
+  }).length;
+  const pantaiTimurCount = snapshots.filter((s) => {
+    const r = regions.find((item) => item.code === s.regionCode);
+    return r?.zones?.includes("pantai-timur");
+  }).length;
+  const dataranTinggiCount = snapshots.filter((s) => {
+    const r = regions.find((item) => item.code === s.regionCode);
+    return r?.zones?.includes("dataran-tinggi");
+  }).length;
+  const niasCount = snapshots.filter((s) => {
+    const r = regions.find((item) => item.code === s.regionCode);
+    return r?.zones?.includes("nias");
+  }).length;
+
   const visible = snapshots
     .filter((row) => {
       const region = regions.find((region) => region.code === row.regionCode)!;
-      const matchesQuery = region.name
-        .toLowerCase()
-        .includes(query.toLowerCase());
-      const matchesKind = kind === "semua" || region.type === kind;
+      const matchesQuery =
+        region.name.toLowerCase().includes(query.toLowerCase()) ||
+        region.shortName.toLowerCase().includes(query.toLowerCase());
+      const matchesKind =
+        kind === "semua"
+          ? true
+          : kind === "prioritas"
+            ? region.statusAudit === "audit-penuh"
+            : region.type === kind;
+      const matchesZona =
+        zona === "semua" ||
+        (region.zones && region.zones.includes(zona as any));
       const matchesFokus =
         fokus === "penanda"
           ? flagFor(row.regionCode).status === "ditandai"
           : true;
-      return matchesQuery && matchesKind && matchesFokus;
+      return matchesQuery && matchesKind && matchesZona && matchesFokus;
     })
     .sort((a, b) =>
       sort === "penumpukan"
@@ -682,94 +724,269 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
         )}
       </section>
 
+      {/* Scope Switcher: Cakupan Wilayah Multi-Tier */}
+      <section
+        id="cakupan-wilayah"
+        className="scope-switcher"
+        aria-label="Pemilih Cakupan Wilayah Multi-Tier"
+      >
+        <div className="scope-switcher__head">
+          <div className="scope-switcher__title-row">
+            <span className="chip chip--accent chip--square">
+              <Layers size={13} /> Multi-Tier Scalability Architecture
+            </span>
+            <span className="scope-switcher__hint">
+              Pilih tingkatan cakupan wilayah pengawasan:
+            </span>
+          </div>
+        </div>
+
+        <div className="scope-switcher__grid" role="tablist">
+          {/* Tier 1 Card */}
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tier === "1"}
+            className={`scope-card ${tier === "1" ? "is-active" : ""}`}
+            onClick={() => update({ tier: null })}
+          >
+            <div className="scope-card__top">
+              <span className="scope-card__tier">Tier 1 · Baseline</span>
+              <span className="chip chip--ok chip--square">
+                <span className="dot dot--budget" /> Aktif Penuh
+              </span>
+            </div>
+            <strong className="scope-card__title">Sumatera Utara</strong>
+            <span className="scope-card__meta">33 Daerah (8 Kota · 25 Kabupaten)</span>
+            <p className="scope-card__desc">
+              Audit granular SIKD: 10 prioritas audit SHA-256 dan 23 pemda ekspansi modular tahap 2.
+            </p>
+          </button>
+
+          {/* Tier 2 Card */}
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tier === "2"}
+            className={`scope-card ${tier === "2" ? "is-active" : ""}`}
+            onClick={() => update({ tier: "2" })}
+          >
+            <div className="scope-card__top">
+              <span className="scope-card__tier">Tier 2 · Regional</span>
+              <span className="chip chip--info chip--square">
+                <span className="dot dot--info" /> Preview Regional
+              </span>
+            </div>
+            <strong className="scope-card__title">Pulau Sumatera</strong>
+            <span className="scope-card__meta">10 Provinsi · 154 Daerah</span>
+            <p className="scope-card__desc">
+              Matriks komparasi fiskal 10 provinsi se-Sumatera dan status pipeline ingestion modular.
+            </p>
+          </button>
+
+          {/* Tier 3 Card */}
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tier === "3"}
+            className={`scope-card ${tier === "3" ? "is-active" : ""}`}
+            onClick={() => update({ tier: "3" })}
+          >
+            <div className="scope-card__top">
+              <span className="scope-card__tier">Tier 3 · Nasional</span>
+              <span className="chip chip--accent chip--square">
+                <span className="dot dot--modal" /> Roadmap Nasional
+              </span>
+            </div>
+            <strong className="scope-card__title">Seluruh Indonesia</strong>
+            <span className="scope-card__meta">38 Provinsi · 514 Daerah</span>
+            <p className="scope-card__desc">
+              Roadmap pengawasan agregat APBD Rp 1,15 Kuadriliun di 6 gugus kepulauan Nusantara.
+            </p>
+          </button>
+        </div>
+      </section>
+
       <section id="jelajah">
         <SectionHeading
-          title="Jelajahi belanja daerah"
-          subtitle="Mulai dari daerahmu, lalu baca gambaran yang lebih utuh."
+          title={
+            tier === "2"
+              ? "Matrix Fiskal Pulau Sumatera (10 Provinsi)"
+              : tier === "3"
+                ? "Roadmap Skalabilitas Nasional (38 Provinsi · 514 Pemda)"
+                : "Jelajahi Belanja Daerah (Sumatera Utara)"
+          }
+          subtitle={
+            tier === "2"
+              ? "Preview regional 154 kabupaten/kota dan perbandingan penyerapan modal se-Sumatera."
+              : tier === "3"
+                ? "Konsolidasi pagu nasional Rp 1,15 Kuadriliun di 6 gugus kepulauan Nusantara."
+                : "33 Daerah: 10 prioritas audit kriptografis SHA-256 dan 23 pemda ekspansi modular."
+          }
         >
           <ShareButton />
-          <DownloadButton
-            codes={visible.map((row) => row.regionCode)}
-            year={year}
-            month={month}
-          />
+          {tier === "1" && (
+            <DownloadButton
+              codes={visible.map((row) => row.regionCode)}
+              year={year}
+              month={month}
+            />
+          )}
         </SectionHeading>
 
-        <div className="toolbar">
-          <label className="field field--search">
-            <Search size={17} />
-            <span className="sr-only">Cari daerah</span>
-            <input
-              aria-label="Cari daerah"
-              value={query}
-              onChange={(event) => update({ q: event.target.value })}
-              placeholder="Cari kota atau kabupaten…"
-            />
-          </label>
-          <div className="toolbar__group toolbar__group--end">
-            <PeriodControls year={year} month={month} onChange={update} />
-          </div>
-        </div>
+        {tier === "2" ? (
+          <RegionalSumateraMatrix />
+        ) : tier === "3" ? (
+          <NationalRoadmapView />
+        ) : (
+          <>
+            <div className="toolbar">
+              <label className="field field--search">
+                <Search size={17} />
+                <span className="sr-only">Cari daerah</span>
+                <input
+                  aria-label="Cari daerah"
+                  value={query}
+                  onChange={(event) => update({ q: event.target.value })}
+                  placeholder="Cari kota atau kabupaten…"
+                />
+              </label>
+              <div className="toolbar__group toolbar__group--end">
+                <PeriodControls year={year} month={month} onChange={update} />
+              </div>
+            </div>
 
-        <div className="filter-strip">
-          <div
-            className="segmented"
-            role="group"
-            aria-label="Filter cepat daerah"
-          >
-            <button
-              type="button"
-              className={`segmented__item ${fokus === "semua" && kind === "semua" ? "is-active" : ""}`}
-              onClick={() => update({ jenis: null, fokus: null })}
+            <div className="filter-strip">
+              <div
+                className="segmented"
+                role="group"
+                aria-label="Filter cepat daerah"
+              >
+                <button
+                  type="button"
+                  className={`segmented__item ${fokus === "semua" && kind === "semua" ? "is-active" : ""}`}
+                  onClick={() => update({ jenis: null, fokus: null })}
+                >
+                  Semua <span className="count">{snapshots.length}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`segmented__item ${fokus !== "penanda" && kind === "prioritas" ? "is-active" : ""}`}
+                  onClick={() => update({ jenis: "prioritas", fokus: null })}
+                  title="10 Daerah pantauan utama dengan verifikasi kriptografis SHA-256"
+                >
+                  <ShieldCheck size={13} /> 10 Prioritas SHA-256{" "}
+                  <span className="count">{prioritasCount}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`segmented__item ${fokus !== "penanda" && kind === "kota" ? "is-active" : ""}`}
+                  onClick={() => update({ jenis: "kota", fokus: null })}
+                >
+                  <Building2 size={13} /> 8 Kota{" "}
+                  <span className="count">{kotaCount}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`segmented__item ${fokus !== "penanda" && kind === "kabupaten" ? "is-active" : ""}`}
+                  onClick={() => update({ jenis: "kabupaten", fokus: null })}
+                >
+                  <Landmark size={13} /> 25 Kabupaten{" "}
+                  <span className="count">{kabCount}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`segmented__item ${fokus === "penanda" ? "is-active is-warn" : ""}`}
+                  onClick={() =>
+                    update({ fokus: fokus === "penanda" ? null : "penanda" })
+                  }
+                >
+                  <TriangleAlert size={13} /> Ditandai{" "}
+                  <span className="count">{flaggedCount}</span>
+                </button>
+              </div>
+              <label className="field">
+                <span className="sr-only">Urutkan daerah</span>
+                <select
+                  aria-label="Urutkan daerah"
+                  value={sort}
+                  onChange={(event) =>
+                    update({
+                      urut:
+                        event.target.value === "nama" ? null : event.target.value,
+                    })
+                  }
+                >
+                  <option value="nama">Urut: nama daerah</option>
+                  <option value="realisasi">Urut: realisasi terbesar</option>
+                  <option value="penumpukan">Urut: penumpukan akhir tahun</option>
+                </select>
+                <ChevronDown size={14} className="field__caret" />
+              </label>
+            </div>
+
+            {/* Filter Zona Wilayah Sumut */}
+            <div
+              className="zone-filter-strip"
+              role="group"
+              aria-label="Filter zona wilayah strategis Sumatera Utara"
             >
-              Semua <span className="count">{snapshots.length}</span>
-            </button>
-            <button
-              type="button"
-              className={`segmented__item ${fokus !== "penanda" && kind === "kota" ? "is-active" : ""}`}
-              onClick={() => update({ jenis: "kota", fokus: null })}
-            >
-              <Building2 size={13} /> Kota{" "}
-              <span className="count">{kotaCount}</span>
-            </button>
-            <button
-              type="button"
-              className={`segmented__item ${fokus !== "penanda" && kind === "kabupaten" ? "is-active" : ""}`}
-              onClick={() => update({ jenis: "kabupaten", fokus: null })}
-            >
-              <Landmark size={13} /> Kabupaten{" "}
-              <span className="count">{kabCount}</span>
-            </button>
-            <button
-              type="button"
-              className={`segmented__item ${fokus === "penanda" ? "is-active is-warn" : ""}`}
-              onClick={() =>
-                update({ fokus: fokus === "penanda" ? null : "penanda" })
-              }
-            >
-              <TriangleAlert size={13} /> Ditandai{" "}
-              <span className="count">{flaggedCount}</span>
-            </button>
-          </div>
-          <label className="field">
-            <span className="sr-only">Urutkan daerah</span>
-            <select
-              aria-label="Urutkan daerah"
-              value={sort}
-              onChange={(event) =>
-                update({
-                  urut:
-                    event.target.value === "nama" ? null : event.target.value,
-                })
-              }
-            >
-              <option value="nama">Urut: nama daerah</option>
-              <option value="realisasi">Urut: realisasi terbesar</option>
-              <option value="penumpukan">Urut: penumpukan akhir tahun</option>
-            </select>
-            <ChevronDown size={14} className="field__caret" />
-          </label>
-        </div>
+              <span className="zone-filter-label">
+                <MapPin size={13} /> Filter Zona:
+              </span>
+              <button
+                type="button"
+                className={`zone-chip ${zona === "semua" ? "is-active" : ""}`}
+                onClick={() => update({ zona: null })}
+              >
+                Semua Zona <span className="count">({snapshots.length})</span>
+              </button>
+              <button
+                type="button"
+                className={`zone-chip ${zona === "mebidangro" ? "is-active" : ""}`}
+                onClick={() =>
+                  update({ zona: zona === "mebidangro" ? null : "mebidangro" })
+                }
+              >
+                Kawasan Mebidangro <span className="count">({mebidangroCount})</span>
+              </button>
+              <button
+                type="button"
+                className={`zone-chip ${zona === "tapanuli" ? "is-active" : ""}`}
+                onClick={() =>
+                  update({ zona: zona === "tapanuli" ? null : "tapanuli" })
+                }
+              >
+                Kawasan Tapanuli <span className="count">({tapanuliCount})</span>
+              </button>
+              <button
+                type="button"
+                className={`zone-chip ${zona === "pantai-timur" ? "is-active" : ""}`}
+                onClick={() =>
+                  update({ zona: zona === "pantai-timur" ? null : "pantai-timur" })
+                }
+              >
+                Pantai Timur <span className="count">({pantaiTimurCount})</span>
+              </button>
+              <button
+                type="button"
+                className={`zone-chip ${zona === "dataran-tinggi" ? "is-active" : ""}`}
+                onClick={() =>
+                  update({
+                    zona: zona === "dataran-tinggi" ? null : "dataran-tinggi",
+                  })
+                }
+              >
+                Dataran Tinggi <span className="count">({dataranTinggiCount})</span>
+              </button>
+              <button
+                type="button"
+                className={`zone-chip ${zona === "nias" ? "is-active" : ""}`}
+                onClick={() => update({ zona: zona === "nias" ? null : "nias" })}
+              >
+                Kepulauan Nias <span className="count">({niasCount})</span>
+              </button>
+            </div>
 
         {visible.length ? (
           <div className="stack" style={{ marginTop: "var(--gap)" }}>
@@ -931,17 +1148,18 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 <table className="region-table">
                   <thead>
                     <tr>
-                      <th style={{ width: "24%" }}>Daerah</th>
-                      <th className="is-num" style={{ width: "22%" }}>
+                      <th style={{ width: "22%" }}>Daerah</th>
+                      <th style={{ width: "16%" }}>Status Audit</th>
+                      <th className="is-num" style={{ width: "20%" }}>
                         Pagu / Realisasi
                       </th>
-                      <th className="is-num" style={{ width: "22%" }}>
+                      <th className="is-num" style={{ width: "18%" }}>
                         Tingkat Serapan
                       </th>
-                      <th style={{ width: "26%" }}>
+                      <th style={{ width: "20%" }}>
                         Penanda Belanja Akhir Tahun ({latestCompleteYear})
                       </th>
-                      <th style={{ width: "6%" }}>
+                      <th style={{ width: "4%" }}>
                         <span className="sr-only">Profil</span>
                       </th>
                     </tr>
@@ -970,6 +1188,31 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                                 {kindLabel(region.type)}
                               </span>
                             </Link>
+                          </td>
+                          <td>
+                            {region.statusAudit === "audit-penuh" ? (
+                              <span
+                                className="chip chip--ok chip--square"
+                                title="Terverifikasi berkas resmi SIKD Kemenkeu dengan hash SHA-256"
+                                style={{
+                                  fontSize: "0.6875rem",
+                                  padding: "2px 6px",
+                                }}
+                              >
+                                <ShieldCheck size={12} /> Audit SHA-256
+                              </span>
+                            ) : (
+                              <span
+                                className="chip chip--sunk chip--square"
+                                title="Data pagu & realisasi terpetakan dalam pipeline ekspansi modular tahap 2"
+                                style={{
+                                  fontSize: "0.6875rem",
+                                  padding: "2px 6px",
+                                }}
+                              >
+                                <Sparkles size={12} /> Ekspansi Tahap 2
+                              </span>
+                            )}
                           </td>
                           <td className="is-num">
                             <span className="money-pair">
@@ -1068,6 +1311,29 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                           </span>
                           <span className="region-cell__kind">
                             {kindLabel(region.type)}
+                          </span>
+                          <span style={{ display: "block", marginTop: 4 }}>
+                            {region.statusAudit === "audit-penuh" ? (
+                              <span
+                                className="chip chip--ok chip--square"
+                                style={{
+                                  fontSize: "0.6875rem",
+                                  padding: "1px 6px",
+                                }}
+                              >
+                                <ShieldCheck size={11} /> Audit SHA-256
+                              </span>
+                            ) : (
+                              <span
+                                className="chip chip--sunk chip--square"
+                                style={{
+                                  fontSize: "0.6875rem",
+                                  padding: "1px 6px",
+                                }}
+                              >
+                                <Sparkles size={11} /> Ekspansi Tahap 2
+                              </span>
+                            )}
                           </span>
                         </span>
                         <ArrowUpRight size={16} />
@@ -1194,6 +1460,8 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
           <EmptyState title="Daerah tidak ditemukan">
             Coba cari {regionListLabel}, atau ubah filter jenis daerah.
           </EmptyState>
+        )}
+          </>
         )}
       </section>
 

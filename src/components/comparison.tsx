@@ -93,8 +93,18 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
   }
 
   const mebidangroCodes = ["0215", "0214", "0203"];
+  const tapanuliCodes = ["0207", "0208", "0209"];
+  const kotaUtamaCodes = ["0215", "0216", "0214"];
+  const niasCodes = ["0210", "0232", "0221"];
+
   const isMebidangro =
     codes.length === 3 && mebidangroCodes.every((c) => codes.includes(c));
+  const isTapanuli =
+    codes.length === 3 && tapanuliCodes.every((c) => codes.includes(c));
+  const isKotaUtama =
+    codes.length === 3 && kotaUtamaCodes.every((c) => codes.includes(c));
+  const isNias =
+    codes.length === 3 && niasCodes.every((c) => codes.includes(c));
   const isDefault =
     codes.length === 2 &&
     codes.includes("0215") &&
@@ -167,6 +177,7 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
               >
                 Preset Cepat:
               </span>
+              {/* Preset 1: Kawasan Mebidangro */}
               <button
                 type="button"
                 aria-label="Preset Kawasan Mebidangro (3 Daerah)"
@@ -174,6 +185,8 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
+                  flexWrap: "wrap",
+                  maxWidth: "100%",
                   gap: 6,
                   padding: "5px 12px",
                   borderRadius: "var(--r-pill)",
@@ -198,6 +211,109 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                 {isMebidangro && <Check size={12} />}
               </button>
 
+              {/* Preset 2: Kawasan Tapanuli */}
+              <button
+                type="button"
+                aria-label="Preset Kawasan Tapanuli (3 Daerah)"
+                onClick={() => applyPreset(tapanuliCodes)}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  maxWidth: "100%",
+                  gap: 6,
+                  padding: "5px 12px",
+                  borderRadius: "var(--r-pill)",
+                  border: isTapanuli
+                    ? "1px solid var(--accent)"
+                    : "1px solid var(--line-2)",
+                  background: isTapanuli
+                    ? "var(--accent-tint)"
+                    : "var(--paper)",
+                  color: isTapanuli ? "var(--accent)" : "var(--ink)",
+                  fontSize: "0.8125rem",
+                  fontWeight: isTapanuli ? 600 : 500,
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                <Sparkles size={13} />
+                <span>Kawasan Tapanuli</span>
+                <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>
+                  (Tapteng, Taput, Tapsel)
+                </span>
+                {isTapanuli && <Check size={12} />}
+              </button>
+
+              {/* Preset 3: Kota Otonom Utama */}
+              <button
+                type="button"
+                aria-label="Preset Kota Otonom Utama (3 Daerah)"
+                onClick={() => applyPreset(kotaUtamaCodes)}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  maxWidth: "100%",
+                  gap: 6,
+                  padding: "5px 12px",
+                  borderRadius: "var(--r-pill)",
+                  border: isKotaUtama
+                    ? "1px solid var(--accent)"
+                    : "1px solid var(--line-2)",
+                  background: isKotaUtama
+                    ? "var(--accent-tint)"
+                    : "var(--paper)",
+                  color: isKotaUtama ? "var(--accent)" : "var(--ink)",
+                  fontSize: "0.8125rem",
+                  fontWeight: isKotaUtama ? 600 : 500,
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                <Building2 size={13} />
+                <span>Kota Otonom Utama</span>
+                <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>
+                  (Medan, Pematang Siantar, Binjai)
+                </span>
+                {isKotaUtama && <Check size={12} />}
+              </button>
+
+              {/* Preset 4: Kepulauan Nias */}
+              <button
+                type="button"
+                aria-label="Preset Kepulauan Nias (3 Daerah)"
+                onClick={() => applyPreset(niasCodes)}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  maxWidth: "100%",
+                  gap: 6,
+                  padding: "5px 12px",
+                  borderRadius: "var(--r-pill)",
+                  border: isNias
+                    ? "1px solid var(--accent)"
+                    : "1px solid var(--line-2)",
+                  background: isNias
+                    ? "var(--accent-tint)"
+                    : "var(--paper)",
+                  color: isNias ? "var(--accent)" : "var(--ink)",
+                  fontSize: "0.8125rem",
+                  fontWeight: isNias ? 600 : 500,
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                <Sparkles size={13} />
+                <span>Kepulauan Nias</span>
+                <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>
+                  (Nias, Nias Selatan, Gunungsitoli)
+                </span>
+                {isNias && <Check size={12} />}
+              </button>
+
+              {/* Preset 5: Default Otonom */}
               <button
                 type="button"
                 aria-label="Preset Standar Otonom"
@@ -267,7 +383,7 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                       color: "var(--ink-2)",
                     }}
                   >
-                    Wilayah Otonom Kota (5 Daerah)
+                    Wilayah Otonom Kota ({kotaRegions.length} Daerah)
                   </span>
                 </div>
                 <div className="picker">
@@ -319,7 +435,7 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                       color: "var(--ink-2)",
                     }}
                   >
-                    Wilayah Administratif Kabupaten (5 Daerah)
+                    Wilayah Administratif Kabupaten ({kabRegions.length} Daerah)
                   </span>
                 </div>
                 <div className="picker">
@@ -536,6 +652,23 @@ export function Comparison({ dataset }: { dataset: Dataset }) {
                               <span>
                                 Sumatera Utara · {kindLabel(region.type)}
                               </span>
+                              <div style={{ marginTop: 4 }}>
+                                {region.statusAudit === "audit-penuh" ? (
+                                  <span
+                                    className="chip chip--ok chip--square"
+                                    style={{ fontSize: "0.6875rem", padding: "1px 6px" }}
+                                  >
+                                    Audit SHA-256
+                                  </span>
+                                ) : (
+                                  <span
+                                    className="chip chip--sunk chip--square"
+                                    style={{ fontSize: "0.6875rem", padding: "1px 6px" }}
+                                  >
+                                    Ekspansi Tahap 2
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <button
                               type="button"

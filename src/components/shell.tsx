@@ -202,9 +202,28 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <strong>{current}</strong>
           </div>
           <div className="topbar__right">
-            <span className="chip chip--sunk">
-              Pratinjau · {regions.length} daerah
-            </span>
+            <Link
+              href="/#cakupan-wilayah"
+              className="chip chip--interactive chip--sunk"
+              style={{
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+              title="Cakupan Multi-Tier: Tier 1 (Sumut 33 Daerah) · Tier 2 (Sumatera 154 Daerah) · Tier 3 (Nasional 514 Daerah)"
+            >
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: "var(--ok)",
+                  display: "inline-block",
+                }}
+              />
+              <span>Tier 1 · Sumut ({regions.length})</span>
+            </Link>
           </div>
         </header>
 

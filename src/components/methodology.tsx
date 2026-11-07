@@ -11,14 +11,24 @@ import {
   Compass,
   Cpu,
   Database,
+  Download,
   FileCheck2,
   FileText,
+  Globe,
   GraduationCap,
+  HardDrive,
   Landmark,
+  Layers,
   RefreshCw,
   Scale,
+  Server,
   ShieldCheck,
+  Zap,
 } from "lucide-react";
+import {
+  sumateraProvinces,
+  nationalIslandsGroups,
+} from "@/lib/scalability-data";
 import type { Dataset } from "@/lib/types";
 import { dateLabel } from "@/lib/format";
 import { regions } from "@/lib/regions";
@@ -31,6 +41,115 @@ import {
   UnavailablePeriod,
   useFilters,
 } from "./shared";
+
+
+const scalabilityPhases = [
+  {
+    step: "01",
+    phaseKey: "tahap-1",
+    title: "Tahap 1: 10 Pemda Sumut (Pilot Terverifikasi)",
+    shortTitle: "10 Daerah Sumut",
+    badge: "Aktif Penuh (100% Lulus Uji)",
+    badgeVariant: "chip--ok",
+    icon: Database,
+    scope: "10 Kab/Kota Sumatera Utara",
+    scopeDesc: "Medan, Binjai, Deli Serdang, Karo, Langkat, Pematangsiantar, Simalungun, Asahan, Tebing Tinggi, Dairi",
+    snapshots: "350 Snapshot (2023–2026)",
+    rawSize: "~450 KB (JSON Tunggal)",
+    clientPayload: "450 KB (Gzip: ~68 KB)",
+    latencyTarget: "< 50 ms (TTFB)",
+    throughputTarget: "50 – 100 req/s",
+    costEstimate: "$0 / bulan (Vercel Free Tier)",
+    storageArch: "Static In-Memory JSON (data/snapshots.json)",
+    partitionStrategy: "Monolitik Lokal (Cakupan Terbatas)",
+    computeModel: "Next.js SSG Build-time + Decimal.js Arbitrary Precision",
+    edgeDelivery: "Cloudflare/Vercel Edge Network Cache (Global CDN)",
+    summary: "Fase pilot aktif dengan 350 snapshot tervalidasi SHA-256 dan 25 rangkaian uji otomatis.",
+    rationale: "Pada skala 10 daerah, satu berkas JSON terkompresi masih efisien (<70KB). Seluruh agregasi dan audit ambang batas UU HKPD Pasal 146 & 147 dihitung secara instan di sisi klien tanpa latensi jaringan.",
+    storageBullets: [
+      { label: "Format Penyimpanan", desc: "Satu berkas statis snapshots.json tervalidasi kriptografis SHA-256" },
+      { label: "Partisi Data", desc: "Belum dipartisi (seluruh snapshot 10 daerah dimuat sekaligus saat awal)" },
+      { label: "Verifikasi Integritas", desc: "Pencocokan hash SHA-256 berkas XML asli terhadap portal SIKD DJPK" },
+      { label: "Strategi Caching", desc: "Edge Caching dengan revalidasi otomatis pada deployment CI/CD" },
+    ],
+    computeBullets: [
+      { label: "Engine Komputasi", desc: "Decimal.js dengan presisi rupiah mutlak bebas galat floating-point" },
+      { label: "Model Eksekusi", desc: "Static Site Generation (SSG) dengan pra-render halaman di server Edge" },
+      { label: "Beban Jaringan Mobile", desc: "Unduhan awal ~68KB Gzip (sangat ringan pada koneksi 3G/4G)" },
+      { label: "Toleransi Kegagalan", desc: "Penyajian fallback data lokal jika portal DJPK sedang tidak dapat diakses" },
+    ],
+  },
+  {
+    step: "02",
+    phaseKey: "tahap-2",
+    title: "Tahap 2: 154 Pemda Se-Sumatera (Ekspansi Regional)",
+    shortTitle: "154 Daerah Sumatera",
+    badge: "Cetak Biru Partisi Regional",
+    badgeVariant: "chip--accent",
+    icon: Layers,
+    scope: "154 Kab/Kota di 10 Provinsi Sumatera",
+    scopeDesc: "Aceh (23), Sumut (33), Sumbar (19), Riau (12), Kepri (7), Jambi (11), Sumsel (17), Babel (7), Bengkulu (10), Lampung (15)",
+    snapshots: "~5.544 Snapshot Bulanan",
+    rawSize: "~6,5 MB (Terpartisi 10 Wilayah)",
+    clientPayload: "Index ~15 KB + Chunk ~180 KB",
+    latencyTarget: "< 80 ms (TTFB)",
+    throughputTarget: "500 – 1.000 req/s",
+    costEstimate: "~$19 / bulan (Vercel Pro + Managed Cache)",
+    storageArch: "Partitioned Static JSON Chunks per Provinsi + Ingestion Queue",
+    partitionStrategy: "Horizontal Partitioning per Kode Provinsi (data/chunks/[prov].json)",
+    computeModel: "Next.js ISR 24 Jam + Server Actions untuk Filter Lintas Wilayah",
+    edgeDelivery: "Edge Cache dengan Header Stale-While-Revalidate (PoPs Jakarta & SG)",
+    summary: "Ekspansi regional pertama dengan partisi berkas horizontal per provinsi, mencegah lonjakan ukuran data.",
+    rationale: "Jika 154 daerah disatukan dalam satu file monolitik, ukurannya mencapai ~6,5 MB. Dengan partisi regional, warga di Padang hanya mengunduh chunk Sumbar (~180 KB), memangkas konsumsi bandwidth hingga 95%.",
+    storageBullets: [
+      { label: "Format Penyimpanan", desc: "10 berkas partisi provinsi independen (sumut.json, aceh.json, dll.)" },
+      { label: "Partisi Data", desc: "Horizontal Partitioning berdasarkan kode provinsi BPS/Kemendagri" },
+      { label: "Indeks Pencarian", desc: "Search manifest ultra-ringan (~15 KB) untuk pencarian instan seluruh Sumatera" },
+      { label: "Strategi Caching", desc: "Edge CDN PoPs Jakarta & Singapura dengan TTL revalidasi berkala 24 jam" },
+    ],
+    computeBullets: [
+      { label: "Engine Komputasi", desc: "Decimal.js Core + Next.js Server Components on Node/Edge Runtime" },
+      { label: "Model Eksekusi", desc: "Incremental Static Regeneration (ISR) dengan regenerasi halaman per provinsi" },
+      { label: "Beban Jaringan Mobile", desc: "Warga hanya mengunduh data provinsi aktif, hemat kuota seluler pedesaan" },
+      { label: "Toleransi Kegagalan", desc: "Circuit breaker dengan antrean asinkronus (Queue Worker) saat sinkronisasi DJPK" },
+    ],
+  },
+  {
+    step: "03",
+    phaseKey: "tahap-3",
+    title: "Tahap 3: 514 Pemda Nasional (Skala Penuh 38 Provinsi)",
+    shortTitle: "514 Daerah Nasional",
+    badge: "Spesifikasi DDL Database Siap Produksi",
+    badgeVariant: "chip--sunk",
+    icon: Globe,
+    scope: "514 Kab/Kota + 38 Pemprov (552 Pemda)",
+    scopeDesc: "Seluruh kabupaten, kota, dan provinsi di 6 gugus pulau: Sumatera, Jawa, Kalimantan, Sulawesi, Bali-Nusa Tenggara, Maluku-Papua",
+    snapshots: "~59.000 Snapshot Historis (3 Tahun)",
+    rawSize: "~75 MB (Tersimpan di Relational Database)",
+    clientPayload: "Index <50 KB + Detail Daerah ~18 KB",
+    latencyTarget: "< 100 ms (P95 Nasional)",
+    throughputTarget: "5.000+ req/s (Elastis Auto-Scale)",
+    costEstimate: "~$50 – $120 / bulan (Neon Serverless + Edge)",
+    storageArch: "Neon Serverless PostgreSQL (List Partitioning) + Global Search Index",
+    partitionStrategy: "Declarative Partitioning PostgreSQL 15+ per province_code & year",
+    computeModel: "Distributed Ingestion Worker Pool + Edge Serverless Dynamic Engine",
+    edgeDelivery: "Anycast Edge CDN PoPs + Local IndexedDB Storage di Browser Warga",
+    summary: "Arsitektur cloud-native skala penuh dengan kluster database terpartisi dan optimasi payload ponsel pelosok.",
+    rationale: "Menghindari bencana memori monolitik 25MB+ di smartphone beranggaran rendah. Pencarian daerah menggunakan meta-indeks <50KB, dan detail ditarik secara on-demand (~18KB) dengan response time <15ms berkat partition pruning.",
+    storageBullets: [
+      { label: "Format Penyimpanan", desc: "Tabel terpartisi apbd_snapshots di Neon Serverless PostgreSQL" },
+      { label: "Partisi Data", desc: "PostgreSQL Native List Partitioning per province_code & Range per year" },
+      { label: "Indeks Pencarian", desc: "Global Search Meta-Index (<50 KB) terkompresi Brotli di seluruh Edge CDN" },
+      { label: "Strategi Caching", desc: "Multi-tier: Browser IndexedDB -> Edge CDN Cache -> Neon Connection Pool" },
+    ],
+    computeBullets: [
+      { label: "Engine Komputasi", desc: "Worker Pool mandiri dengan Token Bucket Rate Limiter (maks 5 req/s)" },
+      { label: "Model Eksekusi", desc: "Hybrid ISR + Edge Server Actions dengan Partition Pruning query runtime <15ms" },
+      { label: "Beban Jaringan Mobile", desc: "Zero Bloat: Total konsumsi kuota <70KB bahkan untuk navigasi multi-daerah" },
+      { label: "Toleransi Kegagalan", desc: "Zero Single Point of Failure: Isolasi partisi database, read replicas, dan quarantine queue" },
+    ],
+  },
+];
 
 const pipelineStages = [
   {
@@ -216,6 +335,7 @@ const pipelineStages = [
 
 export function Methodology({ dataset }: { dataset: Dataset }) {
   const [activeStage, setActiveStage] = useState<number>(0);
+  const [scalabilityPhase, setScalabilityPhase] = useState<number>(0);
   const { year, month, update, invalidPeriod } = useFilters();
   if (invalidPeriod) return <UnavailablePeriod />;
   const snapshots = dataset.snapshots.filter(
@@ -464,6 +584,411 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
               </div>
             );
           })()}
+        </section>
+
+        {/* Blueprint Skalabilitas Nasional (10 → 33 → 154 → 514 Daerah) */}
+        <section
+          id="skalabilitas-nasional"
+          className="pipeline-section"
+          aria-labelledby="skalabilitas-nasional-heading"
+        >
+          <div className="pipeline-header">
+            <div className="pipeline-header__badge-row">
+              <span className="chip chip--accent chip--square">
+                Blueprint Skalabilitas
+              </span>
+              <span className="chip chip--sunk chip--square">
+                10 → 33 → 154 → 514 Daerah
+              </span>
+              <span className="chip chip--ok chip--square">
+                Arsitektur Produksi
+              </span>
+            </div>
+            <h2 id="skalabilitas-nasional-heading" className="pipeline-header__title">
+              Blueprint Skalabilitas Nasional (10 → 33 → 154 → 514 Daerah)
+            </h2>
+            <p className="pipeline-header__desc">
+              Dari 10 pemda percontohan di Sumatera Utara menuju pengawasan 514 kabupaten/kota dan 38 provinsi se-Indonesia.
+              Klik salah satu tahapan di bawah untuk mempelajari evolusi arsitektur penyimpanan, model komputasi, dan efisiensi seluler.
+            </p>
+          </div>
+
+          {/* Stepper 3 Tahap */}
+          <div
+            className="scalability-stepper"
+            role="tablist"
+            aria-label="3 Tahap Skalabilitas Nasional GovSight ID"
+          >
+            {scalabilityPhases.map((phase, idx) => {
+              const Icon = phase.icon;
+              const isActive = scalabilityPhase === idx;
+              return (
+                <button
+                  key={phase.step}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls={"scalability-panel-" + phase.step}
+                  id={"scalability-tab-" + phase.step}
+                  className={"pipeline-node " + (isActive ? "is-active" : "")}
+                  onClick={() => setScalabilityPhase(idx)}
+                >
+                  <div className="pipeline-node__top">
+                    <span className="pipeline-node__step">Tahap {phase.step}</span>
+                    <Icon size={16} />
+                  </div>
+                  <div>
+                    <span className="pipeline-node__phase">{phase.shortTitle}</span>
+                    <h3 className="pipeline-node__title" style={{ fontSize: "0.9375rem" }}>
+                      {phase.title}
+                    </h3>
+                  </div>
+                  <p style={{ fontSize: "0.75rem", color: "var(--ink-2)", margin: 0, lineHeight: 1.45 }}>
+                    {phase.summary}
+                  </p>
+                  <span className="pipeline-node__badge">{phase.badge}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Detail Panel Tahap Terpilih */}
+          {(() => {
+            const currentPhase = scalabilityPhases[scalabilityPhase];
+            const CurrentIcon = currentPhase.icon;
+            return (
+              <div
+                id={"scalability-panel-" + currentPhase.step}
+                role="tabpanel"
+                aria-labelledby={"scalability-tab-" + currentPhase.step}
+                className="pipeline-detail"
+              >
+                <div className="pipeline-detail__top">
+                  <div className="pipeline-detail__header-title">
+                    <span className="chip chip--accent chip--square">
+                      Tahap {currentPhase.step} / 03
+                    </span>
+                    <span className={"chip " + currentPhase.badgeVariant + " chip--square"}>
+                      {currentPhase.badge}
+                    </span>
+                    <strong style={{ fontSize: "0.9375rem", color: "var(--ink)" }}>
+                      {currentPhase.title}
+                    </strong>
+                  </div>
+                  <div className="pipeline-detail__nav">
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm"
+                      onClick={() => setScalabilityPhase((p) => Math.max(0, p - 1))}
+                      disabled={scalabilityPhase === 0}
+                      aria-label="Tahap sebelumnya"
+                    >
+                      <ArrowLeft size={13} /> Sebelumnya
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm"
+                      onClick={() =>
+                        setScalabilityPhase((p) =>
+                          Math.min(scalabilityPhases.length - 1, p + 1),
+                        )
+                      }
+                      disabled={scalabilityPhase === scalabilityPhases.length - 1}
+                      aria-label="Tahap berikutnya"
+                    >
+                      Berikutnya <ArrowRight size={13} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Deskripsi & Rationale */}
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--ink-2)",
+                    lineHeight: 1.6,
+                    margin: "14px 0 16px",
+                    maxWidth: "80ch",
+                  }}
+                >
+                  {currentPhase.rationale}
+                </p>
+
+                {/* Grid 6 Metrik Teknis Utama */}
+                <div className="metrics" style={{ marginBottom: 18 }}>
+                  <div className="metric">
+                    <span className="metric__label">
+                      <CurrentIcon size={13} /> Cakupan Pemda
+                    </span>
+                    <strong className="metric__value metric__value--accent" style={{ fontSize: "1.125rem" }}>
+                      {currentPhase.scope}
+                    </strong>
+                    <span className="metric__hint" style={{ fontSize: "0.72rem" }}>
+                      {currentPhase.scopeDesc}
+                    </span>
+                  </div>
+
+                  <div className="metric">
+                    <span className="metric__label">
+                      <Database size={13} /> Volume Snapshot
+                    </span>
+                    <strong className="metric__value" style={{ fontSize: "1.125rem" }}>
+                      {currentPhase.snapshots}
+                    </strong>
+                    <span className="metric__hint" style={{ fontSize: "0.72rem" }}>
+                      Raw payload: {currentPhase.rawSize}
+                    </span>
+                  </div>
+
+                  <div className="metric">
+                    <span className="metric__label">
+                      <Zap size={13} /> Payload Browser Klien
+                    </span>
+                    <strong className="metric__value" style={{ fontSize: "1.125rem", color: "var(--ok-solid)" }}>
+                      {currentPhase.clientPayload}
+                    </strong>
+                    <span className="metric__hint" style={{ fontSize: "0.72rem" }}>
+                      Ramah kuota & seluler pedesaan
+                    </span>
+                  </div>
+
+                  <div className="metric">
+                    <span className="metric__label">
+                      <Cpu size={13} /> Target Latensi (TTFB)
+                    </span>
+                    <strong className="metric__value" style={{ fontSize: "1.125rem" }}>
+                      {currentPhase.latencyTarget}
+                    </strong>
+                    <span className="metric__hint" style={{ fontSize: "0.72rem" }}>
+                      Kecepatan respons edge CDN
+                    </span>
+                  </div>
+
+                  <div className="metric">
+                    <span className="metric__label">
+                      <Server size={13} /> Throughput Server
+                    </span>
+                    <strong className="metric__value" style={{ fontSize: "1.125rem" }}>
+                      {currentPhase.throughputTarget}
+                    </strong>
+                    <span className="metric__hint" style={{ fontSize: "0.72rem" }}>
+                      Kapasitas beban bersamaan
+                    </span>
+                  </div>
+
+                  <div className="metric">
+                    <span className="metric__label">
+                      <Scale size={13} /> Estimasi Biaya Infra
+                    </span>
+                    <strong className="metric__value" style={{ fontSize: "1.125rem" }}>
+                      {currentPhase.costEstimate}
+                    </strong>
+                    <span className="metric__hint" style={{ fontSize: "0.72rem" }}>
+                      Civic tech efisiensi maksimal
+                    </span>
+                  </div>
+                </div>
+
+                {/* 2 Kolom Spesifikasi Detail */}
+                <div className="pipeline-detail__content">
+                  {/* Kolom Kiri: Arsitektur Penyimpanan & Partisi Data */}
+                  <div className="pipeline-spec-card">
+                    <span className="pipeline-spec-card__title">
+                      <HardDrive size={14} /> Arsitektur Penyimpanan & Partisi Data
+                    </span>
+                    <ul className="pipeline-spec-list">
+                      {currentPhase.storageBullets.map((b, i) => (
+                        <li key={i} className="pipeline-spec-item is-highlight">
+                          <span className="pipeline-spec-item__label">{b.label}</span>
+                          <span className="pipeline-spec-item__desc">{b.desc}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Kolom Kanan: Model Komputasi & Efisiensi Seluler */}
+                  <div className="pipeline-spec-card">
+                    <span className="pipeline-spec-card__title">
+                      <Cpu size={14} /> Model Komputasi & Efisiensi Seluler
+                    </span>
+                    <ul className="pipeline-spec-list">
+                      {currentPhase.computeBullets.map((b, i) => (
+                        <li key={i} className="pipeline-spec-item is-highlight">
+                          <span className="pipeline-spec-item__label">{b.label}</span>
+                          <span className="pipeline-spec-item__desc">{b.desc}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Contextual Preview: Pulau Sumatera (Tahap 2) atau 6 Gugus Nasional (Tahap 3) */}
+                {currentPhase.phaseKey === "tahap-2" && (
+                  <div style={{ marginTop: 16 }}>
+                    <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--ink-2)", display: "block", marginBottom: 8 }}>
+                      Distribusi 10 Provinsi Se-Pulau Sumatera (154 Daerah):
+                    </span>
+                    <div className="pipeline-pills" style={{ flexWrap: "wrap", gap: 6 }}>
+                      {sumateraProvinces.map((prov) => (
+                        <span key={prov.code} className="chip chip--sunk" style={{ fontSize: "0.75rem" }}>
+                          <strong>{prov.name}</strong> ({prov.daerahCount} daerah)
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {currentPhase.phaseKey === "tahap-3" && (
+                  <div style={{ marginTop: 16 }}>
+                    <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--ink-2)", display: "block", marginBottom: 8 }}>
+                      Distribusi 6 Gugus Kepulauan Nasional (514 Daerah / 38 Provinsi):
+                    </span>
+                    <div className="pipeline-pills" style={{ flexWrap: "wrap", gap: 6 }}>
+                      {nationalIslandsGroups.map((gugus) => (
+                        <span key={gugus.id} className="chip chip--accent" style={{ fontSize: "0.75rem" }}>
+                          <strong>{gugus.name}</strong>: {gugus.daerahCount} daerah ({gugus.provincesCount} prov)
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Matriks Perbandingan Ringkas 3 Tahap */}
+          <div style={{ marginTop: 24 }}>
+            <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--ink)", marginBottom: 10 }}>
+              Matriks Perbandingan Skalabilitas Sistem
+            </h3>
+            <div className="table-wrap">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Parameter Rekayasa</th>
+                    <th>Tahap 1: 10 Daerah Sumut</th>
+                    <th>Tahap 2: 154 Daerah Sumatera</th>
+                    <th>Tahap 3: 514 Daerah Nasional</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>Cakupan Pemda</th>
+                    <td>10 Kab/Kota Sumut</td>
+                    <td>154 Kab/Kota (10 Provinsi)</td>
+                    <td>514 Kab/Kota + 38 Provinsi (552 Pemda)</td>
+                  </tr>
+                  <tr>
+                    <th>Jumlah Snapshot</th>
+                    <td>350 Snapshot (2023–2026)</td>
+                    <td>~5.544 Snapshot Bulanan</td>
+                    <td>~59.000 Snapshot (3 Tahun)</td>
+                  </tr>
+                  <tr>
+                    <th>Ukuran Data Mentah</th>
+                    <td>~450 KB (JSON Tunggal)</td>
+                    <td>~6,5 MB (Terpartisi 10 Wilayah)</td>
+                    <td>~75 MB (Relational Database)</td>
+                  </tr>
+                  <tr>
+                    <th>Payload Klien (Seluler)</th>
+                    <td><strong style={{ color: "var(--ok-solid)" }}>450 KB</strong> (Gzip ~68 KB)</td>
+                    <td><strong style={{ color: "var(--ok-solid)" }}>Index ~15 KB</strong> + Chunk ~180 KB</td>
+                    <td><strong style={{ color: "var(--ok-solid)" }}>Index &lt;50 KB</strong> + Detail ~18 KB</td>
+                  </tr>
+                  <tr>
+                    <th>Target Latensi (TTFB)</th>
+                    <td>&lt; 50 ms</td>
+                    <td>&lt; 80 ms</td>
+                    <td>&lt; 100 ms (P95 Nasional)</td>
+                  </tr>
+                  <tr>
+                    <th>Throughput Server</th>
+                    <td>50 – 100 req/s</td>
+                    <td>500 – 1.000 req/s</td>
+                    <td>5.000+ req/s (Auto-Scale)</td>
+                  </tr>
+                  <tr>
+                    <th>Media Penyimpanan</th>
+                    <td>Static In-Memory JSON</td>
+                    <td>Partitioned JSON Chunks + ISR</td>
+                    <td>Neon Serverless PostgreSQL</td>
+                  </tr>
+                  <tr>
+                    <th>Model Komputasi</th>
+                    <td>SSG Build-time + Decimal.js</td>
+                    <td>ISR 24 Jam + Server Actions</td>
+                    <td>Distributed Worker Pool + Edge</td>
+                  </tr>
+                  <tr>
+                    <th>Biaya Infrastruktur</th>
+                    <td><strong>$0 / bulan</strong> (Free Tier)</td>
+                    <td><strong>~$19 / bulan</strong> (Vercel Pro)</td>
+                    <td><strong>~$50 – $120 / bulan</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Callout Mengapa Monolitik 25MB Ditolak */}
+          <div
+            className="note note--info"
+            style={{
+              marginTop: 20,
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Zap size={16} style={{ color: "var(--accent)" }} />
+              <strong style={{ fontSize: "0.875rem", color: "var(--ink)" }}>
+                Mengapa Arsitektur Monolitik 25MB+ Ditolak untuk 514 Daerah?
+              </strong>
+            </div>
+            <p style={{ margin: 0, fontSize: "0.8125rem", color: "var(--ink-2)", lineHeight: 1.6 }}>
+              Pada skala 514 daerah dengan 36 bulan data historis, satu berkas JSON monolitik akan membengkak hingga lebih dari 25 MB.
+              Di jaringan 4G pedesaan Indonesia dengan kecepatan rata-rata 2–3 Mbps, mengunduh 25 MB membutuhkan waktu lebih dari 100 detik
+              serta memicu kehabisan memori (OOM browser crash) pada smartphone beranggaran rendah (RAM 2GB–3GB).
+              Arsitektur modular GovSight ID memangkas beban awal menjadi hanya search index &lt;50 KB dan data detail daerah on-demand ~18 KB.
+            </p>
+          </div>
+
+          {/* Action / Documentation Links */}
+          <div
+            style={{
+              marginTop: 20,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 12,
+              paddingTop: 16,
+              borderTop: "1px solid var(--line)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <a
+                href="/docs/ARSITEKTUR-SKALABILITAS.md"
+                download="ARSITEKTUR-SKALABILITAS.md"
+                className="btn btn--primary"
+              >
+                <Download size={14} /> Unduh Cetak Biru Arsitektur (Markdown)
+              </a>
+              <a
+                href="/docs/ARSITEKTUR-SKALABILITAS.md"
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn--secondary"
+              >
+                <FileText size={14} /> Baca Dokumen Lengkap & Skema DDL <ArrowUpRight size={13} />
+              </a>
+            </div>
+            <span style={{ fontSize: "0.75rem", color: "var(--ink-3)" }}>
+              Dokumen resmi: <code>docs/ARSITEKTUR-SKALABILITAS.md</code>
+            </span>
+          </div>
         </section>
 
         <div id="rumus-indikator" className="grid-2">
