@@ -13,9 +13,16 @@ import {
   ExternalLink,
   Info,
   Link2,
+  MessageSquare,
 } from "lucide-react";
 import { months } from "@/lib/regions";
-import { dateLabel, fullMoney, percent, periodLabel } from "@/lib/format";
+import {
+  compactMoney,
+  dateLabel,
+  fullMoney,
+  percent,
+  periodLabel,
+} from "@/lib/format";
 import { percentage } from "@/lib/data-core";
 import {
   availabilityLabel,
@@ -174,6 +181,102 @@ export function ShareButton() {
         </span>
       )}
     </>
+  );
+}
+
+export function CivicSummaryShareButton({
+  regionName,
+  year,
+  month,
+  budget,
+  realized,
+  rate,
+  anomalyNote,
+  url,
+  label = "Salin Ringkasan WA/X",
+  style,
+}: {
+  regionName: string;
+  year: number;
+  month: number;
+  budget?: string | number | null;
+  realized?: string | number | null;
+  rate?: number | null;
+  anomalyNote?: string | null;
+  url?: string;
+  label?: string;
+  style?: React.CSSProperties;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    const targetUrl =
+      url ||
+      (typeof window !== "undefined"
+        ? window.location.href
+        : "https://govsight-id.vercel.app");
+    const budgetText =
+      budget !== undefined && budget !== null
+        ? compactMoney(String(budget))
+        : "Belum tersedia";
+    const realizedText =
+      realized !== undefined && realized !== null
+        ? compactMoney(String(realized))
+        : "Belum tersedia";
+    const rateText =
+      rate !== undefined && rate !== null ? percent(rate) : "";
+
+    const lines = [
+      `🔎 Catatan APBD ${regionName} (GovSight ID)`,
+      `• Pagu Belanja: ${budgetText}`,
+      `• Realisasi (${months[month] ?? `Bulan ${month}`} ${year}): ${realizedText}${rateText ? ` (${rateText})` : ""}`,
+    ];
+
+    if (anomalyNote) {
+      lines.push(`⚠️ Catatan Kritis: ${anomalyNote}`);
+    }
+
+    lines.push(
+      ``,
+      `Telusuri rincian transparansi anggaran daerahmu di:`,
+      targetUrl
+    );
+
+    try {
+      await navigator.clipboard.writeText(lines.join("\n"));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2400);
+    } catch {
+      // ignore
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      className="btn btn--secondary"
+      onClick={handleCopy}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "6px",
+        fontWeight: 500,
+        borderColor: "var(--line-2)",
+        color: "var(--ink)",
+        ...style,
+      }}
+      title="Salin rangkuman data APBD siap kirim ke WhatsApp atau media sosial"
+    >
+      {copied ? (
+        <Check size={14} style={{ color: "var(--ok-solid)", flexShrink: 0 }} />
+      ) : (
+        <MessageSquare
+          size={14}
+          style={{ color: "var(--ink-2)", flexShrink: 0 }}
+        />
+      )}
+      <span>{copied ? "Ringkasan tersalin!" : label}</span>
+    </button>
   );
 }
 

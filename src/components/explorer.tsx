@@ -19,6 +19,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleHelp,
+  Filter,
   Globe,
   Landmark,
   Layers,
@@ -47,6 +48,7 @@ import {
   NationalRoadmapView,
 } from "./scalability-views";
 import {
+  CivicSummaryShareButton,
   DownloadButton,
   EmptyState,
   InfoNote,
@@ -455,17 +457,18 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
         <div className="hero__copy">
           <h1>Pemda mana yang perlu ditanya soal belanjanya?</h1>
           <p className="hero__lead">
-            Kami membaca data APBD resmi, lalu menandai pola belanja yang patut
-            ditanyakan — dengan rumus yang terbuka dan sumber yang bisa kamu
-            unduh.
+            Pantau alokasi dan realisasi Rp63,2 Triliun APBD 33 kabupaten/kota
+            se-Sumatera Utara. Kami membaca data APBD resmi, lalu menandai pola
+            belanja yang patut ditanyakan — dengan rumus yang terbuka dan berkas
+            asli yang bisa kamu unduh.
           </p>
           <p className="hero__byline">
             Inisiatif Independen Pengawasan Anggaran Publik Sumatera Utara ·
-            Berbasis Data Resmi SIKD Kemenkeu
+            Berbasis Data Terbuka Resmi SIKD Kemenkeu RI dengan Verifikasi SHA-256
           </p>
           <div className="hero__actions">
             <a className="btn btn--primary" href="#jelajah">
-              Mulai jelajahi <ArrowDown size={15} />
+              Mulai jelajahi 33 Daerah <ArrowDown size={15} />
             </a>
             <Link className="btn btn--secondary" href="/metodologi">
               <CircleHelp size={15} /> Cara membaca data
@@ -938,6 +941,42 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
             </p>
           </button>
         </div>
+
+        <div
+          style={{
+            marginTop: 12,
+            padding: "10px 14px",
+            background: "var(--sunk)",
+            borderRadius: "var(--r)",
+            border: "1px solid var(--line)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 10,
+            fontSize: "0.8125rem",
+            color: "var(--ink-2)",
+          }}
+        >
+          <span>
+            <strong>Informasi Cakupan:</strong> Beranda ini difokuskan penuh
+            untuk eksplorasi 33 Daerah Sumatera Utara (Tier 1). Ingin menelaah
+            pipeline kriptografis dan cetak biru ekspansi 154 daerah Sumatera &amp;
+            552 nasional?
+          </span>
+          <Link
+            href="/arsitektur"
+            className="btn btn--secondary"
+            style={{
+              fontSize: "0.75rem",
+              padding: "4px 10px",
+              height: "auto",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Buka Peta Arsitektur &amp; Skalabilitas →
+          </Link>
+        </div>
       </section>
 
       <section id="jelajah">
@@ -1068,12 +1107,13 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                   </button>
                   <button
                     type="button"
-                    className={`filter-pill ${fokus === "penanda" ? "is-active is-warn" : ""}`}
+                    className={`filter-pill filter-pill--warn ${fokus === "penanda" ? "is-active is-warn" : ""}`}
                     onClick={() =>
                       update({ fokus: fokus === "penanda" ? null : "penanda" })
                     }
+                    title="8 Daerah dengan indikasi penumpukan belanja modal fisik akhir tahun >40%"
                   >
-                    <TriangleAlert size={12} /> Ditandai{" "}
+                    <TriangleAlert size={12} /> Anomali Akhir Tahun{" "}
                     <span className="count">{flaggedCount}</span>
                   </button>
                 </div>
@@ -1158,6 +1198,45 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                 </div>
               </div>
             </div>
+
+            {fokus === "penanda" && (
+              <div
+                className="note note--warn note--block"
+                style={{
+                  margin: "12px 0 0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                }}
+              >
+                <div>
+                  <strong>
+                    <TriangleAlert
+                      size={14}
+                      style={{ verticalAlign: "-2px", marginRight: 6 }}
+                    />
+                    Menampilkan 8 Daerah Anomali Akhir Tahun ({latestCompleteYear}):
+                  </strong>{" "}
+                  Konsentrasi pencairan belanja modal fisik di Triwulan IV melampaui
+                  ambang kewajaran 40%.
+                </div>
+                <button
+                  type="button"
+                  className="btn btn--secondary"
+                  style={{
+                    fontSize: "0.75rem",
+                    padding: "4px 10px",
+                    height: "auto",
+                    whiteSpace: "nowrap",
+                  }}
+                  onClick={() => update({ fokus: null })}
+                >
+                  Tampilkan Semua 33 Daerah
+                </button>
+              </div>
+            )}
 
             {visible.length ? (
               <div className="stack" style={{ marginTop: "var(--gap)" }}>
@@ -1640,9 +1719,37 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
                           </p>
                         </div>
                       </div>
-                      <span className="chip chip--warn">
-                        Catatan Telaah Kritis
-                      </span>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <span className="chip chip--warn">
+                          Catatan Telaah Kritis
+                        </span>
+                        <button
+                          type="button"
+                          className="btn btn--secondary"
+                          style={{
+                            fontSize: "0.75rem",
+                            padding: "4px 10px",
+                            height: "auto",
+                            background: "var(--paper)",
+                          }}
+                          onClick={() => {
+                            update({ fokus: "penanda" });
+                            document
+                              .getElementById("jelajah")
+                              ?.scrollIntoView({ behavior: "smooth" });
+                          }}
+                          title="Saring tabel daerah di atas hanya menampilkan 8 daerah anomali ini"
+                        >
+                          <Filter size={12} /> Saring di Tabel Atas ↑
+                        </button>
+                      </div>
                     </div>
 
                     <div

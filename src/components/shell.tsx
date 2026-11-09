@@ -228,9 +228,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 color: "var(--ink)",
                 fontWeight: 500,
               }}
-              title="Cakupan Multi-Tier: Tier 1 (Sumut 33 Daerah) · Tier 2 (Sumatera 154 Daerah) · Tier 3 (Nasional 514 Daerah)"
+              title="Cakupan Data Aktif: Sumatera Utara (33 Kabupaten/Kota)"
             >
-              <span>Tier 1: Sumut ({regions.length})</span>
+              <span>Sumut ({regions.length} Daerah)</span>
             </Link>
           </div>
         </header>

@@ -21,6 +21,7 @@ import { runningYear } from "@/lib/periods";
 import { compactMoney, fullMoney, percent } from "@/lib/format";
 import { percentage } from "@/lib/data-core";
 import {
+  CivicSummaryShareButton,
   Composition,
   DownloadButton,
   EmptyState,
@@ -196,6 +197,21 @@ export function Profile({
           </p>
         </div>
         <div className="page-actions">
+          <CivicSummaryShareButton
+            regionName={region.name}
+            year={year}
+            month={month}
+            budget={snapshot.total.budget}
+            realized={snapshot.total.realized}
+            rate={rate}
+            anomalyNote={
+              over
+                ? `Realisasi tercatat ${percent(rate)} melampaui pagu awal SIKD (perlu cek revisi APBD-P).`
+                : modalNum > 0
+                  ? `Simulasi realisasi modal fisik ${compactMoney(modalRealized)} (setara ~${kmJalan} km jalan / ~${ruangKelas} ruang kelas).`
+                  : null
+            }
+          />
           <button
             type="button"
             className="btn btn--secondary"
@@ -341,11 +357,13 @@ export function Profile({
           )}
 
           {/* Inquiry Toolkit / Panduan Fraksi DPRD (Prioritas Utama) */}
-          <InquiryToolkit
-            region={region}
-            currentSnapshot={snapshot}
-            dataset={dataset}
-          />
+          <div id="lembar-advokasi">
+            <InquiryToolkit
+              region={region}
+              currentSnapshot={snapshot}
+              dataset={dataset}
+            />
+          </div>
 
           {/* Navigasi Pembaca Lintas Segmen */}
           <div

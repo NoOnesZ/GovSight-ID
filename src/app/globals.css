@@ -5923,6 +5923,17 @@ a.chip:active,
   color: #ffffff;
 }
 
+.filter-pill--warn:not(.is-active) {
+  border-color: var(--warn-line, #fcd34d);
+  background: var(--warn-bg, #fffbeb);
+  color: var(--warn-ink, #92400e);
+}
+
+.filter-pill--warn:not(.is-active):hover {
+  border-color: var(--warn-solid, #b45309);
+  color: var(--warn-ink, #92400e);
+}
+
 /* Badge count di dalam filter-pill dan zone-chip */
 .filter-pill .count,
 .zone-chip .count {
