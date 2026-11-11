@@ -5983,6 +5983,11 @@ a.chip:active,
   opacity: 1;
 }
 
+.filter-pill.is-active.is-warn .count {
+  background: rgba(0, 0, 0, 0.28);
+  color: #ffffff;
+}
+
 /* Multi-Tier Architecture Banners */
 .tier-banner {
   padding: 20px 24px;
@@ -6549,6 +6554,23 @@ a.chip:active,
   box-sizing: border-box;
 }
 
+/* Topbar Scope Chip Responsive Control */
+.topbar-scope-chip__mobile {
+  display: none;
+}
+.topbar-scope-chip__desktop {
+  display: inline;
+}
+
+@media (max-width: 640px) {
+  .topbar-scope-chip__mobile {
+    display: inline;
+  }
+  .topbar-scope-chip__desktop {
+    display: none;
+  }
+}
+
 /* Multi-Tier Back Navigation Bar */
 .tier-nav-bar {
   display: flex;
@@ -6562,20 +6584,26 @@ a.chip:active,
   border-radius: var(--r-sm);
   box-shadow: var(--shadow-xs);
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .tier-nav-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  justify-content: flex-start !important;
+  gap: 8px;
   min-height: 36px;
   height: auto !important;
-  padding: 6px 12px !important;
+  padding: 6px 14px !important;
   white-space: normal !important;
+  word-break: normal;
+  overflow-wrap: break-word;
   line-height: 1.35 !important;
-  text-align: left;
+  text-align: left !important;
   max-width: 100%;
+  overflow: hidden;
   box-sizing: border-box;
   font-family: inherit;
 }
@@ -6646,13 +6674,13 @@ a.chip:active,
   }
   .tier-nav-btn {
     width: 100% !important;
-    justify-content: center !important;
-    text-align: center !important;
-    padding: 8px 10px !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding: 8px 12px !important;
   }
   .tier-nav-status {
-    justify-content: center;
-    text-align: center;
+    justify-content: flex-start;
+    text-align: left;
     font-size: 0.75rem;
   }
 }

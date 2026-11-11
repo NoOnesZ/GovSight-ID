@@ -555,8 +555,10 @@ export function ScalabilityBlueprint3Tier({
 
 export function RegionalSumateraMatrix({
   onSelectTier,
+  showBlueprintCards = true,
 }: {
   onSelectTier?: (tier: 1 | 2 | 3) => void;
+  showBlueprintCards?: boolean;
 } = {}) {
   const [filterStatus, setFilterStatus] = useState<string>("semua");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -623,12 +625,10 @@ export function RegionalSumateraMatrix({
           type="button"
           className="btn btn--secondary btn--sm tier-nav-btn"
           onClick={() => onSelectTier?.(1)}
+          aria-label="Kembali ke Jelajah Anggaran 33 Pemda Sumut"
         >
           <ArrowLeft size={14} style={{ flexShrink: 0 }} />
-          <span className="label-desktop">
-            Kembali ke Jelajah Anggaran Sumut (33 Pemda)
-          </span>
-          <span className="label-mobile">Kembali ke 33 Daerah Sumut</span>
+          <span className="tier-nav-btn__text">Kembali ke 33 Pemda Sumut</span>
         </button>
         <div className="tier-nav-status">
           <span className="dot dot--info" style={{ flexShrink: 0 }} />
@@ -637,7 +637,9 @@ export function RegionalSumateraMatrix({
       </div>
 
       {/* 3-Tier Blueprint Component at top */}
-      <ScalabilityBlueprint3Tier activeTier={2} onSelectTier={onSelectTier} />
+      {showBlueprintCards && (
+        <ScalabilityBlueprint3Tier activeTier={2} onSelectTier={onSelectTier} />
+      )}
 
       {/* Banner Arsitektur Modular Sumatera (Flattened & Calm) */}
       <section
@@ -1305,8 +1307,10 @@ export function RegionalSumateraMatrix({
 
 export function NationalRoadmapView({
   onSelectTier,
+  showBlueprintCards = true,
 }: {
   onSelectTier?: (tier: 1 | 2 | 3) => void;
+  showBlueprintCards?: boolean;
 } = {}) {
   const summary = nationalFiscalSummary;
 
@@ -1318,12 +1322,10 @@ export function NationalRoadmapView({
           type="button"
           className="btn btn--secondary btn--sm tier-nav-btn"
           onClick={() => onSelectTier?.(1)}
+          aria-label="Kembali ke Jelajah Anggaran 33 Pemda Sumut"
         >
           <ArrowLeft size={14} style={{ flexShrink: 0 }} />
-          <span className="label-desktop">
-            Kembali ke Jelajah Anggaran Sumut (33 Pemda)
-          </span>
-          <span className="label-mobile">Kembali ke 33 Daerah Sumut</span>
+          <span className="tier-nav-btn__text">Kembali ke 33 Pemda Sumut</span>
         </button>
         <div className="tier-nav-status">
           <span className="dot dot--accent" style={{ flexShrink: 0 }} />
@@ -1332,7 +1334,9 @@ export function NationalRoadmapView({
       </div>
 
       {/* 3-Tier Blueprint Component at top */}
-      <ScalabilityBlueprint3Tier activeTier={3} onSelectTier={onSelectTier} />
+      {showBlueprintCards && (
+        <ScalabilityBlueprint3Tier activeTier={3} onSelectTier={onSelectTier} />
+      )}
 
       {/* Header Banner Nasional (Flattened & Calm, No Gimmick) */}
       <section

@@ -229,7 +229,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <div className="topbar__right">
             <Link
               href="/#cakupan-wilayah"
-              className="chip chip--interactive chip--sunk"
+              className="chip chip--interactive chip--sunk topbar-scope-chip"
               style={{
                 textDecoration: "none",
                 display: "inline-flex",
@@ -239,7 +239,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
               }}
               title="Cakupan Data Aktif: Sumatera Utara (33 Kabupaten/Kota)"
             >
-              <span>Sumut ({regions.length} Daerah)</span>
+              <span className="dot dot--accent" style={{ width: 6, height: 6, flexShrink: 0 }} />
+              <span className="topbar-scope-chip__desktop">Sumut ({regions.length} Daerah)</span>
+              <span className="topbar-scope-chip__mobile">Sumut</span>
             </Link>
           </div>
         </header>

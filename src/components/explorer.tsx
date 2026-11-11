@@ -994,10 +994,12 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
 
         {tier === "2" ? (
           <RegionalSumateraMatrix
+            showBlueprintCards={false}
             onSelectTier={(t) => update({ tier: String(t) as "1" | "2" | "3" })}
           />
         ) : tier === "3" ? (
           <NationalRoadmapView
+            showBlueprintCards={false}
             onSelectTier={(t) => update({ tier: String(t) as "1" | "2" | "3" })}
           />
         ) : (

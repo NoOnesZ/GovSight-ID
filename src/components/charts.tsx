@@ -204,7 +204,7 @@ export const MonthlyChart = memo(function MonthlyChart({
             dataKey="month"
             axisLine={false}
             tickLine={false}
-            tick={{ ...axisTick, fontSize: isMobile ? 10 : 11 }}
+            tick={{ ...axisTick, fontSize: 11 }}
             minTickGap={4}
             dy={6}
           />
@@ -212,7 +212,7 @@ export const MonthlyChart = memo(function MonthlyChart({
             tickFormatter={(value) => `${value}%`}
             axisLine={false}
             tickLine={false}
-            tick={{ ...axisTick, fontSize: isMobile ? 10 : 11 }}
+            tick={{ ...axisTick, fontSize: 11 }}
           />
           <Tooltip
             isAnimationActive={false}
@@ -325,7 +325,7 @@ export const ComparisonRateChart = memo(function ComparisonRateChart({
             tickLine={false}
             tick={{
               ...axisTick,
-              fontSize: isMobile ? 10 : 11,
+              fontSize: 11,
             }}
             dy={isMobile ? 6 : 8}
             dx={isMobile ? -2 : 0}
@@ -346,7 +346,7 @@ export const ComparisonRateChart = memo(function ComparisonRateChart({
             tickFormatter={(val) => `${val}%`}
             axisLine={false}
             tickLine={false}
-            tick={{ ...axisTick, fontSize: isMobile ? 10 : 11 }}
+            tick={{ ...axisTick, fontSize: 11 }}
           />
           <Tooltip
             isAnimationActive={false}
@@ -444,7 +444,7 @@ export const SpendingChart = memo(function SpendingChart({
               tickFormatter={trillionTick}
               axisLine={false}
               tickLine={false}
-              tick={{ ...axisTick, fontSize: isMobile ? 10 : 11 }}
+              tick={{ ...axisTick, fontSize: 11 }}
             />
             <YAxis
               type="category"
@@ -454,7 +454,7 @@ export const SpendingChart = memo(function SpendingChart({
               tickLine={false}
               tick={{
                 fill: C.label,
-                fontSize: isMobile ? 10 : 11.5,
+                fontSize: 11,
                 fontFamily: "inherit",
               }}
               interval={0}
@@ -514,7 +514,7 @@ export const SpendingChart = memo(function SpendingChart({
               tickLine={false}
               tick={{
                 ...axisTick,
-                fontSize: isMobile ? 10 : 11,
+                fontSize: 11,
               }}
               dy={isMobile ? 6 : 8}
               dx={isMobile ? -2 : 0}
@@ -534,7 +534,7 @@ export const SpendingChart = memo(function SpendingChart({
               tickFormatter={trillionTick}
               axisLine={false}
               tickLine={false}
-              tick={{ ...axisTick, fontSize: isMobile ? 10 : 11 }}
+              tick={{ ...axisTick, fontSize: 11 }}
             />
             <Tooltip
               isAnimationActive={false}
@@ -641,7 +641,7 @@ export const HistoryChart = memo(function HistoryChart({
             dataKey="tahun"
             axisLine={false}
             tickLine={false}
-            tick={{ ...axisTick, fontSize: isMobile ? 10 : 11 }}
+            tick={{ ...axisTick, fontSize: 11 }}
             minTickGap={8}
             dy={8}
           />
@@ -649,7 +649,7 @@ export const HistoryChart = memo(function HistoryChart({
             tickFormatter={trillionTick}
             axisLine={false}
             tickLine={false}
-            tick={{ ...axisTick, fontSize: isMobile ? 10 : 11 }}
+            tick={{ ...axisTick, fontSize: 11 }}
           />
           <Tooltip
             isAnimationActive={false}
