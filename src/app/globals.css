@@ -698,6 +698,21 @@ hr {
   color: var(--accent);
 }
 
+.site-foot__sync {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+  max-width: 100%;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+
+.site-foot__sync svg {
+  color: var(--ok-solid);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
 .site-foot p {
   margin-right: auto;
 }

@@ -31,6 +31,8 @@ import {
   useFilters,
 } from "./shared";
 
+const isDev = process.env.NODE_ENV === "development";
+
 export function Methodology({ dataset }: { dataset: Dataset }) {
   const { year, month, update, invalidPeriod } = useFilters();
   if (invalidPeriod) return <UnavailablePeriod />;
@@ -82,68 +84,70 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </a>
         </div>
 
-        {/* Tautan Khusus Menuju Peta Arsitektur & Cetak Biru Skalabilitas */}
-        <div
-          className="card"
-          style={{
-            padding: "20px 22px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "16px",
-            flexWrap: "wrap",
-            background: "var(--paper)",
-            border: "1px solid var(--accent-line, #cbd5e1)",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-            <div
-              style={{
-                width: "42px",
-                height: "42px",
-                borderRadius: "var(--r)",
-                background: "var(--accent-tint)",
-                color: "var(--accent)",
-                display: "grid",
-                placeItems: "center",
-                flexShrink: 0,
-              }}
-            >
-              <Layers size={22} />
-            </div>
-            <div>
-              <h3
-                style={{
-                  fontSize: "1rem",
-                  margin: 0,
-                  fontWeight: 600,
-                  color: "var(--ink)",
-                }}
-              >
-                Peta Arsitektur &amp; Cetak Biru Rekayasa Skalabilitas
-              </h3>
-              <p
-                style={{
-                  margin: "3px 0 0",
-                  fontSize: "0.8125rem",
-                  color: "var(--ink-2)",
-                  lineHeight: 1.5,
-                }}
-              >
-                Dokumentasi pipeline data 4-tier, partisi regional 154 pemda,
-                dan skema DDL database nasional 514 daerah kini tersedia di
-                halaman khusus.
-              </p>
-            </div>
-          </div>
-          <Link
-            href="/arsitektur"
-            className="btn btn--secondary"
-            style={{ fontSize: "0.8125rem" }}
+        {/* Tautan Khusus Menuju Peta Arsitektur & Cetak Biru Skalabilitas (Hanya Mode Development) */}
+        {isDev && (
+          <div
+            className="card"
+            style={{
+              padding: "20px 22px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "16px",
+              flexWrap: "wrap",
+              background: "var(--paper)",
+              border: "1px solid var(--accent-line, #cbd5e1)",
+            }}
           >
-            Buka Peta Arsitektur <ArrowRight size={14} />
-          </Link>
-        </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+              <div
+                style={{
+                  width: "42px",
+                  height: "42px",
+                  borderRadius: "var(--r)",
+                  background: "var(--accent-tint)",
+                  color: "var(--accent)",
+                  display: "grid",
+                  placeItems: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <Layers size={22} />
+              </div>
+              <div>
+                <h3
+                  style={{
+                    fontSize: "1rem",
+                    margin: 0,
+                    fontWeight: 600,
+                    color: "var(--ink)",
+                  }}
+                >
+                  Peta Arsitektur &amp; Cetak Biru Rekayasa Skalabilitas
+                </h3>
+                <p
+                  style={{
+                    margin: "3px 0 0",
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-2)",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  Dokumentasi pipeline data 4-tier, partisi regional 154 pemda,
+                  dan skema DDL database nasional 514 daerah kini tersedia di
+                  halaman khusus (mode pengembang).
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/arsitektur"
+              className="btn btn--secondary"
+              style={{ fontSize: "0.8125rem" }}
+            >
+              Buka Peta Arsitektur <ArrowRight size={14} />
+            </Link>
+          </div>
+        )}
 
         <div id="rumus-indikator" className="grid-2">
           <section className="card">
@@ -821,6 +825,164 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
           </div>
         </section>
 
+        {/* Alur Otomatisasi Data & Jaminan Integritas */}
+        <section id="otomatisasi-data" className="card">
+          <div className="card__head">
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 6,
+                  flexWrap: "wrap",
+                }}
+              >
+                <span className="chip chip--ok chip--square">
+                  Terjadwal Tiap Senin 02:00 WIB
+                </span>
+                <span className="chip chip--sunk chip--square">
+                  SHA-256 Kriptografis
+                </span>
+                <span className="chip chip--accent chip--square">
+                  Zero Manual Intervention
+                </span>
+              </div>
+              <h2 className="card__title">
+                Alur otomatisasi data dan jaminan integritas
+              </h2>
+              <p className="card__sub" style={{ maxWidth: "68ch" }}>
+                GovSight ID mengandalkan pipeline data otomatis tanpa intervensi manual,
+                lengkap dengan verifikasi kriptografis dan mekanisme pemulihan kegagalan
+                untuk menjamin akurasi data publik.
+              </p>
+            </div>
+          </div>
+          <div className="card__body">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+                gap: 20,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                }}
+              >
+                <span
+                  className="chip chip--square chip--sunk"
+                  style={{ alignSelf: "flex-start" }}
+                >
+                  <Database size={12} style={{ marginRight: 4 }} /> 01. Sumber Data
+                </span>
+                <h3
+                  style={{
+                    fontSize: "0.9375rem",
+                    margin: "4px 0 2px",
+                    fontWeight: 600,
+                    color: "var(--ink)",
+                  }}
+                >
+                  DJPK Kemenkeu RI (SIKD)
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-2)",
+                    lineHeight: 1.6,
+                    margin: 0,
+                  }}
+                >
+                  Data primer APBD diperoleh langsung dari portal Sistem Informasi Keuangan
+                  Daerah (SIKD) DJPK Kementerian Keuangan RI. Setiap entri mencerminkan pagu
+                  dan realisasi belanja publik terakumulasi per periode pelaporan.
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                }}
+              >
+                <span
+                  className="chip chip--square chip--accent"
+                  style={{ alignSelf: "flex-start" }}
+                >
+                  <RefreshCw size={12} style={{ marginRight: 4 }} /> 02. Mekanisme Otomasi
+                </span>
+                <h3
+                  style={{
+                    fontSize: "0.9375rem",
+                    margin: "4px 0 2px",
+                    fontWeight: 600,
+                    color: "var(--ink)",
+                  }}
+                >
+                  Cron Runner &amp; SHA-256
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-2)",
+                    lineHeight: 1.6,
+                    margin: 0,
+                  }}
+                >
+                  GitHub Actions scheduled cron runner yang berjalan periodik (tiap Senin 02:00
+                  WIB) secara otomatis mengunduh berkas XML mentah, memverifikasi checksum SHA-256
+                  untuk validasi integritas biner, lalu men-deploy pembaruan ke edge network secara
+                  otomatis tanpa intervensi manual.
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                }}
+              >
+                <span
+                  className="chip chip--square chip--ok"
+                  style={{ alignSelf: "flex-start" }}
+                >
+                  <ShieldCheck size={12} style={{ marginRight: 4 }} /> 03. Jaminan Integritas
+                </span>
+                <h3
+                  style={{
+                    fontSize: "0.9375rem",
+                    margin: "4px 0 2px",
+                    fontWeight: 600,
+                    color: "var(--ink)",
+                  }}
+                >
+                  Fail-Safe Snapshot Retensi
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--ink-2)",
+                    lineHeight: 1.6,
+                    margin: 0,
+                  }}
+                >
+                  Jika server sumber tidak merespons (downtime/timeout) atau mengembalikan data
+                  korup (gagal validasi skema XML atau mismatch checksum), sistem otomatis
+                  membatalkan pembaruan dan mempertahankan snapshot terakhir yang valid sehingga
+                  data publik tetap konsisten dan bebas anomali teknis.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Flattened Limits and Update Cadence Section with Hairline Separation */}
         <section className="card">
           <div
@@ -868,20 +1030,21 @@ export function Methodology({ dataset }: { dataset: Dataset }) {
                 className="muted"
                 style={{ fontSize: "0.875rem", marginTop: 12, lineHeight: 1.6 }}
               >
-                Versi awal ini memakai salinan data yang diperiksa pada{" "}
-                <strong>{dateLabel(dataset.generatedAt)}</strong>. Pembaruan
-                mengikuti publikasi berkala DJPK Kementerian Keuangan.
+                Data diperbarui secara otomatis melalui jadwal mingguan GitHub Actions setiap
+                Senin pukul 02:00 WIB. Salinan data saat ini bersumber dari pemeriksaan pada{" "}
+                <strong>{dateLabel(dataset.generatedAt)}</strong> mengacu pada publikasi berkala
+                DJPK Kementerian Keuangan RI.
               </p>
               <p
                 className="muted"
                 style={{ fontSize: "0.875rem", marginTop: 10, lineHeight: 1.6 }}
               >
-                Tanggal penerimaan SIKD berasal dari keterangan portal saat
-                pemeriksaan, bukan tanggal terbit tiap angka. Tanggal
-                pemeriksaan menunjukkan kapan kami mengakses sumber.
+                Setiap siklus unduhan berkas XML divalidasi checksum SHA-256. Apabila server
+                SIKD tidak merespons atau mengembalikan data korup, sistem otomatis membatalkan
+                pembaruan dan mempertahankan snapshot terakhir yang valid.
               </p>
               <span className="checked-line" style={{ marginTop: 14 }}>
-                <Check size={14} /> Bukan pembaruan langsung secara real-time.
+                <Check size={14} /> Sinkronisasi otomatis terjadwal tiap Senin 02:00 WIB via GitHub Actions.
               </span>
             </div>
           </div>

@@ -13,10 +13,13 @@ import {
   Layers,
   Lock,
   Menu,
+  RefreshCw,
   Scale,
   X,
 } from "lucide-react";
 import { regions } from "@/lib/regions";
+
+const isDev = process.env.NODE_ENV === "development";
 
 const navigation = [
   {
@@ -37,12 +40,16 @@ const navigation = [
     desc: "Rumus, batas tafsir, berkas asli",
     icon: BookOpen,
   },
-  {
-    href: "/arsitektur",
-    label: "Peta arsitektur",
-    desc: "Alur data & cetak biru skalabilitas",
-    icon: Layers,
-  },
+  ...(isDev
+    ? [
+        {
+          href: "/arsitektur",
+          label: "Peta arsitektur",
+          desc: "Alur data & cetak biru skalabilitas",
+          icon: Layers,
+        },
+      ]
+    : []),
 ];
 
 function Brand({ onNavigate }: { onNavigate?: () => void }) {
@@ -104,7 +111,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
   const current =
     navigation.find((item) => item.href === pathname)?.label ??
-    (pathname.startsWith("/daerah/")
+    (pathname === "/arsitektur"
+      ? "Peta arsitektur"
+      : pathname.startsWith("/daerah/")
       ? "Profil daerah"
       : "Halaman tidak ditemukan");
 
@@ -257,14 +266,25 @@ export function Shell({ children }: { children: React.ReactNode }) {
               ·
             </span>
             <span>Inisiatif independen keterbukaan fiskal daerah</span>
+            <span className="source-line__sep" aria-hidden="true">
+              ·
+            </span>
+            <span className="site-foot__sync">
+              <RefreshCw size={12} aria-hidden="true" />
+              <span>
+                Sinkronisasi otomatis terjadwal tiap Senin 02:00 WIB via GitHub Actions
+              </span>
+            </span>
           </div>
           <div className="site-foot__links">
             <Link href="/metodologi" className="site-foot__link">
               Metodologi &amp; Sumber
             </Link>
-            <Link href="/arsitektur" className="site-foot__link">
-              Peta Arsitektur
-            </Link>
+            {isDev && (
+              <Link href="/arsitektur" className="site-foot__link">
+                Peta Arsitektur
+              </Link>
+            )}
             <a
               href="https://djpk.kemenkeu.go.id/portal/data/apbd"
               target="_blank"

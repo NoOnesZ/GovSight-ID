@@ -959,23 +959,9 @@ export function Explorer({ dataset }: { dataset: Dataset }) {
           }}
         >
           <span>
-            <strong>Informasi Cakupan:</strong> Beranda ini difokuskan penuh
-            untuk eksplorasi 33 Daerah Sumatera Utara (Tier 1). Ingin menelaah
-            pipeline kriptografis dan cetak biru ekspansi 154 daerah Sumatera &amp;
-            552 nasional?
+            <strong>Informasi Cakupan:</strong> Beranda ini aktif penuh
+            menampilkan data APBD 33 Kabupaten/Kota di Sumatera Utara (Tier 1 Baseline).
           </span>
-          <Link
-            href="/arsitektur"
-            className="btn btn--secondary"
-            style={{
-              fontSize: "0.75rem",
-              padding: "4px 10px",
-              height: "auto",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Buka Peta Arsitektur &amp; Skalabilitas →
-          </Link>
         </div>
       </section>
 

@@ -1,0 +1,62 @@
+name: Sync Data APBD DJPK
+
+on:
+  schedule:
+    # Setiap Senin pukul 02:00 WIB (Minggu 19:00 UTC)
+    - cron: '0 19 * * 0'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Jalankan simulasi tanpa menyimpan berkas (dry-run)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  sync-apbd:
+    name: Sinkronisasi & Verifikasi APBD DJPK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Eksekusi sinkronisasi data DJPK
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            npx tsx scripts/sync-data.ts --dry-run
+          else
+            npx tsx scripts/sync-data.ts
+          fi
+
+      - name: Jalankan uji integritas & typecheck
+        run: |
+          npm run typecheck
+          npm test
+
+      - name: Periksa perubahan snapshot & commit otomatis
+        run: |
+          if ! git diff --quiet data/snapshots.json; then
+            echo "Perubahan snapshot data APBD terdeteksi. Menyimpan commit otomatis..."
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/snapshots.json public/data/raw/
+            git commit -m "data(sync): perbarui snapshot data APBD resmi DJPK Kemenkeu"
+            git push origin main
+          else
+            echo "Tidak ada perubahan snapshot data APBD dari portal DJPK Kemenkeu."
+          fi
