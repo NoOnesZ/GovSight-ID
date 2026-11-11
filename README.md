@@ -103,5 +103,3 @@ PORT=3100 npm start
 ```
 
 Server mendengarkan semua alamat dan memakai variabel `PORT` dari hosting.
-
-Pengujian manusia dengan lima orang, deploy publik/redeploy, persyaratan hosting sponsor, dan konfirmasi format pengumpulan lomba belum dilakukan. Guidebook memuat tanggal draft yang berbeda; target internal tetap 1 November 2026 sampai ketua memastikan pengumuman terbaru.
