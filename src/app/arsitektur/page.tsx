@@ -4,6 +4,8 @@ import { dataset } from "@/lib/dataset";
 import { ArchitectureView } from "@/components/architecture-view";
 import Loading from "../loading";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Peta Arsitektur & Cetak Biru Skalabilitas",
   description:
