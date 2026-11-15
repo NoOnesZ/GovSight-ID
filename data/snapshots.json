@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-11T13:28:46.484Z",
+  "generatedAt": "2026-11-15T23:17:07.296Z",
   "snapshots": [
     {
       "regionCode": "0215",
@@ -1572,9 +1572,9 @@
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=15",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=15",
         "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "77643fdc1a34f9486f6d6433ea7a23ad1da3efc274d9a43cfaffb928996274cb",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0215-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0215-2026-10.xml"
       }
     },
     {
@@ -3146,10 +3146,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=14",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=14",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "ef35f30fc066e539865f382611b7ab1938d714da66ad6803620d784371c36dcc",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0214-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0214-2026-10.xml"
       }
     },
     {
@@ -7871,10 +7871,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=19",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=19",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "eeeac4be935af76aeaa4a0ce4b1095b80fd26c24efc3e4e07639093489fd1829",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0219-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0219-2026-10.xml"
       }
     },
     {
@@ -9446,10 +9446,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=18",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=18",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "27145526b01da30cd1743639042060763249604c40fa04dd9b25e9ae51d27921",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0218-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0218-2026-10.xml"
       }
     },
     {
@@ -11021,10 +11021,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=24",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=24",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "ad1f00e86474f5eed6b0893ccd7646e5b897f4ae5a0d8520f3e84273a9c4fd1a",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0224-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0224-2026-10.xml"
       }
     },
     {
@@ -12596,10 +12596,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=06",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=06",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "35822b98ff2e811597ab315f22ded4d9f8fc4d18dd95d7e043857944d4319461",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0206-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0206-2026-10.xml"
       }
     },
     {
@@ -14171,10 +14171,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=04",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=04",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
-        "batchId": "555b9956280c8d73c076043ab85cd0b771fd7a146f7e5115ed1eba5c4ade11ea",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0204-2026-10.xml"
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
+        "batchId": "533eea282a188b56c523d06be7036161221dd177026c8547e37d3c1b2721821b",
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0204-2026-10.xml"
       }
     },
     {
@@ -15746,10 +15746,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=01",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=01",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "82c43810e8746f8d9a00eb8a06d02bec2baeaad0423da272ce9f384ca8469c2c",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0201-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0201-2026-10.xml"
       }
     },
     {
@@ -17321,10 +17321,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=17",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=17",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "62c7919e62949c91c3b64c11f446c2d7c60066a67407ea19179d87f47035b2ba",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0217-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0217-2026-10.xml"
       }
     },
     {
@@ -18865,7 +18865,7 @@
         "code": "total",
         "label": "Belanja Daerah",
         "budget": "763696348617",
-        "realized": "538901042562.72"
+        "realized": "538935167462.72"
       },
       "categories": [
         {
@@ -18878,7 +18878,7 @@
           "code": "barang-jasa",
           "label": "Belanja Barang dan Jasa",
           "budget": "245300525901",
-          "realized": "161908276282.72"
+          "realized": "161942401182.72"
         },
         {
           "code": "modal",
@@ -18896,10 +18896,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=20",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=20",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
-        "batchId": "57ff40d2a34bd0959465b3160c7dfef77d9f6661b5b5193c72ffd3ed0a48885b",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0220-2026-10.xml"
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
+        "batchId": "06723e2f4cd1f325a6637fa06a97393faeaf4cc44e6f008c775c38f994f008e8",
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0220-2026-10.xml"
       }
     },
     {
@@ -20471,10 +20471,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=21",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=21",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "9273f6c28380813b2b771a576a7a7f4b8e251f554e2fe7d255daad5e8414205b",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0221-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0221-2026-10.xml"
       }
     },
     {
@@ -22046,10 +22046,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=02",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=02",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "57d47a962886273bf78208d8e2be102897d314bc3e802be165c1d1c57ac9790c",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0202-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0202-2026-10.xml"
       }
     },
     {
@@ -23621,10 +23621,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=05",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=05",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "cf28890d55c756de2f013a7cb094bbe921e84bf8f395227ca7c18245b027a6b2",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0205-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0205-2026-10.xml"
       }
     },
     {
@@ -25165,41 +25165,41 @@
         "code": "total",
         "label": "Belanja Daerah",
         "budget": "1925531152512.3",
-        "realized": "1314943914333.9"
+        "realized": "1562987142615.2"
       },
       "categories": [
         {
           "code": "pegawai",
           "label": "Belanja Pegawai",
           "budget": "1054260107554",
-          "realized": "812189684439"
+          "realized": "861159807291"
         },
         {
           "code": "barang-jasa",
           "label": "Belanja Barang dan Jasa",
           "budget": "406287672938.5",
-          "realized": "336501109493.91"
+          "realized": "471252411760.55"
         },
         {
           "code": "modal",
           "label": "Belanja Modal",
           "budget": "73946144592.84",
-          "realized": "26512296711"
+          "realized": "39824719449.7"
         },
         {
           "code": "lainnya",
           "label": "Belanja Lainnya",
           "budget": "391037227427",
-          "realized": "139740823690"
+          "realized": "190750204114"
         }
       ],
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=07",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=07",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
-        "batchId": "c553a1b4f5c3bf2dd3ec0f602f57565b8ebf0eed3c91a8dbfd5a5d103cae7047",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0207-2026-10.xml"
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
+        "batchId": "5de8e41ea46483184b272e0a8954ec176430d07ddfd242d75a92edc7c1da02fa",
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0207-2026-10.xml"
       }
     },
     {
@@ -26771,10 +26771,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=08",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=08",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "d381e691970b242e70f87bb7cda356e2066e262cb6c7d84ceccc21ebef8baf4a",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0208-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0208-2026-10.xml"
       }
     },
     {
@@ -28346,10 +28346,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=09",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=09",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "7e31831a5ddc0e778cc44f37220cbee06ae609dc99f2b8fae7e3840da2a0b3c3",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0209-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0209-2026-10.xml"
       }
     },
     {
@@ -29921,10 +29921,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=10",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=10",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "e60e8913f07833a64122d622895eb9c4a54df98a26a7a66f05a044b07f17bfae",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0210-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0210-2026-10.xml"
       }
     },
     {
@@ -31496,10 +31496,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=11",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=11",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "975a2afc4246b5b4cfb7fab097cc33b674bab0cd8ba2b3600c4cf9bcee0ff88f",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0211-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0211-2026-10.xml"
       }
     },
     {
@@ -33071,10 +33071,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=12",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=12",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "d8ee52e5784efd8f5ca30ad08f8b2999981063106b626cb767371bdb5cc466c4",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0212-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0212-2026-10.xml"
       }
     },
     {
@@ -34646,10 +34646,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=13",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=13",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "e639f35ff9fca6eb9eedd7e2fbf4ab6be11feb431c205fdf03590e58064f831b",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0213-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0213-2026-10.xml"
       }
     },
     {
@@ -36221,10 +36221,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=22",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=22",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "85fd4373f54c1bf2d79ac62762d6d4fe93ce05de88f7ad6add9fb436d5b14bf2",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0222-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0222-2026-10.xml"
       }
     },
     {
@@ -37796,10 +37796,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=23",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=23",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "daa0f8e713f3ec3deebcef661df20bcb2d7946f143731c275e13e5e09719c5b8",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0223-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0223-2026-10.xml"
       }
     },
     {
@@ -39371,10 +39371,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=25",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=25",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "a1faf377984d8ce45434bd7b661fe564c607ca2359fe51f49fb4cc54ce4bcabc",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0225-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0225-2026-10.xml"
       }
     },
     {
@@ -40946,10 +40946,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=26",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=26",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "2f35e56f1c67e80b7d170a38ebff3c866b287cb5f6245c3c2c5e56d2109f69b1",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0226-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0226-2026-10.xml"
       }
     },
     {
@@ -42521,10 +42521,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=27",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=27",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "13663036cfcf77847f202c09df20de83609c4a8fb0d6b409e8062307c59819f8",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0227-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0227-2026-10.xml"
       }
     },
     {
@@ -44096,10 +44096,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=28",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=28",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "21dfbec3e8be054213bd48f06c2facf3744b5386aa44e5736d1a3a8a1dec96c2",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0228-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0228-2026-10.xml"
       }
     },
     {
@@ -45671,10 +45671,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=29",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=29",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "f748fe40de7bae6d3c8e250a107873a8f9b11210ed7c3fe2fa8e32fd155ddea7",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0229-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0229-2026-10.xml"
       }
     },
     {
@@ -47246,10 +47246,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=30",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=30",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "cec9fef7035ea92e6fc7d325938a3ea089394b6964dcb5da2e0fc14ca8c5f8a1",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0230-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0230-2026-10.xml"
       }
     },
     {
@@ -48821,10 +48821,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=31",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=31",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "537db065b7720838361150e490b077a2f35691c6b3308b1dd5b3f8108760d298",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0231-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0231-2026-10.xml"
       }
     },
     {
@@ -50396,10 +50396,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=32",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=32",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "8c5cb2bdf302a7bca84079e717bab107aec5337f6cf55789fa309c230008fee8",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0232-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0232-2026-10.xml"
       }
     },
     {
@@ -51971,10 +51971,10 @@
       "source": {
         "url": "https://djpk.kemenkeu.go.id/portal/csv_apbd?type=apbd&periode=10&tahun=2026&provinsi=02&pemda=33",
         "portalUrl": "https://djpk.kemenkeu.go.id/portal/data/apbd?periode=10&tahun=2026&provinsi=02&pemda=33",
-        "publishedAt": "2026-11-10",
-        "checkedAt": "2026-11-11T13:28:46.484Z",
+        "publishedAt": "2026-11-15",
+        "checkedAt": "2026-11-15T23:17:07.296Z",
         "batchId": "b99fafa63f2312de696250893a2226c5f9da8b0f3496fbf5f1fea566d17725bf",
-        "rawPath": "/data/raw/2026-11-11T13-28-46-484Z/0233-2026-10.xml"
+        "rawPath": "/data/raw/2026-11-15T23-17-07-296Z/0233-2026-10.xml"
       }
     }
   ]
